@@ -9,7 +9,7 @@ Required:
 
 ### License
 
-Copyright 2019 wumo
+Copyright 2019 Sea Knight from HIT
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
