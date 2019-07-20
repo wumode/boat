@@ -1,0 +1,39 @@
+{
+  "gps_position": {
+    "latitude": -5.864022808999003e-12,
+    "longitude": -6.57163496953217e-08
+  },
+  "imu_data": {
+    "angle": {
+      "pitch": 0.004985437728464603,
+      "roll": -0.10939200222492218,
+      "yaw": -0.35473304986953735
+    },
+    "angular_velocity": {"z": 0.0},
+    "linear_acceleration": {
+      "x": -0.0048828125,
+      "y": -0.10888671875
+    }
+  },
+  "locking": 0,
+  "raw_gps_position": {
+    "latitude": 0.0,
+    "longitude": 0.0
+  },
+  "route_gps_positions": [{
+    "latitude": 37.53556823730469,
+    "longitude": 122.07560729980469
+  }, {
+    "latitude": 37.53578186035156,
+    "longitude": 122.07599639892578
+  }, {
+    "latitude": 37.53556823730469,
+    "longitude": 122.07562255859375
+  }],
+  "utm_position": {
+    "GridZone": 31,
+    "Hemisphere": 1,
+    "x": 166021.4375,
+    "y": -6.512333357022726e-07
+  }
+}

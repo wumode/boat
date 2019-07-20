@@ -1,13 +1,13 @@
 # Boat
 
-### Dependencies
+### 依赖
 
-Required:
+必要:
 
 - [cmake](http://www.cmake.org/) - build system
 - [serial](http://wjwwood.github.com/serial/) Cross-platform, Serial Port library written in C++ 
 
-### Build
+### 编译
 
 Get:
 
@@ -20,11 +20,19 @@ cd build
 cmake ..
 make`
 
-### Run
+### 配置文件
+配置文件在boat下config.xml
 
+参数说明：
+
+- gps 自主航行预置航线
+
+### 运行
+
+在boat目录下执行
 `sudo build/./Ship`
 
-### License
+### 许可证
 
 Copyright 2019 Sea Knight from HIT
 
@@ -40,7 +48,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-### Author
+### 作者
 
 WuMo wumo1999@gmail.com
 

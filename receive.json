@@ -1,0 +1,16 @@
+{
+  "empower": 0,
+  "mode": 1,
+  "route_updated": 0,
+  "stop": 0,
+  "route_gps_positions": [
+    {
+      "latitude": 0.0,
+      "longitude": 0.0
+    },
+    {
+      "latitude": 0.0,
+      "longitude": 0.0
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-<navigation>
+<boat>
     <gps>
         <point>
             <latitude>37.535510</latitude>
@@ -41,4 +41,4 @@
             <baud>460800</baud>
         </serial>
     </boat>
-</navigation>
+</boat>
