@@ -4,7 +4,7 @@
 
 Required:
 
-- [cmake](http://www.cmake.org/) - buildsystem
+- [cmake](http://www.cmake.org/) - build system
 - [serial](http://wjwwood.github.com/serial/) Cross-platform, Serial Port library written in C++ 
 
 ### License

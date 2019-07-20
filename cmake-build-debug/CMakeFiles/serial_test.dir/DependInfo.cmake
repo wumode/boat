@@ -4,14 +4,14 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "K:/wumode/CLionProjects/pi/Ship/3rdparty/tiny_xml/tinystr.cpp" "K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/CMakeFiles/serial_test.dir/3rdparty/tiny_xml/tinystr.cpp.obj"
-  "K:/wumode/CLionProjects/pi/Ship/3rdparty/tiny_xml/tinyxml.cpp" "K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/CMakeFiles/serial_test.dir/3rdparty/tiny_xml/tinyxml.cpp.obj"
-  "K:/wumode/CLionProjects/pi/Ship/3rdparty/tiny_xml/tinyxmlerror.cpp" "K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/CMakeFiles/serial_test.dir/3rdparty/tiny_xml/tinyxmlerror.cpp.obj"
-  "K:/wumode/CLionProjects/pi/Ship/3rdparty/tiny_xml/tinyxmlparser.cpp" "K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/CMakeFiles/serial_test.dir/3rdparty/tiny_xml/tinyxmlparser.cpp.obj"
-  "K:/wumode/CLionProjects/pi/Ship/geo_to_utm/datum/datum.cpp" "K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/CMakeFiles/serial_test.dir/geo_to_utm/datum/datum.cpp.obj"
-  "K:/wumode/CLionProjects/pi/Ship/geo_to_utm/utm/utm.cpp" "K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/CMakeFiles/serial_test.dir/geo_to_utm/utm/utm.cpp.obj"
-  "K:/wumode/CLionProjects/pi/Ship/serial_communication/serial_communication.cc" "K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/CMakeFiles/serial_test.dir/serial_communication/serial_communication.cc.obj"
-  "K:/wumode/CLionProjects/pi/Ship/test.cc" "K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/CMakeFiles/serial_test.dir/test.cc.obj"
+  "/home/wumode/CLionProjects/boat/3rdparty/tiny_xml/tinystr.cpp" "/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/serial_test.dir/3rdparty/tiny_xml/tinystr.cpp.o"
+  "/home/wumode/CLionProjects/boat/3rdparty/tiny_xml/tinyxml.cpp" "/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/serial_test.dir/3rdparty/tiny_xml/tinyxml.cpp.o"
+  "/home/wumode/CLionProjects/boat/3rdparty/tiny_xml/tinyxmlerror.cpp" "/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/serial_test.dir/3rdparty/tiny_xml/tinyxmlerror.cpp.o"
+  "/home/wumode/CLionProjects/boat/3rdparty/tiny_xml/tinyxmlparser.cpp" "/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/serial_test.dir/3rdparty/tiny_xml/tinyxmlparser.cpp.o"
+  "/home/wumode/CLionProjects/boat/geo_to_utm/datum/datum.cpp" "/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/serial_test.dir/geo_to_utm/datum/datum.cpp.o"
+  "/home/wumode/CLionProjects/boat/geo_to_utm/utm/utm.cpp" "/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/serial_test.dir/geo_to_utm/utm/utm.cpp.o"
+  "/home/wumode/CLionProjects/boat/serial_communication/serial_communication.cc" "/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/serial_test.dir/serial_communication/serial_communication.cc.o"
+  "/home/wumode/CLionProjects/boat/test.cc" "/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/serial_test.dir/test.cc.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

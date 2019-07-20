@@ -8,470 +8,480 @@
 		<Option virtualFolders="CMake Files\;"/>
 		<Build>
 			<Target title="all">
-				<Option working_dir="K:/wumode/CLionProjects/pi/Ship/cmake-build-debug"/>
+				<Option working_dir="/home/wumode/CLionProjects/boat/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
-					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="Ship">
-				<Option output="K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Ship.exe" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="K:/wumode/CLionProjects/pi/Ship/cmake-build-debug"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/geo_to_utm/datum"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/geo_to_utm/utm"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/kalman_filter"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/navigation"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/tiny_xml"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/Eigen"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/c_socket"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/json"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/nlohmann"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/serial_communication"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/socket_communication"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/mingw32"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/backward"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../include"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include-fixed"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../mingw32/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 Ship"/>
-					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="Ship/fast">
-				<Option output="K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Ship.exe" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="K:/wumode/CLionProjects/pi/Ship/cmake-build-debug"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/geo_to_utm/datum"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/geo_to_utm/utm"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/kalman_filter"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/navigation"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/tiny_xml"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/Eigen"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/c_socket"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/json"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/nlohmann"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/serial_communication"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/socket_communication"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/mingw32"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/backward"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../include"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include-fixed"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../mingw32/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 Ship/fast"/>
-					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="serial_test">
-				<Option output="K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/serial_test.exe" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="K:/wumode/CLionProjects/pi/Ship/cmake-build-debug"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/geo_to_utm/datum"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/geo_to_utm/utm"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/kalman_filter"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/navigation"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/tiny_xml"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/Eigen"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/c_socket"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/json"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/nlohmann"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/serial_communication"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/socket_communication"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/mingw32"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/backward"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../include"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include-fixed"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../mingw32/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 serial_test"/>
-					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="serial_test/fast">
-				<Option output="K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/serial_test.exe" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="K:/wumode/CLionProjects/pi/Ship/cmake-build-debug"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/geo_to_utm/datum"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/geo_to_utm/utm"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/kalman_filter"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/navigation"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/tiny_xml"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/Eigen"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/c_socket"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/json"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/nlohmann"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/serial_communication"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/socket_communication"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/mingw32"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/backward"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../include"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include-fixed"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../mingw32/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 serial_test/fast"/>
-					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="client">
-				<Option output="K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/client.exe" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="K:/wumode/CLionProjects/pi/Ship/cmake-build-debug"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/geo_to_utm/datum"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/geo_to_utm/utm"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/kalman_filter"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/navigation"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/tiny_xml"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/Eigen"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/c_socket"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/json"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/nlohmann"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/serial_communication"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/socket_communication"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/mingw32"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/backward"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../include"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include-fixed"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../mingw32/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 client"/>
-					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="client/fast">
-				<Option output="K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/client.exe" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="K:/wumode/CLionProjects/pi/Ship/cmake-build-debug"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/geo_to_utm/datum"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/geo_to_utm/utm"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/kalman_filter"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/navigation"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/tiny_xml"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/Eigen"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/c_socket"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/json"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/nlohmann"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/serial_communication"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/socket_communication"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/mingw32"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/backward"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../include"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include-fixed"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../mingw32/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 client/fast"/>
-					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="serve">
-				<Option output="K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/serve.exe" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="K:/wumode/CLionProjects/pi/Ship/cmake-build-debug"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/geo_to_utm/datum"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/geo_to_utm/utm"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/kalman_filter"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/navigation"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/tiny_xml"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/Eigen"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/c_socket"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/json"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/nlohmann"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/serial_communication"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/socket_communication"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/mingw32"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/backward"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../include"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include-fixed"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../mingw32/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 serve"/>
-					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="serve/fast">
-				<Option output="K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/serve.exe" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="K:/wumode/CLionProjects/pi/Ship/cmake-build-debug"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/geo_to_utm/datum"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/geo_to_utm/utm"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/kalman_filter"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/navigation"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/tiny_xml"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/Eigen"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/c_socket"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/json"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/nlohmann"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/serial_communication"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/socket_communication"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/mingw32"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/backward"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../include"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include-fixed"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../mingw32/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 serve/fast"/>
-					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="edit_cache">
-				<Option working_dir="K:/wumode/CLionProjects/pi/Ship/cmake-build-debug"/>
-				<Option type="4"/>
-				<MakeCommands>
-					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="json_test">
-				<Option output="K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/json_test.exe" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="K:/wumode/CLionProjects/pi/Ship/cmake-build-debug"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/geo_to_utm/datum"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/geo_to_utm/utm"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/kalman_filter"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/navigation"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/tiny_xml"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/Eigen"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/c_socket"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/json"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/nlohmann"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/serial_communication"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/socket_communication"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/mingw32"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/backward"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../include"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include-fixed"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../mingw32/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 json_test"/>
-					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="json_test/fast">
-				<Option output="K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/json_test.exe" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="K:/wumode/CLionProjects/pi/Ship/cmake-build-debug"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/geo_to_utm/datum"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/geo_to_utm/utm"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/kalman_filter"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/navigation"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/tiny_xml"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/Eigen"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/c_socket"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/json"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty/nlohmann"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/3rdparty"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/serial_communication"/>
-					<Add directory="K:/wumode/CLionProjects/pi/Ship/socket_communication"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/mingw32"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/backward"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../include"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include-fixed"/>
-					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../mingw32/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 json_test/fast"/>
-					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="rebuild_cache">
-				<Option working_dir="K:/wumode/CLionProjects/pi/Ship/cmake-build-debug"/>
+				<Option working_dir="/home/wumode/CLionProjects/boat/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
-					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="Ship">
+				<Option output="/home/wumode/CLionProjects/boat/cmake-build-debug/Ship" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/wumode/CLionProjects/boat/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/wumode/CLionProjects/boat/geo_to_utm/datum"/>
+					<Add directory="/home/wumode/CLionProjects/boat/geo_to_utm/utm"/>
+					<Add directory="/home/wumode/CLionProjects/boat/kalman_filter"/>
+					<Add directory="/home/wumode/CLionProjects/boat/navigation"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/tiny_xml"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/Eigen"/>
+					<Add directory="/home/wumode/CLionProjects/boat/c_socket"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/json"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/nlohmann"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty"/>
+					<Add directory="/home/wumode/CLionProjects/boat/serial_communication"/>
+					<Add directory="/home/wumode/CLionProjects/boat/socket_communication"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 Ship"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="Ship/fast">
+				<Option output="/home/wumode/CLionProjects/boat/cmake-build-debug/Ship" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/wumode/CLionProjects/boat/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/wumode/CLionProjects/boat/geo_to_utm/datum"/>
+					<Add directory="/home/wumode/CLionProjects/boat/geo_to_utm/utm"/>
+					<Add directory="/home/wumode/CLionProjects/boat/kalman_filter"/>
+					<Add directory="/home/wumode/CLionProjects/boat/navigation"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/tiny_xml"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/Eigen"/>
+					<Add directory="/home/wumode/CLionProjects/boat/c_socket"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/json"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/nlohmann"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty"/>
+					<Add directory="/home/wumode/CLionProjects/boat/serial_communication"/>
+					<Add directory="/home/wumode/CLionProjects/boat/socket_communication"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 Ship/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="serial_test">
+				<Option output="/home/wumode/CLionProjects/boat/cmake-build-debug/serial_test" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/wumode/CLionProjects/boat/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/wumode/CLionProjects/boat/geo_to_utm/datum"/>
+					<Add directory="/home/wumode/CLionProjects/boat/geo_to_utm/utm"/>
+					<Add directory="/home/wumode/CLionProjects/boat/kalman_filter"/>
+					<Add directory="/home/wumode/CLionProjects/boat/navigation"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/tiny_xml"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/Eigen"/>
+					<Add directory="/home/wumode/CLionProjects/boat/c_socket"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/json"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/nlohmann"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty"/>
+					<Add directory="/home/wumode/CLionProjects/boat/serial_communication"/>
+					<Add directory="/home/wumode/CLionProjects/boat/socket_communication"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 serial_test"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="serial_test/fast">
+				<Option output="/home/wumode/CLionProjects/boat/cmake-build-debug/serial_test" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/wumode/CLionProjects/boat/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/wumode/CLionProjects/boat/geo_to_utm/datum"/>
+					<Add directory="/home/wumode/CLionProjects/boat/geo_to_utm/utm"/>
+					<Add directory="/home/wumode/CLionProjects/boat/kalman_filter"/>
+					<Add directory="/home/wumode/CLionProjects/boat/navigation"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/tiny_xml"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/Eigen"/>
+					<Add directory="/home/wumode/CLionProjects/boat/c_socket"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/json"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/nlohmann"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty"/>
+					<Add directory="/home/wumode/CLionProjects/boat/serial_communication"/>
+					<Add directory="/home/wumode/CLionProjects/boat/socket_communication"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 serial_test/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="client">
+				<Option output="/home/wumode/CLionProjects/boat/cmake-build-debug/client" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/wumode/CLionProjects/boat/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/wumode/CLionProjects/boat/geo_to_utm/datum"/>
+					<Add directory="/home/wumode/CLionProjects/boat/geo_to_utm/utm"/>
+					<Add directory="/home/wumode/CLionProjects/boat/kalman_filter"/>
+					<Add directory="/home/wumode/CLionProjects/boat/navigation"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/tiny_xml"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/Eigen"/>
+					<Add directory="/home/wumode/CLionProjects/boat/c_socket"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/json"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/nlohmann"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty"/>
+					<Add directory="/home/wumode/CLionProjects/boat/serial_communication"/>
+					<Add directory="/home/wumode/CLionProjects/boat/socket_communication"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 client"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="client/fast">
+				<Option output="/home/wumode/CLionProjects/boat/cmake-build-debug/client" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/wumode/CLionProjects/boat/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/wumode/CLionProjects/boat/geo_to_utm/datum"/>
+					<Add directory="/home/wumode/CLionProjects/boat/geo_to_utm/utm"/>
+					<Add directory="/home/wumode/CLionProjects/boat/kalman_filter"/>
+					<Add directory="/home/wumode/CLionProjects/boat/navigation"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/tiny_xml"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/Eigen"/>
+					<Add directory="/home/wumode/CLionProjects/boat/c_socket"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/json"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/nlohmann"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty"/>
+					<Add directory="/home/wumode/CLionProjects/boat/serial_communication"/>
+					<Add directory="/home/wumode/CLionProjects/boat/socket_communication"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 client/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="serve">
+				<Option output="/home/wumode/CLionProjects/boat/cmake-build-debug/serve" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/wumode/CLionProjects/boat/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/wumode/CLionProjects/boat/geo_to_utm/datum"/>
+					<Add directory="/home/wumode/CLionProjects/boat/geo_to_utm/utm"/>
+					<Add directory="/home/wumode/CLionProjects/boat/kalman_filter"/>
+					<Add directory="/home/wumode/CLionProjects/boat/navigation"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/tiny_xml"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/Eigen"/>
+					<Add directory="/home/wumode/CLionProjects/boat/c_socket"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/json"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/nlohmann"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty"/>
+					<Add directory="/home/wumode/CLionProjects/boat/serial_communication"/>
+					<Add directory="/home/wumode/CLionProjects/boat/socket_communication"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 serve"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="serve/fast">
+				<Option output="/home/wumode/CLionProjects/boat/cmake-build-debug/serve" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/wumode/CLionProjects/boat/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/wumode/CLionProjects/boat/geo_to_utm/datum"/>
+					<Add directory="/home/wumode/CLionProjects/boat/geo_to_utm/utm"/>
+					<Add directory="/home/wumode/CLionProjects/boat/kalman_filter"/>
+					<Add directory="/home/wumode/CLionProjects/boat/navigation"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/tiny_xml"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/Eigen"/>
+					<Add directory="/home/wumode/CLionProjects/boat/c_socket"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/json"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/nlohmann"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty"/>
+					<Add directory="/home/wumode/CLionProjects/boat/serial_communication"/>
+					<Add directory="/home/wumode/CLionProjects/boat/socket_communication"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 serve/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="json_test">
+				<Option output="/home/wumode/CLionProjects/boat/cmake-build-debug/json_test" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/wumode/CLionProjects/boat/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/wumode/CLionProjects/boat/geo_to_utm/datum"/>
+					<Add directory="/home/wumode/CLionProjects/boat/geo_to_utm/utm"/>
+					<Add directory="/home/wumode/CLionProjects/boat/kalman_filter"/>
+					<Add directory="/home/wumode/CLionProjects/boat/navigation"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/tiny_xml"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/Eigen"/>
+					<Add directory="/home/wumode/CLionProjects/boat/c_socket"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/json"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/nlohmann"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty"/>
+					<Add directory="/home/wumode/CLionProjects/boat/serial_communication"/>
+					<Add directory="/home/wumode/CLionProjects/boat/socket_communication"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 json_test"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="json_test/fast">
+				<Option output="/home/wumode/CLionProjects/boat/cmake-build-debug/json_test" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/wumode/CLionProjects/boat/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/wumode/CLionProjects/boat/geo_to_utm/datum"/>
+					<Add directory="/home/wumode/CLionProjects/boat/geo_to_utm/utm"/>
+					<Add directory="/home/wumode/CLionProjects/boat/kalman_filter"/>
+					<Add directory="/home/wumode/CLionProjects/boat/navigation"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/tiny_xml"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/Eigen"/>
+					<Add directory="/home/wumode/CLionProjects/boat/c_socket"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/json"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty/nlohmann"/>
+					<Add directory="/home/wumode/CLionProjects/boat/3rdparty"/>
+					<Add directory="/home/wumode/CLionProjects/boat/serial_communication"/>
+					<Add directory="/home/wumode/CLionProjects/boat/socket_communication"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 json_test/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/wumode/CLionProjects/boat/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/wumode/CLionProjects/boat/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/3rdparty/tiny_xml/tinystr.cpp">
+		<Unit filename="/home/wumode/CLionProjects/boat/3rdparty/tiny_xml/tinystr.cpp">
 			<Option target="Ship"/>
 			<Option target="serial_test"/>
 		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/3rdparty/tiny_xml/tinystr.h">
+		<Unit filename="/home/wumode/CLionProjects/boat/3rdparty/tiny_xml/tinystr.h">
 			<Option target="Ship"/>
 			<Option target="serial_test"/>
 		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/3rdparty/tiny_xml/tinyxml.cpp">
+		<Unit filename="/home/wumode/CLionProjects/boat/3rdparty/tiny_xml/tinyxml.cpp">
 			<Option target="Ship"/>
 			<Option target="serial_test"/>
 		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/3rdparty/tiny_xml/tinyxml.h">
+		<Unit filename="/home/wumode/CLionProjects/boat/3rdparty/tiny_xml/tinyxml.h">
 			<Option target="Ship"/>
 			<Option target="serial_test"/>
 		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/3rdparty/tiny_xml/tinyxmlerror.cpp">
+		<Unit filename="/home/wumode/CLionProjects/boat/3rdparty/tiny_xml/tinyxmlerror.cpp">
 			<Option target="Ship"/>
 			<Option target="serial_test"/>
 		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/3rdparty/tiny_xml/tinyxmlparser.cpp">
+		<Unit filename="/home/wumode/CLionProjects/boat/3rdparty/tiny_xml/tinyxmlparser.cpp">
 			<Option target="Ship"/>
 			<Option target="serial_test"/>
 		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/boat.cc">
+		<Unit filename="/home/wumode/CLionProjects/boat/boat.cc">
 			<Option target="Ship"/>
 		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/boat.h">
+		<Unit filename="/home/wumode/CLionProjects/boat/boat.h">
 			<Option target="Ship"/>
 		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/boat_config.h">
+		<Unit filename="/home/wumode/CLionProjects/boat/boat_config.h">
 			<Option target="Ship"/>
 		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/c_socket/client.c">
+		<Unit filename="/home/wumode/CLionProjects/boat/c_socket/client.c">
 			<Option target="client"/>
 		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/c_socket/server.cc">
+		<Unit filename="/home/wumode/CLionProjects/boat/c_socket/server.cc">
 			<Option target="serve"/>
 		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/geo_to_utm/datum/datum.cpp">
+		<Unit filename="/home/wumode/CLionProjects/boat/geo_to_utm/datum/datum.cpp">
 			<Option target="Ship"/>
 			<Option target="serial_test"/>
 		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/geo_to_utm/datum/datum.h">
+		<Unit filename="/home/wumode/CLionProjects/boat/geo_to_utm/datum/datum.h">
 			<Option target="Ship"/>
 			<Option target="serial_test"/>
 		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/geo_to_utm/utm/utm.cpp">
+		<Unit filename="/home/wumode/CLionProjects/boat/geo_to_utm/utm/utm.cpp">
 			<Option target="Ship"/>
 			<Option target="serial_test"/>
 		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/geo_to_utm/utm/utm.h">
+		<Unit filename="/home/wumode/CLionProjects/boat/geo_to_utm/utm/utm.h">
 			<Option target="Ship"/>
 			<Option target="serial_test"/>
 		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/json_test.cc">
+		<Unit filename="/home/wumode/CLionProjects/boat/json_test.cc">
 			<Option target="json_test"/>
 		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/kalman_filter/KalmanFilter.h">
+		<Unit filename="/home/wumode/CLionProjects/boat/kalman_filter/KalmanFilter.h">
 			<Option target="Ship"/>
 		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/main.cc">
+		<Unit filename="/home/wumode/CLionProjects/boat/main.cc">
 			<Option target="Ship"/>
 		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/navigation/navigation.cc">
+		<Unit filename="/home/wumode/CLionProjects/boat/navigation/navigation.cc">
 			<Option target="Ship"/>
 		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/navigation/navigation.h">
+		<Unit filename="/home/wumode/CLionProjects/boat/navigation/navigation.h">
 			<Option target="Ship"/>
 		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/navigation/navigation_config.h">
-			<Option target="Ship"/>
-			<Option target="serial_test"/>
-		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/serial_communication/serial_communication.cc">
+		<Unit filename="/home/wumode/CLionProjects/boat/navigation/navigation_config.h">
 			<Option target="Ship"/>
 			<Option target="serial_test"/>
 		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/serial_communication/serial_communication.h">
+		<Unit filename="/home/wumode/CLionProjects/boat/serial_communication/serial_communication.cc">
 			<Option target="Ship"/>
 			<Option target="serial_test"/>
 		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/socket_communication/socket_communication.cc">
+		<Unit filename="/home/wumode/CLionProjects/boat/serial_communication/serial_communication.h">
 			<Option target="Ship"/>
-			<Option target="json_test"/>
+			<Option target="serial_test"/>
 		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/socket_communication/socket_communication.h">
+		<Unit filename="/home/wumode/CLionProjects/boat/socket_communication/socket_communication.cc">
 			<Option target="Ship"/>
 			<Option target="json_test"/>
 		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/test.cc">
+		<Unit filename="/home/wumode/CLionProjects/boat/socket_communication/socket_communication.h">
+			<Option target="Ship"/>
+			<Option target="json_test"/>
+		</Unit>
+		<Unit filename="/home/wumode/CLionProjects/boat/test.cc">
 			<Option target="serial_test"/>
 		</Unit>
-		<Unit filename="K:/wumode/CLionProjects/pi/Ship/CMakeLists.txt">
+		<Unit filename="/home/wumode/CLionProjects/boat/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
 	</Project>

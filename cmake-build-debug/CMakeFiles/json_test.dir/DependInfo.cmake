@@ -4,8 +4,8 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "K:/wumode/CLionProjects/pi/Ship/json_test.cc" "K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/CMakeFiles/json_test.dir/json_test.cc.obj"
-  "K:/wumode/CLionProjects/pi/Ship/socket_communication/socket_communication.cc" "K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/CMakeFiles/json_test.dir/socket_communication/socket_communication.cc.obj"
+  "/home/wumode/CLionProjects/boat/json_test.cc" "/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/json_test.dir/json_test.cc.o"
+  "/home/wumode/CLionProjects/boat/socket_communication/socket_communication.cc" "/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/json_test.dir/socket_communication/socket_communication.cc.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

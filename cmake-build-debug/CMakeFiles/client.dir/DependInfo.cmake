@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "K:/wumode/CLionProjects/pi/Ship/c_socket/client.c" "K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/CMakeFiles/client.dir/c_socket/client.c.obj"
+  "/home/wumode/CLionProjects/boat/c_socket/client.c" "/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/client.dir/c_socket/client.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 

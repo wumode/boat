@@ -1,3 +1,1 @@
-"D:\All Apps\CLion\CLion 2018.2\bin\cmake\win\bin\cmake.exe" -E remove -f CMakeFiles\client.dir/objects.a
-C:\MinGW\bin\ar.exe cr CMakeFiles\client.dir/objects.a @CMakeFiles\client.dir\objects1.rsp
-C:\MinGW\bin\gcc.exe -g   -Wl,--whole-archive CMakeFiles\client.dir/objects.a -Wl,--no-whole-archive  -o client.exe -Wl,--out-implib,libclient.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\client.dir\linklibs.rsp
+/usr/bin/cc -g   CMakeFiles/client.dir/c_socket/client.c.o  -o client 
