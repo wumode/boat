@@ -1,0 +1,3 @@
+"D:\All Apps\CLion\CLion 2018.2\bin\cmake\win\bin\cmake.exe" -E remove -f CMakeFiles\serial_test.dir/objects.a
+C:\MinGW\bin\ar.exe cr CMakeFiles\serial_test.dir/objects.a @CMakeFiles\serial_test.dir\objects1.rsp
+C:\MinGW\bin\g++.exe -g   -Wl,--whole-archive CMakeFiles\serial_test.dir/objects.a -Wl,--no-whole-archive  -o serial_test.exe -Wl,--out-implib,libserial_test.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\serial_test.dir\linklibs.rsp

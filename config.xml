@@ -1,0 +1,44 @@
+<navigation>
+    <gps>
+        <point>
+            <latitude>37.535510</latitude>
+            <longitude>122.075620</longitude>
+        </point>
+        <point>
+            <latitude>37.535580</latitude>
+            <longitude>122.075620</longitude>
+        </point>
+        <point>
+            <latitude>37.535680</latitude>
+            <longitude>122.075840</longitude>
+        </point>
+    </gps>
+    <mark>
+        <flag>1</flag>
+        <path>points.txt</path>
+        <!--周期-->
+        <period>0.5</period>
+
+    </mark>
+    <parameter>
+        <steering_coefficient>2.0</steering_coefficient>
+        <turning_time>0.02</turning_time>
+        <min_distance>5.0</min_distance>
+        <base_velocity>2.0</base_velocity>
+        <steering_deceleration_coefficient>1.20</steering_deceleration_coefficient>
+        <corner_threshold>0.8</corner_threshold>
+    </parameter>
+    <boat>
+        <frequency>200</frequency>
+        <mode>2</mode>
+        <socket>
+            <send_frequency>100</send_frequency>
+            <host>localhost</host>
+            <port>6666</port>
+        </socket>
+        <serial>
+            <port>/dev/ttyUSB0</port>
+            <baud>460800</baud>
+        </serial>
+    </boat>
+</navigation>

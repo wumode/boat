@@ -1,0 +1,7 @@
+K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/CMakeFiles/Ship.dir
+K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/CMakeFiles/serial_test.dir
+K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/CMakeFiles/client.dir
+K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/CMakeFiles/serve.dir
+K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/CMakeFiles/edit_cache.dir
+K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/CMakeFiles/json_test.dir
+K:/wumode/CLionProjects/pi/Ship/cmake-build-debug/CMakeFiles/rebuild_cache.dir
