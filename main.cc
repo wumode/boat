@@ -22,8 +22,6 @@
 
 #include <iostream>
 #include <unistd.h>
-#include <wiringPi.h>
-#include <wiringSerial.h>
 #include <cstdlib>
 #include <ctime>
 #include <chrono>
