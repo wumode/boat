@@ -9,19 +9,21 @@
 
 ### 编译
 
-Get:
+clone:
 
 `git clone https://github.com/wjwwood/serial.git`
 
 build:
 
-`mkdir build
+```shell
+mkdir build
 cd build
 cmake ..
-make`
+make
+```
 
 ### 配置文件
-配置文件在boat下config.xml
+配置文件: config.xml
 
 参数说明：
 

@@ -9,16 +9,18 @@ Required:
 
 ### Build
 
-Get:
+clone:
 
 `git clone https://github.com/wjwwood/serial.git`
 
 build:
 
-`mkdir build
+```shell
+mkdir build
 cd build
 cmake ..
-make`
+make
+```
 
 ### Run
 
