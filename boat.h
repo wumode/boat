@@ -53,13 +53,6 @@ namespace navigation {
         static void SocketReceiveCallBack(uint8_t* buffer_ptr_, void* __this);
         void VelocityPublish_(VelocityData& velocity_data);
         void ControlPowerPublish_(ControlPowerTrans& control_power_trans);
-        //void SocketDataPublish_();
-        //bool StartSerialThread(const std::string& port = "", uint32_t baud_rate = 115200);
-        //bool StartSocketThread(uint16_t port);
-        //bool KillSerialThread();
-        //bool KillSocketThread();
-        //static void* SerialPortCommunication(void* __this);
-        //static void* SocketCommunication(void* __this);
 
         void Control();
 

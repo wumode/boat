@@ -4,17 +4,17 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/wumode/CLionProjects/boat/3rdparty/tiny_xml/tinystr.cpp" "/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/Ship.dir/3rdparty/tiny_xml/tinystr.cpp.o"
-  "/home/wumode/CLionProjects/boat/3rdparty/tiny_xml/tinyxml.cpp" "/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/Ship.dir/3rdparty/tiny_xml/tinyxml.cpp.o"
-  "/home/wumode/CLionProjects/boat/3rdparty/tiny_xml/tinyxmlerror.cpp" "/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/Ship.dir/3rdparty/tiny_xml/tinyxmlerror.cpp.o"
-  "/home/wumode/CLionProjects/boat/3rdparty/tiny_xml/tinyxmlparser.cpp" "/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/Ship.dir/3rdparty/tiny_xml/tinyxmlparser.cpp.o"
-  "/home/wumode/CLionProjects/boat/boat.cc" "/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/Ship.dir/boat.cc.o"
-  "/home/wumode/CLionProjects/boat/geo_to_utm/datum/datum.cpp" "/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/Ship.dir/geo_to_utm/datum/datum.cpp.o"
-  "/home/wumode/CLionProjects/boat/geo_to_utm/utm/utm.cpp" "/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/Ship.dir/geo_to_utm/utm/utm.cpp.o"
-  "/home/wumode/CLionProjects/boat/main.cc" "/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/Ship.dir/main.cc.o"
-  "/home/wumode/CLionProjects/boat/navigation/navigation.cc" "/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/Ship.dir/navigation/navigation.cc.o"
-  "/home/wumode/CLionProjects/boat/serial_communication/serial_communication.cc" "/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/Ship.dir/serial_communication/serial_communication.cc.o"
-  "/home/wumode/CLionProjects/boat/socket_communication/socket_communication.cc" "/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/Ship.dir/socket_communication/socket_communication.cc.o"
+  "D:/wumode/Documents/Code/CPP/Boat/3rdparty/tiny_xml/tinystr.cpp" "D:/wumode/Documents/Code/CPP/Boat/cmake-build-debug/CMakeFiles/Ship.dir/3rdparty/tiny_xml/tinystr.cpp.obj"
+  "D:/wumode/Documents/Code/CPP/Boat/3rdparty/tiny_xml/tinyxml.cpp" "D:/wumode/Documents/Code/CPP/Boat/cmake-build-debug/CMakeFiles/Ship.dir/3rdparty/tiny_xml/tinyxml.cpp.obj"
+  "D:/wumode/Documents/Code/CPP/Boat/3rdparty/tiny_xml/tinyxmlerror.cpp" "D:/wumode/Documents/Code/CPP/Boat/cmake-build-debug/CMakeFiles/Ship.dir/3rdparty/tiny_xml/tinyxmlerror.cpp.obj"
+  "D:/wumode/Documents/Code/CPP/Boat/3rdparty/tiny_xml/tinyxmlparser.cpp" "D:/wumode/Documents/Code/CPP/Boat/cmake-build-debug/CMakeFiles/Ship.dir/3rdparty/tiny_xml/tinyxmlparser.cpp.obj"
+  "D:/wumode/Documents/Code/CPP/Boat/boat.cc" "D:/wumode/Documents/Code/CPP/Boat/cmake-build-debug/CMakeFiles/Ship.dir/boat.cc.obj"
+  "D:/wumode/Documents/Code/CPP/Boat/geo_to_utm/datum/datum.cpp" "D:/wumode/Documents/Code/CPP/Boat/cmake-build-debug/CMakeFiles/Ship.dir/geo_to_utm/datum/datum.cpp.obj"
+  "D:/wumode/Documents/Code/CPP/Boat/geo_to_utm/utm/utm.cpp" "D:/wumode/Documents/Code/CPP/Boat/cmake-build-debug/CMakeFiles/Ship.dir/geo_to_utm/utm/utm.cpp.obj"
+  "D:/wumode/Documents/Code/CPP/Boat/main.cc" "D:/wumode/Documents/Code/CPP/Boat/cmake-build-debug/CMakeFiles/Ship.dir/main.cc.obj"
+  "D:/wumode/Documents/Code/CPP/Boat/navigation/navigation.cc" "D:/wumode/Documents/Code/CPP/Boat/cmake-build-debug/CMakeFiles/Ship.dir/navigation/navigation.cc.obj"
+  "D:/wumode/Documents/Code/CPP/Boat/serial_communication/serial_communication.cc" "D:/wumode/Documents/Code/CPP/Boat/cmake-build-debug/CMakeFiles/Ship.dir/serial_communication/serial_communication.cc.obj"
+  "D:/wumode/Documents/Code/CPP/Boat/socket_communication/socket_communication.cc" "D:/wumode/Documents/Code/CPP/Boat/cmake-build-debug/CMakeFiles/Ship.dir/socket_communication/socket_communication.cc.obj"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
