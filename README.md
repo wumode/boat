@@ -5,13 +5,13 @@
 Required:
 
 - [cmake](http://www.cmake.org/) - build system
-- [serial](http://wjwwood.github.com/serial/) Cross-platform, Serial Port library written in C++ 
+- [serial](http://wjwwood.github.com/serial/) - Cross-platform, Serial Port library written in C++ 
 
 ### Build
 
-Get:
+clone:
 
-`git clone https://github.com/wjwwood/serial.git`
+`git clone git@github.com:wumode/boat.git`
 
 build:
 

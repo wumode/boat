@@ -32,7 +32,7 @@
         <frequency>200</frequency>
         <mode>2</mode>
         <socket>
-            <send_frequency>100</send_frequency>
+            <send_frequency>20</send_frequency>
             <host>localhost</host>
             <port>6666</port>
         </socket>

@@ -5,13 +5,13 @@
 必要:
 
 - [cmake](http://www.cmake.org/) - build system
-- [serial](http://wjwwood.github.com/serial/) Cross-platform, Serial Port library written in C++ 
+- [serial](http://wjwwood.github.com/serial/) - Cross-platform, Serial Port library written in C++ 
 
 ### 编译
 
-Get:
+clone:
 
-`git clone https://github.com/wjwwood/serial.git`
+`git clone git@github.com:wumode/boat.git`
 
 build:
 
@@ -20,12 +20,43 @@ cd build
 cmake ..
 make`
 
-### 配置文件
-配置文件在boat下config.xml
+### 说明
+
+#### 简介
+
+无人船的主控程序：
+
+- 自主航行
+- 上位机
+- 目标追踪
+- 动力定位
+
+#### 配置文件
+
+配置文件: config.xml
 
 参数说明：
 
 - gps 自主航行预置航线
+- mark 记录航线
+  - flag
+    - 0 不记录
+    - 1 记录
+  - path 保存文件名
+  - period 记录周期（秒）
+- boat 
+  - frequency 控制频率
+  - mode 运行模式
+    - 1 遥控
+    - 2 自主
+    - 3 追踪
+  - socket
+    - send_frequency 发送频率
+    - host 地址
+    - port 端口
+  - serial
+    - prot 串口号
+    - baud 波特率
 
 ### 运行
 
