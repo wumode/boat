@@ -1,5 +1,5 @@
 # Boat
-
+- [说明](https://github.com/wumode/boat/blob/dev/README.zh_cn.md)
 ### Dependencies
 
 Required:
