@@ -13,7 +13,7 @@ clone:
 
 `git clone git@github.com:wumode/boat.git`
 
-build: 
+build:
 
 ```shell
 mkdir build
