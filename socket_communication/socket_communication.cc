@@ -62,7 +62,7 @@ namespace socket_communication{
         *client_socket_ptr_ = socket(AF_INET, SOCK_STREAM, 0);
         if (*client_socket_ptr_ == -1) {
             //perror("socket");
-            std::cerr<<"socket error\n";
+            LOG(ERROR)<<"socket error\n";
             return false;
         }
         struct sockaddr_in addr;
@@ -74,7 +74,7 @@ namespace socket_communication{
         int addrlen = sizeof(addr);
         int listen_socket = connect(*client_socket_ptr_, (struct sockaddr *)&addr, addrlen);
         if (listen_socket == -1) {
-            std::cerr<<"connect "<<host_<<":"<<port_<<" error\n";
+            LOG(ERROR)<<"connect "<<host_<<":"<<port_<<" error\n";
             return false;
         }
         is_open_ = true;
@@ -89,7 +89,7 @@ namespace socket_communication{
         *client_socket_ptr_ = socket(AF_INET, SOCK_STREAM, 0);
         if (*client_socket_ptr_ == -1) {
             //perror("socket");
-            std::cerr<<"socket error\n";
+            LOG(ERROR)<<"socket error\n";
             return false;
         }
         struct sockaddr_in addr;
@@ -102,7 +102,7 @@ namespace socket_communication{
         int addrlen = sizeof(addr);
         int listen_socket = connect(*client_socket_ptr_, (struct sockaddr *)&addr, addrlen);
         if (listen_socket == -1) {
-            std::cerr<<"connect "<<host_<<":"<<port_<<" error\n";
+            LOG(ERROR)<<"connect "<<host_<<":"<<port_<<" error\n";
             return false;
         }
         host_ = host;

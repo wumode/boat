@@ -94,7 +94,7 @@ namespace serial_communication{
         }
         catch (serial::IOException& e)
         {
-            std::cerr<<"Unable to open port "<<port_<<" without params"<<std::endl;
+            LOG(ERROR)<<"Unable to open port "<<port_<<" without params"<<std::endl;
             return false;
         }
         serial_thread_ = true;
@@ -122,7 +122,7 @@ namespace serial_communication{
         }
         catch (serial::IOException& e)
         {
-            std::cerr<<"Unable to open port "<<port<<std::endl;
+            LOG(ERROR)<<"Unable to open port "<<port<<std::endl;
             return false;
         }
         port_ = port;
@@ -160,7 +160,7 @@ namespace serial_communication{
             }
 
             else{
-                //_this->ser_ptr_->flushInput();
+                _this->ser_ptr_->flushInput();
             }
         }
         _this->ser_ptr_->close();

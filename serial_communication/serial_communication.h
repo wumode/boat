@@ -29,6 +29,7 @@
 #include <thread>
 #include <map>
 #include <climits>
+#include <glog/logging.h>
 
 namespace serial_communication {
     typedef int (*callBack)(uint8_t *, void *);

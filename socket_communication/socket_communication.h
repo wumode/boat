@@ -36,6 +36,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <glog/logging.h>
 
 #define SOCKET_SIZE 2048
 
@@ -98,7 +99,7 @@ namespace socket_communication {
             const uint8_t * str_send;
             string_send = j.dump();
             str_send = (const uint8_t *)string_send.c_str();
-            //std::cout << str_send << std::endl;
+            LOG(INFO) << "socket send: "<<str_send << std::endl;
             while(is_sending_){
                 std::this_thread::sleep_for(std::chrono:: microseconds (500));
             }

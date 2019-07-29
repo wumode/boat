@@ -35,7 +35,6 @@
             <send_frequency>5</send_frequency>
             <host>localhost</host>
             <port>6666</port>
-            <bd
         </socket>
         <serial>
             <port>/dev/ttyUSB0</port>

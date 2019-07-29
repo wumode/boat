@@ -92,17 +92,17 @@ namespace navigation
         TiXmlDocument config_xml;
         if (!config_xml.LoadFile(config_xml_path.c_str()))
         {
-            std::cerr << "Can load file: " << config_xml_path << std::endl;
+            LOG(ERROR) << "Can not load file: " << config_xml_path << std::endl;
             config_xml.Clear();
             return false;
         }
         TiXmlElement* xmlRoot = config_xml.RootElement();
         if (xmlRoot == nullptr)
         {
-            std::cerr << "Failed to load file: No root element." << std::endl;
+            LOG(ERROR) << "Failed to load file: No root element." << std::endl;
             return false;
         }
-
+        LOG(INFO) << "load file: " << config_xml_path << std::endl;
         TiXmlElement* gps_xml = xmlRoot->FirstChildElement("gps");
         TiXmlElement* point_xml = gps_xml->FirstChildElement("point");
         while (point_xml){
@@ -256,7 +256,7 @@ namespace navigation
         v_data.velocity_x = navigation_parameter_.base_velocity - navigation_parameter_.steering_deceleration_coefficient
                 *fabsf(v_data.velocity_angle);
         if(stop_motor_){
-            std::cout<<"stop"<<std::endl;
+            LOG(INFO)<<"stop"<<std::endl;
             v_data.velocity_x = 0;
             v_data.velocity_angle = 0;
         }
@@ -307,6 +307,8 @@ namespace navigation
         now_state_.position.x = x_out(0);
         now_state_.position.y = x_out(1);
         now_state_.attitude_angle = x_out(2);
+        now_state_.line_velocity.x = x_out(3);
+        now_state_.line_velocity.y = x_out(4);
     }
 
     /**
@@ -327,9 +329,9 @@ namespace navigation
      ///自主航行的所有计算在NavigationCalculation中调用
     void Navigation::NavigationCalculation(){
         float route_angle;
-        std::cout<<" key: "<<key_position_gps_num_;
+        //std::cout<<" key: "<<key_position_gps_num_;
         float distance = CalcDistanceUtm(&key_position_utm_, &now_state_.position);
-        std::cout<<" distance: "<<distance;
+        //std::cout<<" distance: "<<distance;
         if(distance<navigation_parameter_.min_distance){
             if(key_position_gps_num_ == locus_points_.size()-1)
             {

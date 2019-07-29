@@ -35,6 +35,7 @@
 #include <serial/serial.h>
 #include <tinyxml.h>
 #include <KalmanFilter.h>
+#include <glog/logging.h>
 #include "navigation_config.h"
 
 namespace navigation {

@@ -246,14 +246,14 @@ namespace navigation{
         TiXmlDocument config_xml;
         if (!config_xml.LoadFile(config_xml_path.c_str()))
         {
-            std::cerr << "Can load file: " << config_xml_path << std::endl;
+            LOG(ERROR)  << "Can not load file: " << config_xml_path << std::endl;
             config_xml.Clear();
             return false;
         }
         TiXmlElement* xmlRoot = config_xml.RootElement();
         if (xmlRoot == nullptr)
         {
-            std::cerr << "Failed to load file: No root element." << std::endl;
+            LOG(ERROR)  << "Failed to load file: No root element." << std::endl;
             return false;
         }
 
@@ -292,7 +292,7 @@ namespace navigation{
     void boat::SocketReceiveCallBack(uint8_t* buffer_ptr_, void* __this){
         auto* _this = (boat*)__this;
         std::string string_rec = (const char*)buffer_ptr_;
-        std::cout<<"receive: "<<string_rec<<std::endl;
+        LOG(INFO)<<"receive: "<<string_rec<<std::endl;
         json j = json::parse(string_rec);
         SocketReceive s_r = j;
         if(s_r.empower!=_this->empower_trans_.empower){
@@ -373,6 +373,7 @@ namespace navigation{
             s_s.utm_position = now_state_.position;
             s_s.raw_gps_position = gps_data_.gps_position;
             s_s.gps_position = gps_p;
+            //LOG(INFO)<<"velocity.x: "<<now_state_.line_velocity.x<<std::endl<<"velocity.y: "<<now_state_.line_velocity.y<<std::endl;
             float v = sqrtf(now_state_.line_velocity.x*now_state_.line_velocity.x +
                     now_state_.line_velocity.y*now_state_.line_velocity.y);
             s_s.speed = v;
