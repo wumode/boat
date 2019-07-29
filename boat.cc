@@ -92,7 +92,8 @@ void to_json(json& j, const SocketShow& socketShow){
              {"utm_position", socketShow.utm_position},
              {"route_gps_positions", socketShow.route_gps_positions},
              {"locking", socketShow.locking},
-             {"imu_data", socketShow.imu_data}};
+             {"imu_data", socketShow.imu_data},
+             {"speed", socketShow.speed}};
 }
 
 void from_json(const json& j, SocketShow& socketShow){
@@ -102,6 +103,7 @@ void from_json(const json& j, SocketShow& socketShow){
     socketShow.utm_position = j.at("utm_position").get<UtmPosition>();
     socketShow.route_gps_positions = j.at("route_gps_positions").get<std::vector<GpsPosition>>();
     socketShow.locking = j.at("locking").get<uint8_t >();
+    socketShow.speed = j.at("speed").get<float>();
 }
 
 void to_json(json& j, const SocketReceive& socketReceive){
@@ -371,6 +373,9 @@ namespace navigation{
             s_s.utm_position = now_state_.position;
             s_s.raw_gps_position = gps_data_.gps_position;
             s_s.gps_position = gps_p;
+            float v = sqrtf(now_state_.line_velocity.x*now_state_.line_velocity.x +
+                    now_state_.line_velocity.y*now_state_.line_velocity.y);
+            s_s.speed = v;
             socket_com_ptr_->SendData(s_s, 1);
         }
     }

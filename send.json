@@ -1,4 +1,5 @@
 {
+  "speed": 1.1,
   "gps_position": {
     "latitude": -5.864022808999003e-12,
     "longitude": -6.57163496953217e-08

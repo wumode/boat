@@ -77,6 +77,7 @@ typedef struct SocketShow{
     UtmPosition utm_position;
     uint8_t locking;
     ImuData imu_data;
+    float speed;
 }SocketShow;
 
 

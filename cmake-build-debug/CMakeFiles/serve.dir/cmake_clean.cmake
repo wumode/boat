@@ -1,9 +1,7 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/serve.dir/c_socket/server.cc.obj"
+  "CMakeFiles/serve.dir/c_socket/server.cc.o"
   "serve.pdb"
-  "serve.exe"
-  "serve.exe.manifest"
-  "libserve.dll.a"
+  "serve"
 )
 
 # Per-language clean rules from dependency scanning.

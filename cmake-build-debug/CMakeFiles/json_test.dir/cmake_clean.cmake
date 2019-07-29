@@ -1,10 +1,8 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/json_test.dir/json_test.cc.obj"
-  "CMakeFiles/json_test.dir/socket_communication/socket_communication.cc.obj"
+  "CMakeFiles/json_test.dir/json_test.cc.o"
+  "CMakeFiles/json_test.dir/socket_communication/socket_communication.cc.o"
   "json_test.pdb"
-  "json_test.exe"
-  "json_test.exe.manifest"
-  "libjson_test.dll.a"
+  "json_test"
 )
 
 # Per-language clean rules from dependency scanning.

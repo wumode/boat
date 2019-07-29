@@ -1,7 +1,7 @@
-D:/wumode/Documents/Code/CPP/Boat/cmake-build-debug/CMakeFiles/Ship.dir
-D:/wumode/Documents/Code/CPP/Boat/cmake-build-debug/CMakeFiles/serial_test.dir
-D:/wumode/Documents/Code/CPP/Boat/cmake-build-debug/CMakeFiles/client.dir
-D:/wumode/Documents/Code/CPP/Boat/cmake-build-debug/CMakeFiles/serve.dir
-D:/wumode/Documents/Code/CPP/Boat/cmake-build-debug/CMakeFiles/edit_cache.dir
-D:/wumode/Documents/Code/CPP/Boat/cmake-build-debug/CMakeFiles/json_test.dir
-D:/wumode/Documents/Code/CPP/Boat/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/json_test.dir
+/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/serial_test.dir
+/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/Ship.dir
+/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/client.dir
+/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/serve.dir

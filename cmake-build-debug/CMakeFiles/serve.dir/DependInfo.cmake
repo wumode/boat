@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "D:/wumode/Documents/Code/CPP/Boat/c_socket/server.cc" "D:/wumode/Documents/Code/CPP/Boat/cmake-build-debug/CMakeFiles/serve.dir/c_socket/server.cc.obj"
+  "/home/wumode/CLionProjects/boat/c_socket/server.cc" "/home/wumode/CLionProjects/boat/cmake-build-debug/CMakeFiles/serve.dir/c_socket/server.cc.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
