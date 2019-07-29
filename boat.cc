@@ -144,7 +144,7 @@ namespace navigation{
         imu_data_.linear_acceleration.y = 0.0;
         imu_data_.angular_velocity.z = 0.0;
         imu_data_.angle.yaw = 0.0;
-        imu_data_.angle.pitch = 0.0;
+        //imu_data_.angle.pitch = 0.0;
         imu_data_.angle.roll = 0.0;
         imu_data_.angle.pitch = 0.0;
         remote_channel_data_.channel_1 = 1500;
@@ -290,6 +290,7 @@ namespace navigation{
     void boat::SocketReceiveCallBack(uint8_t* buffer_ptr_, void* __this){
         auto* _this = (boat*)__this;
         std::string string_rec = (const char*)buffer_ptr_;
+        std::cout<<"receive: "<<string_rec<<std::endl;
         json j = json::parse(string_rec);
         SocketReceive s_r = j;
         if(s_r.empower!=_this->empower_trans_.empower){
@@ -331,7 +332,7 @@ namespace navigation{
     void boat::VelocityPublish_(VelocityData& velocity_data){
         if(velocity_data.velocity_angle>3.0f){
             velocity_data.velocity_angle = 3.0f;
-        }else if(velocity_data.velocity_angle<-3.0f){
+        }else if(velocity_data.velocity_angle < -3.0f){
             velocity_data.velocity_angle = -3.0f;
         }
         if(velocity_data.velocity_x>9.9f){
@@ -583,10 +584,11 @@ namespace navigation{
                     MarkGpsPosition();
                 }
             }
+            //std::cout<<"boat_mode: "<<boat_mode_<<std::endl;
             if(boat_mode_ == navigation_mode){
                 NavigationCalculation();
-                std::cout<<" yaw: "<<yaw<<std::endl;
-                std::cout<<" state_a: "<<now_state_.attitude_angle;
+                //std::cout<<" yaw: "<<yaw<<std::endl;
+                //std::cout<<" state_a: "<<now_state_.attitude_angle;
                 if(route_updated_){
                     pthread_mutex_lock(route_updated_mutex_ptr_);
                     UpdateLocusPoints_(locus_points_main_thread_, 0);

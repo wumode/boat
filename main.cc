@@ -31,12 +31,13 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-    bool status;
+    //bool status;
+    std::cout<<"run"<<std::endl;
     string config_path, com;
-    unsigned int baud;
+    //unsigned int baud;
     config_path = "config.xml";
     com = "/dev/ttyUSB0";
-    baud = 460800;
+    //baud = 460800;
     if(argc==2){
         config_path = (std::string)argv[1];
     } else if(argc == 3){
@@ -45,7 +46,7 @@ int main(int argc, char* argv[])
     } else if(argc >= 4){
         config_path = (std::string)argv[1];
         com = (std::string)argv[2];
-        baud = (unsigned int)std::stoi(argv[3]);
+        //baud = (unsigned int)std::stoi(argv[3]);
     }
     navigation::boat boat(config_path);
     //status = boat.StartSerialThread(com, bound);
