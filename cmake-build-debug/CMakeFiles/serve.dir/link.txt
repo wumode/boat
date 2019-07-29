@@ -1,1 +1,0 @@
-/usr/bin/c++      CMakeFiles/serve.dir/c_socket/server.cc.o  -o serve 

@@ -1,1 +1,0 @@
-/usr/bin/cc     CMakeFiles/client.dir/c_socket/client.c.o  -o client 
