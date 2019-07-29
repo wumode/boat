@@ -26,6 +26,7 @@ typedef struct ImuDataTrans{
 typedef struct GpsDataTrans {
     volatile float latitude;
     volatile float longitude;
+    volatile float speed;
 }GpsDataTrans;
 //GPS功能字
 #define GPS_FLAG 0xf2

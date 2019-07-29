@@ -184,21 +184,20 @@ namespace serial_communication{
             /* 帧头2 一个数据帧中第二个数据并且判断是否与宏定义帧头2相等*/
         else if (_this->serial_parse_state_ == 1 && data == _this->receive_head_low_)
         {
-            //printf("data: %d\n", data);
-            //&& data == title2_received
-
             _this->serial_parse_state_ = 2;
             _this->rx_buffer_[1] = data;
         }
             /* 功能字 */
         else if (_this->serial_parse_state_ == 2 && data>0xf0)
         {
+            //std::cout<<"parse state: 2"<<std::endl;
             _this->serial_parse_state_ = 3;
             _this->rx_buffer_[2] = data;
         }
             /* 长度 */
         else if (_this->serial_parse_state_ == 3 && data<100)
         {
+            //std::cout<<"parse state: 3"<<std::endl;
             _this->serial_parse_state_ = 4;
             _this->rx_buffer_[3] = data;
             _this->_data_len = data;
@@ -207,6 +206,7 @@ namespace serial_communication{
             /* 接收数据组*/
         else if (_this->serial_parse_state_ == 4 && _this->_data_len>0)
         {
+            //std::cout<<"parse state: 4"<<std::endl;
             _this->_data_len--;
             _this->rx_buffer_[4 + _this->_data_cnt++] = data;
             if (_this->_data_len == 0)
@@ -215,6 +215,7 @@ namespace serial_communication{
             /* 校验累加和 */
         else if (_this->serial_parse_state_ == 5)
         {
+            //std::cout<<"parse state: 5"<<std::endl;
             _this->serial_parse_state_ = 0;
             _this->rx_buffer_[4 + _data_cnt] = data;
             //std::cout<<"data_state = 5"<<std::endl;
@@ -246,8 +247,8 @@ namespace serial_communication{
         }
         /* 判断功能字：*/
         uint8_t serial_data_flag = *(data_buf+2);
-        //int flags = serial_data_flag;
-        //std::cout<<flags<<std::endl;
+        int flags = serial_data_flag;
+        //std::cout<<"flag: "<<flags<<std::endl;
         std::map<uint8_t , CallBackFunction>::iterator iter;
         iter = _this->callback_function_directory_.find(serial_data_flag);
         if(iter != _this->callback_function_directory_.end()){

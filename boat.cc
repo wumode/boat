@@ -158,7 +158,10 @@ namespace navigation{
         locking_trans_.locking = 0;
 
         gps_data_.gps_position = now_location_gps_;
+        gps_data_.speed = 0.0f;
+         LOG(INFO)<<"init gps_data --- longitude: "<<gps_data_.gps_position.longitude<<" latitude: "<<gps_data_.gps_position.latitude;
         GpsToUtm(&gps_data_.gps_position, &boat_measurement_vector_.position);
+        LOG(INFO)<<"utm --- x: "<<boat_measurement_vector_.position.x<<" y: "<<boat_measurement_vector_.position.y;
         boat_measurement_vector_.imu_data.angle.yaw = initial_yaw_;
         boat_measurement_vector_.imu_data.linear_acceleration.x = 0.0;
         boat_measurement_vector_.imu_data.linear_acceleration.y = 0.0;
@@ -191,6 +194,7 @@ namespace navigation{
 //        now_call_timestamp_ = std::chrono::steady_clock::now();
 //        last_call_timestamp_ = std::chrono::steady_clock::now();
         std::cout<<"Initialized!"<<std::endl;
+         LOG(INFO)<<"Initialized!"<<std::endl;
     }
 
     /**
@@ -206,22 +210,21 @@ namespace navigation{
         if(!res){
             exit(-1);
         }
+        std::cout<<"wait for hardware initialized"<<std::endl;
+        LOG(INFO)<<"wait for hardware initialized"<<std::endl;
         while(!hardware_initialized_){
-            //std::cout<<"while"<<std::endl;
             std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)500));
         }
+        std::cout<<"hardware initialized"<<std::endl;
+        LOG(INFO)<<"hardware initialized"<<std::endl;
         ser.CloseSerialReceiveThread();
     }
 
     void boat::HardWareInitializationCallBack(uint8_t *buffer_ptr_, void *__this) {
         auto* _this = (boat*)__this;
-        //auto* gps_trans = (GpsDataTrans*)buffer_ptr_;
         GpsDataTrans gps_trans;
         memcpy(&gps_trans, buffer_ptr_, sizeof(GpsDataTrans));
-        std::cout<<"initialize callback"<<std::endl;
-//       gps_trans.latitude = 37.0;
-//       gps_trans.longitude = 122.0;
-        //std::cout<<gps_trans->latitude<<"-"<<gps_trans->longitude<<std::endl;
+        LOG(INFO)<<"initialize callback"<<std::endl;
         if(gps_trans.latitude == 0.0 && gps_trans.longitude==0.0){
             return;
         }
@@ -229,13 +232,8 @@ namespace navigation{
         g_p.latitude = gps_trans.latitude;
         g_p.longitude = gps_trans.longitude;
         GpsToUtmPartition(&g_p, &_this->utm_zone_, &_this->hemisphere_);
-        std::cout<<"utm zone: "<<_this->utm_zone_<<" hemisphere: "<<_this->hemisphere_<<std::endl;
-        //std::chrono::time_point<std::chrono::system_clock,std::chrono::milliseconds> tp = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now());
-        //auto tmp=std::chrono::duration_cast<std::chrono::milliseconds>(tp.time_since_epoch());
-        //std::time_t timestamp = tmp.count();
-        //std::time_t timestamp = std::chrono::system_clock::to_time_t(tp);
-        //std::cout<<timestamp<<std::endl;
-        //exit(-1);
+        LOG(INFO)<<"utm zone: "<<_this->utm_zone_<<" hemisphere: "<<_this->hemisphere_<<std::endl;
+        LOG(INFO)<<"initialize callback -- longitude: "<<gps_trans.longitude<<" latitude: "<<gps_trans.latitude;
         _this->gps_data_.gps_position.latitude = gps_trans.latitude;
         _this->gps_data_.gps_position.longitude = gps_trans.longitude;
         _this->now_location_gps_ = _this->gps_data_.gps_position;
@@ -366,6 +364,7 @@ namespace navigation{
             SocketShow s_s;
             GpsPosition gps_p;
             UtmToGps(&now_state_.position, &gps_p);
+            LOG(INFO)<<"socket send --- "<<"utm x: "<<now_state_.position.x<<"utm y: "<<now_state_.position.y<<std::endl;
             GetLocusPoints_(s_s.route_gps_positions);
             s_s.imu_data = imu_data_;
             s_s.imu_data.angle.yaw = now_state_.attitude_angle;
@@ -373,32 +372,13 @@ namespace navigation{
             s_s.utm_position = now_state_.position;
             s_s.raw_gps_position = gps_data_.gps_position;
             s_s.gps_position = gps_p;
-            //LOG(INFO)<<"velocity.x: "<<now_state_.line_velocity.x<<std::endl<<"velocity.y: "<<now_state_.line_velocity.y<<std::endl;
-            float v = sqrtf(now_state_.line_velocity.x*now_state_.line_velocity.x +
-                    now_state_.line_velocity.y*now_state_.line_velocity.y);
-            s_s.speed = v;
+            //float v = sqrtf(now_state_.line_velocity.x*now_state_.line_velocity.x +
+                    //now_state_.line_velocity.y*now_state_.line_velocity.y);
+            s_s.speed = gps_data_.speed;
             socket_com_ptr_->SendData(s_s, 1);
         }
     }
 
-//    void boat::SocketDataPublish_(){
-//        char c[1000];
-//        GpsPosition gps_pos;
-//        UtmToGps(&now_state_.position, &gps_pos);
-//        sprintf(c, "{\n"
-//                   "\t\"gps\": {\n"
-//                   "\t\t\"latitude\": %.5f,\n"
-//                   "\t\t\"longitude\": %.5f\n"
-//                   "\t},\n"
-//                   "\t\"attitude\": {\n"
-//                   "\t\t\"yaw\": %.5f,\n"
-//                   "\t\t\"pitch\": %.5f,\n"
-//                   "\t\t\"roll\": %.5f\n"
-//                   "\t}\n"
-//                   "}",
-//                   gps_pos.latitude,gps_pos.longitude,yaw,imu_data_.angle.pitch,
-//                   imu_data_.angle.roll);
-//    }
     /**
      * @brief ImuMsgsCallback
      * @param imu_info
@@ -448,15 +428,17 @@ namespace navigation{
      */
      ///GPS回调，由串口线程调用，将串口GPS信息转化为滤波器更新需要的观测值
     void boat::GpsMsgsCallback(uint8_t* buffer_ptr_, void* __this){
-        //std::cout<<"gps call back"<<std::endl;
         auto* _this = (boat*)__this;
          GpsDataTrans gps_trans_data;
          GpsDataTrans* gps_trans;
          gps_trans = &gps_trans_data;
          memcpy(gps_trans, buffer_ptr_, sizeof(GpsDataTrans));
+         LOG(INFO)<<"gps call back -- longitude: "<<gps_trans->longitude<<" latitude: "<<gps_trans->latitude;
+         std::cout<<"gps call back -- longitude: "<<gps_trans->longitude<<" latitude: "<<gps_trans->latitude;
         //auto* gps_trans = (GpsDataTrans*)buffer_ptr_;
         _this->gps_data_.gps_position.longitude = gps_trans->longitude;
         _this->gps_data_.gps_position.latitude = gps_trans->latitude;
+        _this->gps_data_.speed = gps_trans->speed;
         pthread_mutex_lock(_this->serial_measurement_mutex_ptr_);
         GpsToUtm(&_this->gps_data_.gps_position, &_this->boat_measurement_vector_.position);
         pthread_mutex_unlock(_this->serial_measurement_mutex_ptr_);
@@ -490,23 +472,6 @@ namespace navigation{
         //remote_channel_info_main_thread_ = channel_info;
         //pthread_mutex_unlock(serial_channel_mutex_ptr_);
     }
-
-
-//    void* boat::SocketCommunication(void* __this) {
-//        auto* _this = (boat*)__this;
-//        char buf[SIZE];
-//        while (_this->socket_thread_){
-//            memset(buf,'\0', SIZE);
-//            read(*_this->client_socket_ptr_, buf, SIZE-1);
-//        }
-//        free(_this->client_socket_ptr_);
-//        _this->client_socket_ptr_ = nullptr;
-//    }
-//
-//    bool boat::KillSocketThread() {
-//        socket_thread_ = false;
-//        return true;
-//    }
 
     /**
      * @brief AnalysisRemoteInfo
