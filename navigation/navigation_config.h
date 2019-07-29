@@ -124,7 +124,7 @@ typedef struct MarkPointParameter{
 }MarkPointParameter;
 
 inline void GpsToUtm(const GpsPosition* gps_position, UtmPosition* utm_position){
-    LOG(INFO)<<"gps to utm latitude: "<<gps_position->latitude<<" longitude: "<<gps_position->longitude<<std::endl;
+    //LOG(INFO)<<"gps to utm latitude: "<<gps_position->latitude<<" longitude: "<<gps_position->longitude<<std::endl;
     double lat = gps_position->latitude/180.0*M_PI;
     double lon = gps_position->longitude/180.0*M_PI;
     double N, E;
@@ -134,7 +134,7 @@ inline void GpsToUtm(const GpsPosition* gps_position, UtmPosition* utm_position)
     geographic_to_grid(e->a, e->e2, lat, lon, &utm_position->gridZone, &utm_position->hemisphere, &N, &E);
     utm_position->x = (float)E;
     utm_position->y = (float)N;
-    LOG(INFO)<<"gps to utm x: "<<utm_position->x<<" y: "<<utm_position->y<<" zone: "<<utm_position->gridZone<<" hemi: "<<utm_position->hemisphere;
+    //LOG(INFO)<<"gps to utm x: "<<utm_position->x<<" y: "<<utm_position->y<<" zone: "<<utm_position->gridZone<<" hemi: "<<utm_position->hemisphere;
 }
 
 inline void UtmToGps(const UtmPosition* utm_position, GpsPosition* gps_position){

@@ -33,7 +33,7 @@
         <mode>2</mode>
         <socket>
             <send_frequency>5</send_frequency>
-            <host>localhost</host>
+            <host>192.168.43.13</host>
             <port>6666</port>
         </socket>
         <serial>

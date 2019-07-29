@@ -159,9 +159,29 @@ namespace navigation{
 
         gps_data_.gps_position = now_location_gps_;
         gps_data_.speed = 0.0f;
+        UtmPosition utmPosition;
+//        utmPosition.gridZone = GRID_AUTO;
+//        utmPosition.hemisphere = HEMI_AUTO;
          LOG(INFO)<<"init gps_data --- longitude: "<<gps_data_.gps_position.longitude<<" latitude: "<<gps_data_.gps_position.latitude;
-        GpsToUtm(&gps_data_.gps_position, &boat_measurement_vector_.position);
-        LOG(INFO)<<"utm --- x: "<<boat_measurement_vector_.position.x<<" y: "<<boat_measurement_vector_.position.y;
+         GpsToUtm(&gps_data_.gps_position, &utmPosition);
+         boat_measurement_vector_.position = utmPosition;
+         //LOG(INFO)<<"gps to utm latitude: "<<gps_position->latitude<<" longitude: "<<gps_position->longitude<<std::endl;
+//         double lat = gps_data_.gps_position.latitude/180.0*M_PI;
+//         double lon = gps_data_.gps_position.longitude/180.0*M_PI;
+//         LOG(INFO)<<"lat: "<<lat<<" lon: "<<lon;
+//         double N, E;
+//         GridZone gridZone;
+//         Hemisphere hemi
+//         sphere;
+//         gridZone = GRID_AUTO;
+//         hemisphere = HEMI_AUTO;
+//         const Ellipse* e = standard_ellipse(ELLIPSE_WGS84);
+//         geographic_to_grid(e->a, e->e2, lat, lon, &gridZone, &hemisphere, &N, &E);
+//         LOG(INFO)<<"E: "<<E<<" N: "<<N;
+//         boat_measurement_vector_.position.x = (float)E;
+//         boat_measurement_vector_.position.y = (float)N;
+
+        LOG(INFO)<<"utm --- x: "<<boat_measurement_vector_.position.x<<" y: "<<boat_measurement_vector_.position.y<<" z: "<<boat_measurement_vector_.position.gridZone;
         boat_measurement_vector_.imu_data.angle.yaw = initial_yaw_;
         boat_measurement_vector_.imu_data.linear_acceleration.x = 0.0;
         boat_measurement_vector_.imu_data.linear_acceleration.y = 0.0;
@@ -303,6 +323,7 @@ namespace navigation{
                 case (int)navigation_mode:
                 case (int)track_mode:
                     _this->boat_mode_ = (BoatMode)s_r.mode;
+                    LOG(INFO)<<"switch boat mode: "<<_this->boat_mode_;
                     break;
                 default:
                     std::cerr<<"Undefined mode: "<<s_r.mode<<std::endl;
@@ -312,9 +333,7 @@ namespace navigation{
 //              _this->boat_mode_ = (BoatMode)s_r.mode;
 //           }
         }
-        if(s_r.stop){
-            _this->stop = true;
-        }
+        _this->stop = (bool)s_r.stop;
         if(s_r.route_updated){
             pthread_mutex_lock(_this->route_updated_mutex_ptr_);
             _this->route_updated_ = s_r.route_updated;
@@ -434,7 +453,7 @@ namespace navigation{
          gps_trans = &gps_trans_data;
          memcpy(gps_trans, buffer_ptr_, sizeof(GpsDataTrans));
          LOG(INFO)<<"gps call back -- longitude: "<<gps_trans->longitude<<" latitude: "<<gps_trans->latitude;
-         std::cout<<"gps call back -- longitude: "<<gps_trans->longitude<<" latitude: "<<gps_trans->latitude;
+         std::cout<<"gps call back -- longitude: "<<gps_trans->longitude<<" latitude: "<<gps_trans->latitude <<std::endl;
         //auto* gps_trans = (GpsDataTrans*)buffer_ptr_;
         _this->gps_data_.gps_position.longitude = gps_trans->longitude;
         _this->gps_data_.gps_position.latitude = gps_trans->latitude;

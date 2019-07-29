@@ -300,7 +300,7 @@ namespace navigation
         //std::cout<<"u_in: "<<u_in<<std::endl;
         Eigen::VectorXd z(3);
 
-         LOG(INFO)<<"kalman input --- "<<"utm x: "<<measurement_vector_.position.x<<"utm y: "<<measurement_vector_.position.y<<std::endl;
+         //LOG(INFO)<<"kalman input --- "<<"utm x: "<<measurement_vector_.position.x<<"utm y: "<<measurement_vector_.position.y<<std::endl;
          z << measurement_vector_.position.x, measurement_vector_.position.y, measurement_vector_.imu_data.angular_velocity.z;
 
         kf_.MeasurementUpdate(z);
@@ -311,7 +311,7 @@ namespace navigation
         now_state_.attitude_angle = x_out(2);
         now_state_.line_velocity.x = x_out(3);
         now_state_.line_velocity.y = x_out(4);
-         LOG(INFO)<<"kalman output --- "<<"utm x: "<<now_state_.position.x<<"utm y: "<<now_state_.position.y<<std::endl;
+         //LOG(INFO)<<"kalman output --- "<<"utm x: "<<now_state_.position.x<<"utm y: "<<now_state_.position.y<<std::endl;
     }
 
     /**
