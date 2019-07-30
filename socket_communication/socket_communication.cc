@@ -25,7 +25,7 @@
 namespace socket_communication{
     CallBackFunction::CallBackFunction() {}
     CallBackFunction::CallBackFunction(callBack callBack1, uint8_t flag, void *this_):
-            function_ptr_(callBack1),data_flag(flag), this_ptr_(this_){}
+            function_ptr_(callBack1), this_ptr_(this_), data_flag(flag){}
     CallBackFunction::CallBackFunction(const socket_communication::CallBackFunction &obj) {
     }
 

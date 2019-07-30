@@ -23,7 +23,7 @@
 #ifndef KALMANFILTER_KALMANFILTER_H
 #define KALMANFILTER_KALMANFILTER_H
 
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Dense>
 
 class KalmanFilter {
 public:

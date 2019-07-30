@@ -107,7 +107,8 @@ typedef struct VelocityData{
 typedef enum BoatMode{
     remote_mode = 1,
     navigation_mode,
-    track_mode
+    track_mode,
+    attack_mode
 }BoatMode;
 
 typedef struct NavigationParameter{

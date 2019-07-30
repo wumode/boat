@@ -133,7 +133,7 @@ namespace navigation{
         LoadBoatConfig_(navigation_config_path, boat_params_);
         boat_mode_ = boat_params_.boatMode;
         ///debug
-        HardWareInitialization_(boat_params_.serialParams.port, boat_params_.serialParams.baud);
+        //HardWareInitialization_(boat_params_.serialParams.port, boat_params_.serialParams.baud);
         Init_(navigation_config_path);
 
         //socket_thread_ = false;
@@ -156,13 +156,15 @@ namespace navigation{
         remote_channel_data_main_thread_ = remote_channel_data_;
         empower_trans_.empower = 0;
         locking_trans_.locking = 0;
+        control_power_trans_.host = 1;
 
         gps_data_.gps_position = now_location_gps_;
         gps_data_.speed = 0.0f;
         UtmPosition utmPosition;
 //        utmPosition.gridZone = GRID_AUTO;
 //        utmPosition.hemisphere = HEMI_AUTO;
-         LOG(INFO)<<"init gps_data --- longitude: "<<gps_data_.gps_position.longitude<<" latitude: "<<gps_data_.gps_position.latitude;
+
+         LOG(INFO)<<"Init gps --- longitude: "<<gps_data_.gps_position.longitude<<" latitude: "<<gps_data_.gps_position.latitude;
          GpsToUtm(&gps_data_.gps_position, &utmPosition);
          boat_measurement_vector_.position = utmPosition;
          //LOG(INFO)<<"gps to utm latitude: "<<gps_position->latitude<<" longitude: "<<gps_position->longitude<<std::endl;
@@ -181,7 +183,7 @@ namespace navigation{
 //         boat_measurement_vector_.position.x = (float)E;
 //         boat_measurement_vector_.position.y = (float)N;
 
-        LOG(INFO)<<"utm --- x: "<<boat_measurement_vector_.position.x<<" y: "<<boat_measurement_vector_.position.y<<" z: "<<boat_measurement_vector_.position.gridZone;
+        LOG(INFO)<<"Init utm --- x: "<<boat_measurement_vector_.position.x<<" y: "<<boat_measurement_vector_.position.y<<" z: "<<boat_measurement_vector_.position.gridZone;
         boat_measurement_vector_.imu_data.angle.yaw = initial_yaw_;
         boat_measurement_vector_.imu_data.linear_acceleration.x = 0.0;
         boat_measurement_vector_.imu_data.linear_acceleration.y = 0.0;
@@ -204,7 +206,6 @@ namespace navigation{
         if(!res){
             exit(-1);
         }
-        ///debug
         socket_com_ptr_ = new socket_communication::SocketCommunication(boat_params_.socketParams.host, boat_params_.socketParams.port);
         socket_com_ptr_->SetCallBackFunction((socket_communication::callBack)SocketReceiveCallBack, 1, this);
          //std::cout<<"er"<<std::endl;
@@ -282,10 +283,12 @@ namespace navigation{
             case (int)remote_mode:
             case (int)navigation_mode:
             case (int)track_mode:
+            case (int)attack_mode:
                 boatParams.boatMode = (BoatMode)mode_flag;
                 break;
             default:
                 std::cerr<<"Undefined mode: "<<mode_flag<<std::endl;
+                LOG(ERROR) <<"Undefined mode: "<<mode_flag<<std::endl;
                 break;
         }
         TiXmlElement* socket_xml = boat_xml->FirstChildElement("socket");
@@ -305,6 +308,7 @@ namespace navigation{
         TiXmlElement* frequency_xml = boat_xml->FirstChildElement("frequency");
         boatParams.frequency = std::stoi(frequency_xml->GetText());
         config_xml.Clear();
+        return true;
     }
 
     void boat::SocketReceiveCallBack(uint8_t* buffer_ptr_, void* __this){
@@ -322,11 +326,13 @@ namespace navigation{
                 case (int)remote_mode:
                 case (int)navigation_mode:
                 case (int)track_mode:
+                case (int)attack_mode:
                     _this->boat_mode_ = (BoatMode)s_r.mode;
                     LOG(INFO)<<"switch boat mode: "<<_this->boat_mode_;
                     break;
                 default:
                     std::cerr<<"Undefined mode: "<<s_r.mode<<std::endl;
+                    LOG(INFO)<<"Undefined mode: "<<s_r.mode<<std::endl;
                     break;
             }
 //          if(s_r.mode<=3 && s_r.mode>=1){
@@ -370,12 +376,14 @@ namespace navigation{
         if(ser_com_ptr_){
             ser_com_ptr_->SendData(control_power_trans, CONTROL_POWER_FLAG);
         }
+        LOG(INFO)<<"Control power publish: "<<control_power_trans.host;
     }
 
     void boat::EmpowerPublish_(EmpowerTrans& empowerTrans){
         if(ser_com_ptr_){
             ser_com_ptr_->SendData(empowerTrans, EMPOWER_FLAG);
         }
+        LOG(INFO)<<"Empower publish: "<<empowerTrans.empower;
     }
 
     void boat::SocketShowPublish_() {
@@ -383,7 +391,7 @@ namespace navigation{
             SocketShow s_s;
             GpsPosition gps_p;
             UtmToGps(&now_state_.position, &gps_p);
-            LOG(INFO)<<"socket send --- "<<"utm x: "<<now_state_.position.x<<"utm y: "<<now_state_.position.y<<std::endl;
+            //LOG(INFO)<<"socket send --- "<<"utm x: "<<now_state_.position.x<<"utm y: "<<now_state_.position.y<<std::endl;
             GetLocusPoints_(s_s.route_gps_positions);
             s_s.imu_data = imu_data_;
             s_s.imu_data.angle.yaw = now_state_.attitude_angle;
@@ -452,8 +460,8 @@ namespace navigation{
          GpsDataTrans* gps_trans;
          gps_trans = &gps_trans_data;
          memcpy(gps_trans, buffer_ptr_, sizeof(GpsDataTrans));
-         LOG(INFO)<<"gps call back -- longitude: "<<gps_trans->longitude<<" latitude: "<<gps_trans->latitude;
-         std::cout<<"gps call back -- longitude: "<<gps_trans->longitude<<" latitude: "<<gps_trans->latitude <<std::endl;
+         LOG(INFO)<<"Gps call back -- longitude: "<<gps_trans->longitude<<" latitude: "<<gps_trans->latitude;
+         //std::cout<<"Gps call back -- longitude: "<<gps_trans->longitude<<" latitude: "<<gps_trans->latitude <<std::endl;
         //auto* gps_trans = (GpsDataTrans*)buffer_ptr_;
         _this->gps_data_.gps_position.longitude = gps_trans->longitude;
         _this->gps_data_.gps_position.latitude = gps_trans->latitude;
@@ -576,6 +584,7 @@ namespace navigation{
             }
             //std::cout<<"boat_mode: "<<boat_mode_<<std::endl;
             if(boat_mode_ == navigation_mode){
+                control_power_trans_.host = 1;
                 NavigationCalculation();
                 //std::cout<<" yaw: "<<yaw<<std::endl;
                 //std::cout<<" state_a: "<<now_state_.attitude_angle;
@@ -588,7 +597,14 @@ namespace navigation{
                 NavigationVelocityAnalyze_(yaw, velocity_data_);
             }
             else if(boat_mode_ == remote_mode){
+                control_power_trans_.host = 1;
                 RemoteVelocityAnalyze_(remote_channel_data_main_thread_, &velocity_data_);
+            }
+            else if(boat_mode_ == track_mode){
+                control_power_trans_.host = 2;
+            }
+            else if(boat_mode_ == attack_mode){
+                control_power_trans_.host = 3;
             }
             //std::cout<<stop<<std::endl;
             if(stop){
@@ -599,6 +615,8 @@ namespace navigation{
             //std::cout<<times<<std::endl;
             //std::cout<<"v: "<<velocity_data_.velocity_x<<std::endl;
             VelocityPublish_(velocity_data_);
+            ControlPowerPublish_(control_power_trans_);
+
             now_timestamp = std::chrono::steady_clock::now();
             std::chrono::duration<double> time_used = std::chrono::duration_cast<std::chrono::duration<double>>(now_timestamp-last_timestamp);
             time_used_u = (int)((period- time_used.count())*1000000);

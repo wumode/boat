@@ -42,7 +42,7 @@ typedef struct VelocityDataTrans {
 
 //控制权数据
 typedef struct ControlPowerTrans {
-    u8 host;
+    u8 host;    //1 树莓派, 2 OpenMV
 }ControlPowerTrans;
 //控制权功能字
 #define CONTROL_POWER_FLAG 0xf4

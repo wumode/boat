@@ -86,6 +86,7 @@ namespace navigation {
         RemoteChannelTrans remote_channel_data_main_thread_;
         EmpowerTrans empower_trans_;
         LockingTrans locking_trans_;
+        ControlPowerTrans control_power_trans_;
         SocketReceive socket_receive_main_thread_;
         BoatParams boat_params_;
         //volatile bool socket_receive_updated_;

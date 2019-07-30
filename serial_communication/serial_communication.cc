@@ -25,7 +25,7 @@
 namespace serial_communication{
     CallBackFunction::CallBackFunction() {}
     CallBackFunction::CallBackFunction(callBack callBack1, uint8_t flag, void *this_):
-            function_ptr_(callBack1),data_flag(flag), this_ptr_(this_){}
+            function_ptr_(callBack1), this_ptr_(this_), data_flag(flag){}
     CallBackFunction::CallBackFunction(const serial_communication::CallBackFunction &obj) {
 
     }
@@ -166,7 +166,7 @@ namespace serial_communication{
             }
         }
         catch(serial::SerialException& e){
-            LOG(FATAL)<<"serial::SerialExceptioe error in receive";
+            LOG(ERROR)<<"serial::SerialException error in receive";
         }
 
         _this->ser_ptr_->close();
@@ -253,7 +253,7 @@ namespace serial_communication{
         }
         /* 判断功能字：*/
         uint8_t serial_data_flag = *(data_buf+2);
-        int flags = serial_data_flag;
+        //int flags = serial_data_flag;
         //std::cout<<"flag: "<<flags<<std::endl;
         std::map<uint8_t , CallBackFunction>::iterator iter;
         iter = _this->callback_function_directory_.find(serial_data_flag);
