@@ -33,13 +33,9 @@
 using namespace std;
 
 int main() {
-    GpsPosition gps;
-    gps.latitude = 37.5354;
-    gps.longitude = 122.076;
-    UtmPosition utm;
-    GpsToUtm(&gps, &utm);
-    std::cout<<"x: "<<utm.x<<std::endl;
-    std::cout<<"y: "<<utm.y<<std::endl;
-    std::cout<<"z: "<<utm.gridZone<<std::endl;
+    char ser_ptr[50];
+    char s[50];
+    sprintf(s, "%p", ser_ptr);
+    LOG(INFO)<<"ser_ptr: "<<s;
     return 0;
 }

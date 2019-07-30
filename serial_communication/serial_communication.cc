@@ -151,18 +151,24 @@ namespace serial_communication{
         auto* _this = (SerialCommunication*)__this;
         uint8_t serial_data_buffer[256];
         int size_read;
-        while (_this->serial_thread_){
-            size_read = _this->ser_ptr_->read(serial_data_buffer,1);
-            //std::cout<<std::hex;
-            //std::cout<<*serial_data_buffer;
-            if(size_read){
-                _this->DataReceivePrepare(*serial_data_buffer, __this);
-            }
+        try {
+            while (_this->serial_thread_){
+                size_read = _this->ser_ptr_->read(serial_data_buffer,1);
+                //std::cout<<std::hex;
+                //std::cout<<*serial_data_buffer;
+                if(size_read){
+                    _this->DataReceivePrepare(*serial_data_buffer, __this);
+                }
 
-            else{
-                _this->ser_ptr_->flushInput();
+                else{
+                    _this->ser_ptr_->flushInput();
+                }
             }
         }
+        catch(serial::SerialException& e){
+            LOG(FATAL)<<"serial::SerialExceptioe error in receive";
+        }
+
         _this->ser_ptr_->close();
         _this->is_open_ = false;
         free(_this->ser_ptr_);

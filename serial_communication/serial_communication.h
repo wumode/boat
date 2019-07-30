@@ -99,7 +99,16 @@ namespace serial_communication {
             }
             is_sending_ = true;
             //std::cout<<"write"<<std::endl;
-            ser_ptr_->write((const uint8_t*)tx_buffer_, data_length+5);
+            try {
+                ser_ptr_->write((const uint8_t*)tx_buffer_, data_length+5);
+            }
+            catch (serial::SerialException& e){
+                char s[32];
+                sprintf(s, "%p", ser_ptr_);
+                LOG(INFO)<<"ser_ptr: "<<s;
+                LOG(ERROR)<<"serial::SerialException error in send";
+            }
+
             is_sending_ = false;
         }
     }
