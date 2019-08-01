@@ -50,9 +50,11 @@ namespace navigation {
         static void GpsMsgsCallback(uint8_t* buffer_ptr_, void* __this);
         static void RemoteControlSignalCallback(uint8_t* buffer_ptr_, void* __this);
         static void HardWareInitializationCallBack(uint8_t* buffer_ptr_, void* __this);
+        static void LockingCallback(uint8_t* buffer_ptr_, void* __this);
         static void SocketReceiveCallBack(uint8_t* buffer_ptr_, void* __this);
         void VelocityPublish_(VelocityData& velocity_data);
         void ControlPowerPublish_(ControlPowerTrans& control_power_trans);
+        void StopPublish_(StopTrans& stopTrans);
 
         void Control();
 
@@ -86,8 +88,9 @@ namespace navigation {
         RemoteChannelTrans remote_channel_data_main_thread_;
         EmpowerTrans empower_trans_;
         LockingTrans locking_trans_;
+        StopTrans stop_trans_;
         ControlPowerTrans control_power_trans_;
-        SocketReceive socket_receive_main_thread_;
+        //SocketReceive socket_receive_main_thread_;
         BoatParams boat_params_;
         //volatile bool socket_receive_updated_;
         bool main_thread_;

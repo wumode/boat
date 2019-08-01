@@ -133,7 +133,13 @@ namespace navigation{
         LoadBoatConfig_(navigation_config_path, boat_params_);
         boat_mode_ = boat_params_.boatMode;
         ///debug
-        //HardWareInitialization_(boat_params_.serialParams.port, boat_params_.serialParams.baud);
+        if(boat_params_.gpsInitialization.hardware_flag){
+            HardWareInitialization_(boat_params_.serialParams.port, boat_params_.serialParams.baud);
+        }
+        else{
+            gps_data_.gps_position = boat_params_.gpsInitialization.gpsPosition;
+            now_location_gps_ = gps_data_.gps_position;
+        }
         Init_(navigation_config_path);
 
         //socket_thread_ = false;
@@ -156,32 +162,19 @@ namespace navigation{
         remote_channel_data_main_thread_ = remote_channel_data_;
         empower_trans_.empower = 0;
         locking_trans_.locking = 0;
+        stop_trans_.stop = 0;
         control_power_trans_.host = 1;
 
         gps_data_.gps_position = now_location_gps_;
         gps_data_.speed = 0.0f;
         UtmPosition utmPosition;
-//        utmPosition.gridZone = GRID_AUTO;
-//        utmPosition.hemisphere = HEMI_AUTO;
+//       utmPosition.gridZone = GRID_AUTO;
+//       utmPosition.hemisphere = HEMI_AUTO;
 
          LOG(INFO)<<"Init gps --- longitude: "<<gps_data_.gps_position.longitude<<" latitude: "<<gps_data_.gps_position.latitude;
          GpsToUtm(&gps_data_.gps_position, &utmPosition);
          boat_measurement_vector_.position = utmPosition;
          //LOG(INFO)<<"gps to utm latitude: "<<gps_position->latitude<<" longitude: "<<gps_position->longitude<<std::endl;
-//         double lat = gps_data_.gps_position.latitude/180.0*M_PI;
-//         double lon = gps_data_.gps_position.longitude/180.0*M_PI;
-//         LOG(INFO)<<"lat: "<<lat<<" lon: "<<lon;
-//         double N, E;
-//         GridZone gridZone;
-//         Hemisphere hemi
-//         sphere;
-//         gridZone = GRID_AUTO;
-//         hemisphere = HEMI_AUTO;
-//         const Ellipse* e = standard_ellipse(ELLIPSE_WGS84);
-//         geographic_to_grid(e->a, e->e2, lat, lon, &gridZone, &hemisphere, &N, &E);
-//         LOG(INFO)<<"E: "<<E<<" N: "<<N;
-//         boat_measurement_vector_.position.x = (float)E;
-//         boat_measurement_vector_.position.y = (float)N;
 
         LOG(INFO)<<"Init utm --- x: "<<boat_measurement_vector_.position.x<<" y: "<<boat_measurement_vector_.position.y<<" z: "<<boat_measurement_vector_.position.gridZone;
         boat_measurement_vector_.imu_data.angle.yaw = initial_yaw_;
@@ -202,6 +195,7 @@ namespace navigation{
         ser_com_ptr_ ->SetCallBackFunction((serial_communication::callBack)GpsMsgsCallback, GPS_FLAG, this);
         ser_com_ptr_ ->SetCallBackFunction((serial_communication::callBack)ImuMsgsCallback, IMU_FLAG, this);
         ser_com_ptr_ ->SetCallBackFunction((serial_communication::callBack)RemoteControlSignalCallback, REMOTE_CHANNEL_FLAG, this);
+        ser_com_ptr_->SetCallBackFunction((serial_communication::callBack)LockingCallback, LOCKING_FLAG, this);
         bool res = ser_com_ptr_->StartSerialReceiveThread();
         if(!res){
             exit(-1);
@@ -296,19 +290,27 @@ namespace navigation{
         TiXmlElement* socket_port_xml = socket_xml->FirstChildElement("port");
         TiXmlElement* socket_send_frequency_xml = socket_xml->FirstChildElement("send_frequency");
         boatParams.socketParams.host = host_xml->GetText();
-        boatParams.socketParams.port = std::stoi(socket_port_xml->GetText());
-        boatParams.socketParams.send_frequency = std::stoi(socket_send_frequency_xml->GetText());
+        boatParams.socketParams.port = (uint16_t)std::stoi(socket_port_xml->GetText());
+        boatParams.socketParams.send_frequency = (uint32_t)std::stoi(socket_send_frequency_xml->GetText());
 
         TiXmlElement* serial_xml = boat_xml->FirstChildElement("serial");
         TiXmlElement* baud_xml = serial_xml->FirstChildElement("baud");
         TiXmlElement* serial_port_xml = serial_xml->FirstChildElement("port");
         TiXmlElement* serial_send_frequency_xml = serial_xml->FirstChildElement("send_frequency");
         boatParams.serialParams.port = serial_port_xml->GetText();
-        boatParams.serialParams.baud = std::stoi(baud_xml->GetText());
-        boatParams.serialParams.send_frequency = std::stoi(serial_send_frequency_xml->GetText());
+        boatParams.serialParams.baud = (uint32_t)std::stoi(baud_xml->GetText());
+        boatParams.serialParams.send_frequency = (uint32_t)std::stoi(serial_send_frequency_xml->GetText());
+
+        TiXmlElement* gps_initialization_xml = boat_xml->FirstChildElement("gps_initialization");
+        TiXmlElement* hardware_flag_xml = gps_initialization_xml->FirstChildElement("hardware_flag");
+        TiXmlElement* gps_initialization_point_xml = gps_initialization_xml->FirstChildElement("point");
+
+        boatParams.gpsInitialization.hardware_flag = (uint8_t )std::stoi(hardware_flag_xml->GetText());
+        boatParams.gpsInitialization.gpsPosition.latitude = (float)std::strtod(gps_initialization_point_xml->FirstChildElement("latitude")->GetText(), nullptr);
+        boatParams.gpsInitialization.gpsPosition.longitude = (float)std::strtod(gps_initialization_point_xml->FirstChildElement("longitude")->GetText(), nullptr);
 
         TiXmlElement* frequency_xml = boat_xml->FirstChildElement("frequency");
-        boatParams.frequency = std::stoi(frequency_xml->GetText());
+        boatParams.frequency = (uint32_t)std::stoi(frequency_xml->GetText());
         config_xml.Clear();
         return true;
     }
@@ -323,7 +325,7 @@ namespace navigation{
         if(s_r.empower!=_this->empower_trans_.empower){
             _this->empower_trans_.empower = s_r.empower;
             LOG(INFO)<<"Empower: "<<_this->empower_trans_.empower<<std::endl;
-            //_this->EmpowerPublish_(_this->empower_trans_);
+            _this->EmpowerPublish_(_this->empower_trans_);
         }
         if(s_r.mode!=_this->boat_mode_){
             switch (s_r.mode){
@@ -343,7 +345,11 @@ namespace navigation{
 //              _this->boat_mode_ = (BoatMode)s_r.mode;
 //           }
         }
-        _this->stop = (bool)s_r.stop;
+        if(_this->stop!=s_r.stop){
+            _this->stop = (bool)s_r.stop;
+            _this->stop_trans_.stop = s_r.stop;
+            _this->StopPublish_(_this->stop_trans_);
+        }
         if(s_r.route_updated){
             pthread_mutex_lock(_this->route_updated_mutex_ptr_);
             _this->route_updated_ = s_r.route_updated;
@@ -392,6 +398,14 @@ namespace navigation{
         std::cout<<"Empower publish: "<<(int)empowerTrans.empower<<std::endl;
     }
 
+    void boat::StopPublish_(StopTrans& stopTrans){
+        if(ser_com_ptr_){
+            ser_com_ptr_->SendData(stopTrans, STOP_FLAG);
+        }
+        LOG(INFO)<<"Stop publish: "<<(int)stopTrans.stop;
+        std::cout<<"Stop publish: "<<(int)stopTrans.stop<<std::endl;
+    }
+
     void boat::SocketShowPublish_() {
         if(socket_com_ptr_->IsOpen()){
             SocketShow s_s;
@@ -405,8 +419,6 @@ namespace navigation{
             s_s.utm_position = now_state_.position;
             s_s.raw_gps_position = gps_data_.gps_position;
             s_s.gps_position = gps_p;
-            //float v = sqrtf(now_state_.line_velocity.x*now_state_.line_velocity.x +
-                    //now_state_.line_velocity.y*now_state_.line_velocity.y);
             s_s.speed = gps_data_.speed;
             socket_com_ptr_->SendData(s_s, 1);
         }
@@ -424,6 +436,7 @@ namespace navigation{
          ImuDataTrans* imu_trans;
          imu_trans = &imu_trans_data;
          memcpy(imu_trans, buffer_ptr_, sizeof(ImuDataTrans));
+         LOG(INFO)<<"Imu call back -- pitch: "<<imu_trans->pitch<<" roll: "<<imu_trans->roll;
         //auto* imu_trans = (ImuDataTrans*)buffer_ptr_;
         float ax, ay;
         //float yaw_raw = imu_trans->yaw;
@@ -487,7 +500,7 @@ namespace navigation{
         ///             down   1000
         ///channel 4    up     1000
         ///             down   2000
-        auto* _this = (boat*)__this;
+         auto* _this = (boat*)__this;
          RemoteChannelTrans remote_channel_trans_data;
          RemoteChannelTrans* remote_channel_trans;
          remote_channel_trans = &remote_channel_trans_data;
@@ -496,14 +509,24 @@ namespace navigation{
          pthread_mutex_lock(_this->serial_channel_mutex_ptr_);
         _this->remote_channel_data_ = *remote_channel_trans;
          pthread_mutex_unlock(_this->serial_channel_mutex_ptr_);
-//         std::cout<<"channel: ";
-//         std::cout<<remote_channel_trans->channel_1<<" ";
-//         std::cout<<remote_channel_trans->channel_2<<" ";
-//         std::cout<<remote_channel_trans->channel_3<<" ";
-//         std::cout<<remote_channel_trans->channel_4<<std::endl;
+         LOG(INFO)<<"channel call back: "
+         <<remote_channel_trans->channel_1 <<" "
+         <<remote_channel_trans->channel_2<<" "
+         <<remote_channel_trans->channel_3<<" "
+         <<remote_channel_trans->channel_4<<std::endl;
         //pthread_mutex_lock(serial_channel_mutex_ptr_);
         //remote_channel_info_main_thread_ = channel_info;
         //pthread_mutex_unlock(serial_channel_mutex_ptr_);
+    }
+
+    void boat::LockingCallback(uint8_t* buffer_ptr_, void* __this){
+        auto* _this = (boat*)__this;
+        LockingTrans locking_trans_data;
+        LockingTrans* locking_trans;
+        locking_trans = &locking_trans_data;
+        memcpy(locking_trans, buffer_ptr_, sizeof(StopTrans));
+        _this->locking_trans_.locking = locking_trans->locking;
+        LOG(INFO)<<"locking call back: "<<locking_trans->locking;
     }
 
     /**
@@ -531,11 +554,12 @@ namespace navigation{
      */
     ///分析遥控信号, 计算速度
     void boat::RemoteVelocityAnalyze_(const RemoteChannelTrans &channel, VelocityData* v) {
-        //TODO
         int v_a = channel.channel_2 - 1500;
-        int v_x= channel.channel_1 - 1500;
-        v->velocity_x =  0.006f * v_x;
-        v->velocity_angle = 0.003f * v_a;
+        int v_x = channel.channel_1 - 1500;
+        int v_a_s = v_a/100;
+        int v_x_s = v_x/100;
+        v->velocity_x =  0.006f * v_x_s*100;
+        v->velocity_angle = 0.003f * v_a_s*100;
     }
 
     /**
@@ -624,7 +648,7 @@ namespace navigation{
                 serial_send_count = 0;
                 VelocityPublish_(velocity_data_);
                 ControlPowerPublish_(control_power_trans_);
-                EmpowerPublish_(empower_trans_);
+                //EmpowerPublish_(empower_trans_);
             }
             //std::cout<<times<<std::endl;
             //std::cout<<"v: "<<velocity_data_.velocity_x<<std::endl;

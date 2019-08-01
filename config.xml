@@ -14,7 +14,7 @@
         </point>
     </gps>
     <mark>
-        <flag>1</flag>
+        <flag>0</flag>
         <path>points.txt</path>
         <!--周期-->
         <period>0.5</period>
@@ -29,11 +29,18 @@
         <corner_threshold>0.8</corner_threshold>
     </parameter>
     <boat>
+        <gps_initialization>
+            <hardware_flag>0</hardware_flag>
+            <point>
+                <latitude>37.535510</latitude>
+                <longitude>122.075620</longitude>
+            </point>
+        </gps_initialization>
         <frequency>200</frequency>
         <mode>2</mode>
         <socket>
-            <send_frequency>5</send_frequency>
-            <host>localhost</host>
+            <send_frequency>3</send_frequency>
+            <host>192.168.123.3</host>
             <port>6666</port>
         </socket>
         <serial>

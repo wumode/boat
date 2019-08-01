@@ -42,7 +42,7 @@ typedef struct VelocityDataTrans {
 
 //控制权数据
 typedef struct ControlPowerTrans {
-    u8 host;    //1 树莓派, 2 OpenMV
+    uint8_t host;    //1 树莓派, 2 OpenMV
 }ControlPowerTrans;
 //控制权功能字
 #define CONTROL_POWER_FLAG 0xf4
@@ -55,21 +55,25 @@ typedef struct RemoteChannelTrans{
 }RemoteChannelTrans;
 #define REMOTE_CHANNEL_FLAG 0xf5
 
-typedef struct InitializedTrans{
-    u8 initialized;
-}InitializedTrans;
-#define INITIALIZED_FLAG 0xf6
-
 typedef struct EmpowerTrans{
-    uint8_t empower;
+    volatile uint8_t empower;
 }EmpowerTrans;
 #define EMPOWER_FLAG 0xf6
-
 
 typedef struct LockingTrans{
     uint8_t locking;
 }LockingTrans;
 #define LOCKING_FLAG 0xf7
+
+typedef struct InitializedTrans{
+    uint8_t initialized;
+}InitializedTrans;
+#define INITIALIZED_FLAG 0xf8
+
+typedef struct StopTrans{
+    volatile uint8_t stop;
+}StopTrans;
+#define STOP_FLAG 0xf9
 
 typedef struct SocketShow{
     std::vector<GpsPosition> route_gps_positions;
@@ -102,11 +106,17 @@ typedef struct SocketParams{
     uint32_t send_frequency;
 }SocketParams;
 
+typedef struct GpsInitialization{
+    uint8_t hardware_flag;
+    GpsPosition gpsPosition;
+}GpsInitialization;
+
 typedef struct BoatParams{
     SerialParams serialParams;
     SocketParams socketParams;
     BoatMode boatMode;
     uint32_t frequency;
+    GpsInitialization gpsInitialization;
 }BoatParams;
 
 #endif //SHIP_BOAT_CONFIG_H
