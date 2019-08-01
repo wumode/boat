@@ -105,8 +105,10 @@ namespace serial_communication {
             catch (serial::SerialException& e){
                 char s[32];
                 sprintf(s, "%p", ser_ptr_);
-                LOG(INFO)<<"ser_ptr: "<<s;
-                LOG(ERROR)<<"serial::SerialException error in send";
+                LOG(ERROR)<<"ser_ptr: "<<s;
+                LOG(ERROR)<<"serial::SerialException error in send, data length: "<<data_length+5;
+                CloseSerialReceiveThread();
+                StartSerialReceiveThread();
             }
 
             is_sending_ = false;

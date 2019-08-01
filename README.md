@@ -4,8 +4,11 @@
 
 Required:
 
-- [cmake](http://www.cmake.org/) - build system
-- [serial](http://wjwwood.github.com/serial/) - Cross-platform, Serial Port library written in C++ 
+- [cmake](http://www.cmake.org/) - an open-source, cross-platform family of tools designed to build, test and package software. 
+- [serial](http://wjwwood.github.com/serial/) - Cross-platform, Serial Port library written in C++
+- [eigen](http://eigen.tuxfamily.org/) - a C++ template library for linear algebra: matrices, vectors, numerical solvers, and related algorithms.
+- [glog](https://github.com/google/glog)  - a C++ implementation of the Google logging module.  
+ 
 
 ### Build
 

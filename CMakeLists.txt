@@ -3,7 +3,7 @@ project(boat)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_BUILD_TYPE "Release")
-add_definitions(-Wall)
+#add_definitions(-Wall)
 
 include_directories(geo_to_utm/datum)
 include_directories(geo_to_utm/utm)
@@ -21,11 +21,12 @@ include_directories(socket_communication)
 
 #link_directories(3rdparty/pthread/lib 3rdparty/pthread/dll/x64)
 
-aux_source_directory(. DIR_SRCS)
+#aux_source_directory(. DIR_SRCS)
 add_subdirectory(navigation)
 add_subdirectory(geo_to_utm)
 add_subdirectory(serial_communication)
 add_subdirectory(socket_communication)
+#add_subdirectory(3rdparty/nlohmann)
 
 add_executable(Ship
         main.cc

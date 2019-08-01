@@ -93,6 +93,7 @@ typedef struct SocketReceive{
 typedef struct SerialParams{
     std::string port;
     uint32_t baud;
+    uint32_t send_frequency;
 }SerialParams;
 
 typedef struct SocketParams{

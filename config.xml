@@ -33,10 +33,11 @@
         <mode>2</mode>
         <socket>
             <send_frequency>5</send_frequency>
-            <host>192.168.43.13</host>
+            <host>localhost</host>
             <port>6666</port>
         </socket>
         <serial>
+            <send_frequency>50</send_frequency>
             <port>/dev/ttyUSB0</port>
             <baud>460800</baud>
         </serial>

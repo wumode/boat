@@ -94,6 +94,7 @@ namespace serial_communication{
         }
         catch (serial::IOException& e)
         {
+            std::cout<<"Unable to open port "<<port_<<" without params"<<std::endl;
             LOG(ERROR)<<"Unable to open port "<<port_<<" without params"<<std::endl;
             return false;
         }
@@ -101,6 +102,8 @@ namespace serial_communication{
         is_open_ = true;
         pthread_t pth;
         pthread_create(&pth, nullptr,SerialPortReceive, (void*)this);
+        std::cout<<"Start serial receive thread"<<std::endl;
+        LOG(INFO)<<"Start serial receive thread"<<std::endl;
         return true;
     }
 
@@ -131,6 +134,8 @@ namespace serial_communication{
         is_open_ = true;
         pthread_t pth;
         pthread_create(&pth, nullptr,SerialPortReceive, (void*)this);
+        LOG(INFO)<<"Start serial receive thread"<<std::endl;
+        std::cout<<"Start serial receive thread"<<std::endl;
         return true;
     }
 
@@ -144,7 +149,12 @@ namespace serial_communication{
 
     void SerialCommunication::CloseSerialReceiveThread() {
         serial_thread_ = false;
-        while(ser_ptr_!= nullptr);
+        while(ser_ptr_!= nullptr){
+            std::cout<<"Wait for serial close"<<std::endl;
+            std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)500));
+        }
+        LOG(INFO)<<"Stop serial receive thread"<<std::endl;
+        std::cout<<"Stop serial receive thread"<<std::endl;
     }
 
     void* SerialCommunication::SerialPortReceive(void* __this) {

@@ -1,0 +1,3 @@
+/home/wumode/CLionProjects/boat/3rdparty/build/CMakeFiles/rebuild_cache.dir
+/home/wumode/CLionProjects/boat/3rdparty/build/CMakeFiles/edit_cache.dir
+/home/wumode/CLionProjects/boat/3rdparty/build/CMakeFiles/nlohmann.dir

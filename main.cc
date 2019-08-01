@@ -54,6 +54,7 @@ int main(int argc, char* argv[])
     navigation::boat boat(config_path);
     //status = boat.StartSerialThread(com, bound);
     boat.Control();
+    google::ShutdownGoogleLogging();
     //boat.KillSerialThread();
     return 0;
 }

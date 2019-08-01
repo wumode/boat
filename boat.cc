@@ -302,8 +302,10 @@ namespace navigation{
         TiXmlElement* serial_xml = boat_xml->FirstChildElement("serial");
         TiXmlElement* baud_xml = serial_xml->FirstChildElement("baud");
         TiXmlElement* serial_port_xml = serial_xml->FirstChildElement("port");
+        TiXmlElement* serial_send_frequency_xml = serial_xml->FirstChildElement("send_frequency");
         boatParams.serialParams.port = serial_port_xml->GetText();
         boatParams.serialParams.baud = std::stoi(baud_xml->GetText());
+        boatParams.serialParams.send_frequency = std::stoi(serial_send_frequency_xml->GetText());
 
         TiXmlElement* frequency_xml = boat_xml->FirstChildElement("frequency");
         boatParams.frequency = std::stoi(frequency_xml->GetText());
@@ -315,11 +317,13 @@ namespace navigation{
         auto* _this = (boat*)__this;
         std::string string_rec = (const char*)buffer_ptr_;
         LOG(INFO)<<"receive: "<<string_rec<<std::endl;
+        std::cout<<"receive: "<<string_rec<<std::endl;
         json j = json::parse(string_rec);
         SocketReceive s_r = j;
         if(s_r.empower!=_this->empower_trans_.empower){
             _this->empower_trans_.empower = s_r.empower;
-            _this->EmpowerPublish_(_this->empower_trans_);
+            LOG(INFO)<<"Empower: "<<_this->empower_trans_.empower<<std::endl;
+            //_this->EmpowerPublish_(_this->empower_trans_);
         }
         if(s_r.mode!=_this->boat_mode_){
             switch (s_r.mode){
@@ -376,14 +380,16 @@ namespace navigation{
         if(ser_com_ptr_){
             ser_com_ptr_->SendData(control_power_trans, CONTROL_POWER_FLAG);
         }
-        LOG(INFO)<<"Control power publish: "<<control_power_trans.host;
+        LOG(INFO)<<"Control power publish: "<<(int)control_power_trans.host;
+        std::cout<<"Control power publish: "<<(int)control_power_trans.host<<std::endl;
     }
 
     void boat::EmpowerPublish_(EmpowerTrans& empowerTrans){
         if(ser_com_ptr_){
             ser_com_ptr_->SendData(empowerTrans, EMPOWER_FLAG);
         }
-        LOG(INFO)<<"Empower publish: "<<empowerTrans.empower;
+        LOG(INFO)<<"Empower publish: "<<(int)empowerTrans.empower;
+        std::cout<<"Empower publish: "<<(int)empowerTrans.empower<<std::endl;
     }
 
     void boat::SocketShowPublish_() {
@@ -549,12 +555,14 @@ namespace navigation{
         //int times = 0;
         double period = 1.0/(double)boat_params_.frequency;
         uint32_t socket_send_count = 0;
+        uint32_t serial_send_count = 0;
         uint32_t count = 0;
         while(main_thread_){
             //times++;
             last_timestamp = std::chrono::steady_clock::now();
             count++;
             socket_send_count++;
+            serial_send_count++;
             if(socket_send_count == boat_params_.frequency/boat_params_.socketParams.send_frequency){
                 socket_send_count = 0;
                 SocketShowPublish_();
@@ -612,11 +620,14 @@ namespace navigation{
                 velocity_data_.velocity_x = 0.0;
                 ReSetMarkPointFlag();
             }
+            if(serial_send_count == boat_params_.frequency/boat_params_.serialParams.send_frequency){
+                serial_send_count = 0;
+                VelocityPublish_(velocity_data_);
+                ControlPowerPublish_(control_power_trans_);
+                EmpowerPublish_(empower_trans_);
+            }
             //std::cout<<times<<std::endl;
             //std::cout<<"v: "<<velocity_data_.velocity_x<<std::endl;
-            VelocityPublish_(velocity_data_);
-            ControlPowerPublish_(control_power_trans_);
-
             now_timestamp = std::chrono::steady_clock::now();
             std::chrono::duration<double> time_used = std::chrono::duration_cast<std::chrono::duration<double>>(now_timestamp-last_timestamp);
             time_used_u = (int)((period- time_used.count())*1000000);
