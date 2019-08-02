@@ -175,6 +175,9 @@ inline float CalcAngleUtm(UtmPosition* key_position, UtmPosition* now_position){
 
 inline float CalcYaw(const float* route_angle, const float* attitude_angle){
     float attitude = *attitude_angle;
+    if(fabs(attitude)>1024*M_PI){
+        return 0.0;
+    }
     while((attitude)<0){
         (attitude) += 2*M_PI;
     }

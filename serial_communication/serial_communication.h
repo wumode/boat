@@ -95,7 +95,8 @@ namespace serial_communication {
             }
             tx_buffer_[data_length+4] = sum;
             while(is_sending_){
-                //std::cout<<is_sending_<<std::endl;
+                std::cout<<"wait send-"<<is_sending_<<std::endl;
+                std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)100));
             }
             is_sending_ = true;
             //std::cout<<"write"<<std::endl;

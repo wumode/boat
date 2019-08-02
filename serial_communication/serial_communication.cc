@@ -264,7 +264,8 @@ namespace serial_communication{
         /* 判断功能字：*/
         uint8_t serial_data_flag = *(data_buf+2);
         //int flags = serial_data_flag;
-        //std::cout<<"flag: "<<flags<<std::endl;
+        //std::cout<<"flag: "<<(int)serial_data_flag<<std::endl;
+        //LOG(INFO)<<"flag: "<<(int)serial_data_flag<<std::endl;
         std::map<uint8_t , CallBackFunction>::iterator iter;
         iter = _this->callback_function_directory_.find(serial_data_flag);
         if(iter != _this->callback_function_directory_.end()){

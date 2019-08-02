@@ -334,7 +334,7 @@ namespace navigation
         float route_angle;
         //std::cout<<" key: "<<key_position_gps_num_;
         float distance = CalcDistanceUtm(&key_position_utm_, &now_state_.position);
-        //std::cout<<" distance: "<<distance;
+        LOG(INFO)<<" distance: "<<distance;
         if(distance<navigation_parameter_.min_distance){
             if(key_position_gps_num_ == locus_points_.size()-1)
             {
@@ -347,7 +347,12 @@ namespace navigation
             }
         }
         route_angle = CalcAngleUtm(&key_position_utm_, &now_state_.position);
+        if(fabs(now_state_.attitude_angle)>100*M_PI){
+            now_state_.attitude_angle = 0.0;
+            LOG(ERROR)<<"attitude_angle error: "<<now_state_.attitude_angle<<std::endl;
+        }
         yaw = CalcYaw(&route_angle, &now_state_.attitude_angle);
+         LOG(INFO)<<"calc end";
     }
 
 

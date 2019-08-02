@@ -248,7 +248,7 @@ namespace navigation{
         g_p.longitude = gps_trans.longitude;
         GpsToUtmPartition(&g_p, &_this->utm_zone_, &_this->hemisphere_);
         LOG(INFO)<<"utm zone: "<<_this->utm_zone_<<" hemisphere: "<<_this->hemisphere_<<std::endl;
-        LOG(INFO)<<"initialize callback -- longitude: "<<gps_trans.longitude<<" latitude: "<<gps_trans.latitude;
+        LOG(INFO)<<"initialize call back -- longitude: "<<gps_trans.longitude<<" latitude: "<<gps_trans.latitude;
         _this->gps_data_.gps_position.latitude = gps_trans.latitude;
         _this->gps_data_.gps_position.longitude = gps_trans.longitude;
         _this->now_location_gps_ = _this->gps_data_.gps_position;
@@ -375,35 +375,34 @@ namespace navigation{
         }else if(velocity_data.velocity_x<-9.9f){
             velocity_data.velocity_x = -9.9f;
         }
-        //std::cout<<"v_x: "<<velocity_data.velocity_x<<std::endl;
-        //std::cout<<"v_a: "<<velocity_data.velocity_angle<<std::endl;
+        LOG(INFO)<<"Velocity publish v_x: "<<velocity_data.velocity_x<<" v_a: "<<velocity_data.velocity_angle<<std::endl;
         if(ser_com_ptr_){
             ser_com_ptr_->SendData(velocity_data, VELOCITY_FLAG);
         }
     }
 
     void boat::ControlPowerPublish_(ControlPowerTrans& control_power_trans){
+        LOG(INFO)<<"Control power publish: "<<(int)control_power_trans.host;
+        std::cout<<"Control power publish: "<<(int)control_power_trans.host<<std::endl;
         if(ser_com_ptr_){
             ser_com_ptr_->SendData(control_power_trans, CONTROL_POWER_FLAG);
         }
-        LOG(INFO)<<"Control power publish: "<<(int)control_power_trans.host;
-        std::cout<<"Control power publish: "<<(int)control_power_trans.host<<std::endl;
     }
 
     void boat::EmpowerPublish_(EmpowerTrans& empowerTrans){
+        LOG(INFO)<<"Empower publish: "<<(int)empowerTrans.empower;
+        std::cout<<"Empower publish: "<<(int)empowerTrans.empower<<std::endl;
         if(ser_com_ptr_){
             ser_com_ptr_->SendData(empowerTrans, EMPOWER_FLAG);
         }
-        LOG(INFO)<<"Empower publish: "<<(int)empowerTrans.empower;
-        std::cout<<"Empower publish: "<<(int)empowerTrans.empower<<std::endl;
     }
 
     void boat::StopPublish_(StopTrans& stopTrans){
+        LOG(INFO)<<"Stop publish: "<<(int)stopTrans.stop;
+        std::cout<<"Stop publish: "<<(int)stopTrans.stop<<std::endl;
         if(ser_com_ptr_){
             ser_com_ptr_->SendData(stopTrans, STOP_FLAG);
         }
-        LOG(INFO)<<"Stop publish: "<<(int)stopTrans.stop;
-        std::cout<<"Stop publish: "<<(int)stopTrans.stop<<std::endl;
     }
 
     void boat::SocketShowPublish_() {
@@ -439,6 +438,21 @@ namespace navigation{
          LOG(INFO)<<"Imu call back -- pitch: "<<imu_trans->pitch<<" roll: "<<imu_trans->roll;
         //auto* imu_trans = (ImuDataTrans*)buffer_ptr_;
         float ax, ay;
+        if(fabs(imu_trans->roll) > 100*M_PI){
+            imu_trans->roll = 0.0;
+        }
+        if(fabs(imu_trans->pitch) > 100*M_PI){
+            imu_trans->pitch = 0.0;
+        }
+        if(fabs(imu_trans->angular_velocity_z)>100*M_PI){
+            imu_trans->angular_velocity_z = 0.0;
+        }
+        if(fabs(imu_trans->linear_acceleration_y)>100*M_PI){
+            imu_trans->linear_acceleration_y = 0.0;
+        }
+        if(fabs(imu_trans->linear_acceleration_x)>100*M_PI){
+            imu_trans->linear_acceleration_x = 0.0;
+        }
         //float yaw_raw = imu_trans->yaw;
         _this->imu_data_.angle.roll = imu_trans->roll;
         _this->imu_data_.angle.pitch = imu_trans->pitch;
@@ -447,10 +461,11 @@ namespace navigation{
         _this->imu_data_.linear_acceleration.x = imu_trans->linear_acceleration_x;
         _this->imu_data_.linear_acceleration.y = imu_trans->linear_acceleration_y;
 
-        ax = cos(_this->imu_data_.angle.pitch)*_this->imu_data_.linear_acceleration.x*cos(_this->now_state_.attitude_angle)-
-                _this->imu_data_.linear_acceleration.y*sin(_this->now_state_.attitude_angle);
-        ay = cos(_this->imu_data_.angle.pitch)*_this->imu_data_.linear_acceleration.x*sin(_this->now_state_.attitude_angle)+
-                _this->imu_data_.linear_acceleration.y*cos(_this->now_state_.attitude_angle);
+        float a_a = _this->now_state_.attitude_angle;
+        ax = cos(_this->imu_data_.angle.pitch)*_this->imu_data_.linear_acceleration.x*cos(a_a)-
+                _this->imu_data_.linear_acceleration.y*sin(a_a);
+        ay = cos(_this->imu_data_.angle.pitch)*_this->imu_data_.linear_acceleration.x*sin(a_a)+
+                _this->imu_data_.linear_acceleration.y*cos(a_a);
         //std::cout<<"imu call back"<<std::endl;
         //std::cout<<" v_z: "<<imu_trans->angular_velocity_z<<" ";
         pthread_mutex_lock(_this->serial_measurement_mutex_ptr_);
@@ -509,7 +524,7 @@ namespace navigation{
          pthread_mutex_lock(_this->serial_channel_mutex_ptr_);
         _this->remote_channel_data_ = *remote_channel_trans;
          pthread_mutex_unlock(_this->serial_channel_mutex_ptr_);
-         LOG(INFO)<<"channel call back: "
+         LOG(INFO)<<"Channel call back: "
          <<remote_channel_trans->channel_1 <<" "
          <<remote_channel_trans->channel_2<<" "
          <<remote_channel_trans->channel_3<<" "
@@ -526,7 +541,7 @@ namespace navigation{
         locking_trans = &locking_trans_data;
         memcpy(locking_trans, buffer_ptr_, sizeof(StopTrans));
         _this->locking_trans_.locking = locking_trans->locking;
-        LOG(INFO)<<"locking call back: "<<locking_trans->locking;
+        LOG(INFO)<<"Locking call back: "<<locking_trans->locking;
     }
 
     /**
@@ -573,16 +588,31 @@ namespace navigation{
         std::chrono::steady_clock::time_point last_timestamp;
         now_mark_timestamp = std::chrono::steady_clock::now();
 
+#ifdef DEGUG
+        std::chrono::steady_clock::time_point debug_now_timestamp;
+        std::chrono::steady_clock::time_point debug_last_timestamp;
+        debug_now_timestamp = std::chrono::steady_clock::now();
+        debug_last_timestamp = std::chrono::steady_clock::now();
+#endif
         last_mark_timestamp = now_mark_timestamp;
         int time_used_u;
         stop = false;
-        //int times = 0;
+        int times = 0;
         double period = 1.0/(double)boat_params_.frequency;
         uint32_t socket_send_count = 0;
         uint32_t serial_send_count = 0;
         uint32_t count = 0;
         while(main_thread_){
-            //times++;
+#ifdef DEGUG
+            debug_now_timestamp = std::chrono::steady_clock::now();
+            std::chrono::duration<double> debug_time_used = std::chrono::duration_cast<std::chrono::duration<double>>(debug_now_timestamp-debug_last_timestamp);
+            debug_last_timestamp = debug_now_timestamp;
+            std::cout<<"time used: "<<debug_time_used.count()<<std::endl;
+#endif
+
+            times++;
+            std::cout<<"times: "<<times<<std::endl;
+            LOG(INFO)<<"times: "<<times<<std::endl;
             last_timestamp = std::chrono::steady_clock::now();
             count++;
             socket_send_count++;
@@ -605,6 +635,8 @@ namespace navigation{
             }
             AnalysisRemoteInfo(remote_channel_data_main_thread_, &stop);
             Filter();
+            //std::cout<<"filter: "<<std::endl;
+            //LOG(INFO)<<"filter: "<<std::endl;
             if(mark_point_parameter_.mark_flag){
                 now_mark_timestamp = std::chrono::steady_clock::now();
                 std::chrono::duration<double> time_used = std::chrono::duration_cast<std::chrono::duration<double>>
@@ -617,9 +649,10 @@ namespace navigation{
             //std::cout<<"boat_mode: "<<boat_mode_<<std::endl;
             if(boat_mode_ == navigation_mode){
                 control_power_trans_.host = 1;
+                //LOG(INFO)<<"Navi calc before "<<now_state_.attitude_angle;
                 NavigationCalculation();
                 //std::cout<<" yaw: "<<yaw<<std::endl;
-                //std::cout<<" state_a: "<<now_state_.attitude_angle;
+                LOG(INFO)<<"Navi calc after "<<now_state_.attitude_angle;
                 if(route_updated_){
                     pthread_mutex_lock(route_updated_mutex_ptr_);
                     UpdateLocusPoints_(locus_points_main_thread_, 0);
@@ -627,6 +660,7 @@ namespace navigation{
                     route_updated_ = 0;
                 }
                 NavigationVelocityAnalyze_(yaw, velocity_data_);
+                LOG(INFO)<<"Navi anal";
             }
             else if(boat_mode_ == remote_mode){
                 control_power_trans_.host = 1;
@@ -646,10 +680,14 @@ namespace navigation{
             }
             if(serial_send_count == boat_params_.frequency/boat_params_.serialParams.send_frequency){
                 serial_send_count = 0;
+                std::cout<<"serial send"<<std::endl;
+                LOG(INFO)<<"serial send"<<std::endl;
                 VelocityPublish_(velocity_data_);
                 ControlPowerPublish_(control_power_trans_);
                 //EmpowerPublish_(empower_trans_);
             }
+            std::cout<<"sleep"<<std::endl;
+            LOG(INFO)<<"sleep"<<std::endl;
             //std::cout<<times<<std::endl;
             //std::cout<<"v: "<<velocity_data_.velocity_x<<std::endl;
             now_timestamp = std::chrono::steady_clock::now();
