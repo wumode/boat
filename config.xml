@@ -37,7 +37,7 @@
             </point>
         </gps_initialization>
         <frequency>200</frequency>
-        <mode>2</mode>
+        <mode>1</mode>
         <socket>
             <send_frequency>3</send_frequency>
             <host>192.168.123.3</host>

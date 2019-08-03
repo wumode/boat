@@ -318,14 +318,14 @@ namespace navigation{
     void boat::SocketReceiveCallBack(uint8_t* buffer_ptr_, void* __this){
         auto* _this = (boat*)__this;
         std::string string_rec = (const char*)buffer_ptr_;
-        LOG(INFO)<<"receive: "<<string_rec<<std::endl;
-        std::cout<<"receive: "<<string_rec<<std::endl;
+        LOG(INFO)<<"socket receive: "<<string_rec<<std::endl;
+        std::cout<<"socket receive: "<<string_rec<<std::endl;
         json j = json::parse(string_rec);
         SocketReceive s_r = j;
         if(s_r.empower!=_this->empower_trans_.empower){
             _this->empower_trans_.empower = s_r.empower;
-            LOG(INFO)<<"Empower: "<<_this->empower_trans_.empower<<std::endl;
-            _this->EmpowerPublish_(_this->empower_trans_);
+            //LOG(INFO)<<"Empower: "<<_this->empower_trans_.empower<<std::endl;
+            //_this->EmpowerPublish_(_this->empower_trans_);
         }
         if(s_r.mode!=_this->boat_mode_){
             switch (s_r.mode){
@@ -587,8 +587,7 @@ namespace navigation{
         std::chrono::steady_clock::time_point now_timestamp;
         std::chrono::steady_clock::time_point last_timestamp;
         now_mark_timestamp = std::chrono::steady_clock::now();
-
-#ifdef DEGUG
+#ifdef DEBUG
         std::chrono::steady_clock::time_point debug_now_timestamp;
         std::chrono::steady_clock::time_point debug_last_timestamp;
         debug_now_timestamp = std::chrono::steady_clock::now();
@@ -596,23 +595,23 @@ namespace navigation{
 #endif
         last_mark_timestamp = now_mark_timestamp;
         int time_used_u;
-        stop = false;
+        stop = true;
         int times = 0;
         double period = 1.0/(double)boat_params_.frequency;
         uint32_t socket_send_count = 0;
         uint32_t serial_send_count = 0;
         uint32_t count = 0;
         while(main_thread_){
-#ifdef DEGUG
+#ifdef DEBUG
             debug_now_timestamp = std::chrono::steady_clock::now();
             std::chrono::duration<double> debug_time_used = std::chrono::duration_cast<std::chrono::duration<double>>(debug_now_timestamp-debug_last_timestamp);
             debug_last_timestamp = debug_now_timestamp;
-            std::cout<<"time used: "<<debug_time_used.count()<<std::endl;
+            double debug_time_count = debug_time_used.count();
+            if(debug_time_count>0.0055){
+                std::cout<<"time used: "<<debug_time_count<<std::endl;
+                LOG(WARNING)<<"time used: "<<debug_time_count<<std::endl;
+            }
 #endif
-
-            times++;
-            std::cout<<"times: "<<times<<std::endl;
-            LOG(INFO)<<"times: "<<times<<std::endl;
             last_timestamp = std::chrono::steady_clock::now();
             count++;
             socket_send_count++;
@@ -652,7 +651,7 @@ namespace navigation{
                 //LOG(INFO)<<"Navi calc before "<<now_state_.attitude_angle;
                 NavigationCalculation();
                 //std::cout<<" yaw: "<<yaw<<std::endl;
-                LOG(INFO)<<"Navi calc after "<<now_state_.attitude_angle;
+                //LOG(INFO)<<"Navi calc after "<<now_state_.attitude_angle;
                 if(route_updated_){
                     pthread_mutex_lock(route_updated_mutex_ptr_);
                     UpdateLocusPoints_(locus_points_main_thread_, 0);
@@ -660,7 +659,7 @@ namespace navigation{
                     route_updated_ = 0;
                 }
                 NavigationVelocityAnalyze_(yaw, velocity_data_);
-                LOG(INFO)<<"Navi anal";
+                //LOG(INFO)<<"Navi anal";
             }
             else if(boat_mode_ == remote_mode){
                 control_power_trans_.host = 1;
@@ -670,6 +669,7 @@ namespace navigation{
                 control_power_trans_.host = 2;
             }
             else if(boat_mode_ == attack_mode){
+                RemoteVelocityAnalyze_(remote_channel_data_main_thread_, &velocity_data_);
                 control_power_trans_.host = 3;
             }
             //std::cout<<stop<<std::endl;
@@ -683,11 +683,13 @@ namespace navigation{
                 std::cout<<"serial send"<<std::endl;
                 LOG(INFO)<<"serial send"<<std::endl;
                 VelocityPublish_(velocity_data_);
+                std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)50));
                 ControlPowerPublish_(control_power_trans_);
-                //EmpowerPublish_(empower_trans_);
+                std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)50));
+                EmpowerPublish_(empower_trans_);
             }
-            std::cout<<"sleep"<<std::endl;
-            LOG(INFO)<<"sleep"<<std::endl;
+            //std::cout<<"sleep"<<std::endl;
+            //LOG(INFO)<<"sleep"<<std::endl;
             //std::cout<<times<<std::endl;
             //std::cout<<"v: "<<velocity_data_.velocity_x<<std::endl;
             now_timestamp = std::chrono::steady_clock::now();

@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_BUILD_TYPE "Release")
 #add_definitions(-Wall)
 
-option(DEBUG "debug" ON)
+add_definitions(-D DEBUG)
 
 include_directories(geo_to_utm/datum)
 include_directories(geo_to_utm/utm)
