@@ -12,6 +12,18 @@
             <latitude>37.535680</latitude>
             <longitude>122.075840</longitude>
         </point>
+        <point>
+            <latitude>37.535580</latitude>
+            <longitude>122.075610</longitude>
+        </point>
+        <point>
+            <latitude>37.535510</latitude>
+            <longitude>122.075620</longitude>
+        </point>
+        <point>
+            <latitude>37.535270</latitude>
+            <longitude>122.076010</longitude>
+        </point>
     </gps>
     <mark>
         <flag>0</flag>
@@ -30,7 +42,7 @@
     </parameter>
     <boat>
         <gps_initialization>
-            <hardware_flag>0</hardware_flag>
+            <hardware_flag>1</hardware_flag>
             <point>
                 <latitude>37.535510</latitude>
                 <longitude>122.075620</longitude>
