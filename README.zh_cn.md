@@ -26,6 +26,8 @@ make
 
 ### 说明
 
+第八届海洋航行器设计与制作大赛B类水面组特等奖作品，感谢[Evolution404](https://github.com/Evolution404)和[233SylviaLi](<https://github.com/233SylviaLi>) 的帮助和支持，下位机固件[在此](<https://github.com/wumode/boat-firmware>)
+
 #### 简介
 
 无人船的主控程序：
@@ -49,6 +51,10 @@ make
   - path 保存文件名
   - period 记录周期（秒）
 - boat 
+  - gps_initialization
+    - hardware_flag
+      - 0 使用以下gps坐标作为初始坐标
+      - 1 读取一帧gps数据作为初始坐标
   - frequency 控制频率
   - mode 运行模式
     - 1 遥控
@@ -59,7 +65,7 @@ make
     - host 地址
     - port 端口
   - serial
-    - prot 串口号
+    - port 串口号
     - baud 波特率
 
 ### 运行
