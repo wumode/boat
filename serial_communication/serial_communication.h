@@ -93,16 +93,11 @@ namespace serial_communication {
             for (int i = 0; i < data_length+4; i++) {
                 sum += tx_buffer_[i];
             }
-            if(flag == 0xf4){
-                LOG(INFO)<<"serial sum: "<<(int)sum;
-            }
             tx_buffer_[data_length+4] = sum;
             while(is_sending_){
-                std::cout<<"wait send-"<<is_sending_<<std::endl;
                 std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)100));
             }
             is_sending_ = true;
-            //std::cout<<"write"<<std::endl;
             try {
                 ser_ptr_->write((const uint8_t*)tx_buffer_, data_length+5);
             }
@@ -114,7 +109,6 @@ namespace serial_communication {
                 CloseSerialReceiveThread();
                 StartSerialReceiveThread();
             }
-
             is_sending_ = false;
         }
     }

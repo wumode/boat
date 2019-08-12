@@ -68,6 +68,20 @@ make
     - port 串口号
     - baud 波特率
 
+#### 通信协议
+
+##### 串口
+
+串口通信封装在类SerialCommunication中，串口通信协议如下：
+
+|   帧头    | 功能字 |  长度  | 数据 | 校验 |
+| :-------: | :----: | :----: | :--: | :--: |
+| 0xAA,0xAF |  flag  | length | data | sum  |
+
+##### socket
+
+socket通信封装在类SocketCommunication中, 发送和接收的例子在*send.json*和*receive.json*
+
 ### 运行
 
 在boat目录下执行
