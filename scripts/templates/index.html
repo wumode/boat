@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title></title>
+  </head>
+  <body>
+    <!--<div id="graph" style="width: 1600px;height:900px;"></div>-->
+    <div id="graph" style="width: 100vw;height:100vh;"></div>
+  </body>
+  <script type="text/javascript" src="../static/jquery.js"></script>
+  <script type="text/javascript" src="../static/echarts-all-3.js"></script>
+  <script type="text/javascript" src="../static/dataTool.min.js"></script>
+  <script type="text/javascript" src="../static/china.js"></script>
+  <script type="text/javascript" src="../static/world.js"></script>
+  <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=C2ad266fe2059eb8d615d8910444d5b1"></script>
+  <script type="text/javascript" src="../static/bmap.min.js"></script>
+  <script src="../static/map.js"></script>
+  <script charset="utf-8">
+    var myChart = echarts.init(document.getElementById('graph'));
+    myChart.setOption(option); 
+  </script>
+</html>
