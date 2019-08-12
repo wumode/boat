@@ -1,41 +1,33 @@
 <boat>
     <gps>
         <point>
-            <latitude>37.535510</latitude>
-            <longitude>122.075620</longitude>
+            <latitude>45.774410</latitude>
+            <longitude>126.675870</longitude>
         </point>
         <point>
-            <latitude>37.535580</latitude>
-            <longitude>122.075620</longitude>
+            <latitude>45.774410</latitude>
+            <longitude>126.675750</longitude>
         </point>
         <point>
-            <latitude>37.535680</latitude>
-            <longitude>122.075840</longitude>
+            <latitude>45.774535</latitude>
+            <longitude>126.675748</longitude>
         </point>
         <point>
-            <latitude>37.535580</latitude>
-            <longitude>122.075610</longitude>
-        </point>
-        <point>
-            <latitude>37.535510</latitude>
-            <longitude>122.075620</longitude>
-        </point>
-        <point>
-            <latitude>37.535270</latitude>
-            <longitude>122.076010</longitude>
+            <latitude>45.774540</latitude>
+            <longitude>126.675870</longitude>
         </point>
     </gps>
     <mark>
         <flag>0</flag>
         <path>points.txt</path>
         <!--周期-->
-        <period>0.5</period>
+        <period>0.8</period>
 
     </mark>
     <parameter>
         <steering_coefficient>2.0</steering_coefficient>
         <turning_time>0.02</turning_time>
-        <min_distance>5.0</min_distance>
+        <min_distance>3.6</min_distance>
         <base_velocity>2.0</base_velocity>
         <steering_deceleration_coefficient>1.20</steering_deceleration_coefficient>
         <corner_threshold>0.8</corner_threshold>
@@ -44,15 +36,15 @@
         <gps_initialization>
             <hardware_flag>1</hardware_flag>
             <point>
-                <latitude>37.535510</latitude>
-                <longitude>122.075620</longitude>
+                <latitude>45.774410</latitude>
+                <longitude>126.675870</longitude>
             </point>
         </gps_initialization>
         <frequency>200</frequency>
         <mode>1</mode>
         <socket>
             <send_frequency>3</send_frequency>
-            <host>192.168.123.3</host>
+            <host>192.168.43.101</host>
             <port>6666</port>
         </socket>
         <serial>

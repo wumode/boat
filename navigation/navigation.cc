@@ -322,7 +322,7 @@ namespace navigation
         GpsPosition gps_pos;
         UtmToGps(&measurement_vector_.position, &gps_pos);
         if(point_file_ptr_ != nullptr){
-            *point_file_ptr_<<std::fixed << std::setprecision(5)<<gps_pos.latitude<<","<<gps_pos.longitude<<std::endl;
+            *point_file_ptr_<<std::fixed << std::setprecision(7)<<gps_pos.latitude<<","<<gps_pos.longitude<<std::endl;
         }
     }
 
@@ -334,7 +334,7 @@ namespace navigation
         float route_angle;
         //std::cout<<" key: "<<key_position_gps_num_;
         float distance = CalcDistanceUtm(&key_position_utm_, &now_state_.position);
-        LOG(INFO)<<" distance: "<<distance;
+        //LOG(INFO)<<" distance: "<<distance;
         if(distance<navigation_parameter_.min_distance){
             if(key_position_gps_num_ == locus_points_.size()-1)
             {

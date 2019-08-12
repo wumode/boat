@@ -376,6 +376,7 @@ namespace navigation{
             velocity_data.velocity_x = -9.9f;
         }
         LOG(INFO)<<"Velocity publish v_x: "<<velocity_data.velocity_x<<" v_a: "<<velocity_data.velocity_angle<<std::endl;
+        std::cout<<"Velocity publish v_x: "<<velocity_data.velocity_x<<" v_a: "<<velocity_data.velocity_angle<<std::endl;
         if(ser_com_ptr_){
             ser_com_ptr_->SendData(velocity_data, VELOCITY_FLAG);
         }
@@ -571,10 +572,13 @@ namespace navigation{
     void boat::RemoteVelocityAnalyze_(const RemoteChannelTrans &channel, VelocityData* v) {
         int v_a = channel.channel_2 - 1500;
         int v_x = channel.channel_1 - 1500;
-        int v_a_s = v_a/100;
-        int v_x_s = v_x/100;
-        v->velocity_x =  0.006f * v_x_s*100;
-        v->velocity_angle = 0.003f * v_a_s*100;
+        int fre = 125;
+        int v_a_s = v_a/fre;
+        int v_x_s = v_x/fre;
+        v->velocity_x =  0.006f * v_x_s*fre;
+        v->velocity_angle = 0.003f * v_a_s*fre;
+        //std::cout<<"pub: v_x: "<<v->velocity_x<<"v_a: "<<v->velocity_angle<<std::endl;
+        //LOG(INFO)<<"pub: v_x: "<<v->velocity_x<<"v_a: "<<v->velocity_angle<<std::endl;
     }
 
     /**
@@ -632,7 +636,7 @@ namespace navigation{
                 UpdateMeasurementVector(boat_measurement_vector_);
                 pthread_mutex_unlock(serial_measurement_mutex_ptr_);
             }
-            AnalysisRemoteInfo(remote_channel_data_main_thread_, &stop);
+            //AnalysisRemoteInfo(remote_channel_data_main_thread_, &stop);
             Filter();
             //std::cout<<"filter: "<<std::endl;
             //LOG(INFO)<<"filter: "<<std::endl;
@@ -646,6 +650,7 @@ namespace navigation{
                 }
             }
             //std::cout<<"boat_mode: "<<boat_mode_<<std::endl;
+            LOG(INFO)<<"boat_mode: "<<boat_mode_<<std::endl;
             if(boat_mode_ == navigation_mode){
                 control_power_trans_.host = 1;
                 //LOG(INFO)<<"Navi calc before "<<now_state_.attitude_angle;
@@ -676,7 +681,7 @@ namespace navigation{
             if(stop){
                 velocity_data_.velocity_angle = 0.0;
                 velocity_data_.velocity_x = 0.0;
-                ReSetMarkPointFlag();
+                //ReSetMarkPointFlag();
             }
             if(serial_send_count == boat_params_.frequency/boat_params_.serialParams.send_frequency){
                 serial_send_count = 0;
