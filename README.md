@@ -1,5 +1,5 @@
 # Boat
-- [说明](https://github.com/wumode/boat/blob/dev/README.zh_cn.md)
+- [说明](https://github.com/wumode/boat/blob/master/README.zh_cn.md)
 ### Dependencies
 
 Required:
@@ -51,4 +51,4 @@ WuMo wumo1999@gmail.com
 
 ### Contact
 
-https://www.westsite.cn:8001
+https://www.westsite.cn:8001/?p=7
