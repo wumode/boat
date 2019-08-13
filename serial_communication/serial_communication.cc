@@ -36,8 +36,6 @@ namespace serial_communication{
         serial_thread_ = false;
         is_open_ = false;
         is_sending_= false;
-        //port_ = com;
-        //baud_rate_ = baud_rate;
         _data_len = 0;
         _data_cnt = 0;
         memset(rx_buffer_,'\0', 256);
@@ -47,7 +45,6 @@ namespace serial_communication{
         receive_head_low_ = 0xAF;
         send_head_high_ = 0xAA;
         send_head_low_ = 0xAF;
-        //StartSerialThread(port_, baud_rate_);
     }
 
     SerialCommunication::SerialCommunication(const std::string& com, uint32_t baud_rate) {
@@ -66,7 +63,6 @@ namespace serial_communication{
         receive_head_low_ = 0xAF;
         send_head_high_ = 0xAA;
         send_head_low_ = 0xAF;
-        //StartSerialThread(port_, baud_rate_);
     }
 
     SerialCommunication::~SerialCommunication(){
@@ -164,8 +160,6 @@ namespace serial_communication{
         try {
             while (_this->serial_thread_){
                 size_read = _this->ser_ptr_->read(serial_data_buffer,1);
-                //std::cout<<std::hex;
-                //std::cout<<*serial_data_buffer;
                 if(size_read){
                     _this->DataReceivePrepare(*serial_data_buffer, __this);
                 }
@@ -189,81 +183,63 @@ namespace serial_communication{
     void SerialCommunication::DataReceivePrepare(uint8_t data, void* __this)
     {
         auto* _this = (SerialCommunication*)__this;
-        /* 帧头1  一个数据帧中第一个数据并且判断是否与宏定义帧头1相等*/
         if (_this->serial_parse_state_ == 0 && data == _this->receive_head_high_)
         {
-            //std::cout<<"data_state = 1"<<std::endl;
             _this->serial_parse_state_ = 1;
             _this->rx_buffer_[0] = data;
 
         }
-            /* 帧头2 一个数据帧中第二个数据并且判断是否与宏定义帧头2相等*/
         else if (_this->serial_parse_state_ == 1 && data == _this->receive_head_low_)
         {
             _this->serial_parse_state_ = 2;
             _this->rx_buffer_[1] = data;
         }
-            /* 功能字 */
         else if (_this->serial_parse_state_ == 2 && data>0xf0)
         {
-            //std::cout<<"parse state: 2"<<std::endl;
             _this->serial_parse_state_ = 3;
             _this->rx_buffer_[2] = data;
         }
-            /* 长度 */
         else if (_this->serial_parse_state_ == 3 && data<100)
         {
-            //std::cout<<"parse state: 3"<<std::endl;
             _this->serial_parse_state_ = 4;
             _this->rx_buffer_[3] = data;
             _this->_data_len = data;
             _this->_data_cnt = 0;
         }
-            /* 接收数据组*/
         else if (_this->serial_parse_state_ == 4 && _this->_data_len>0)
         {
-            //std::cout<<"parse state: 4"<<std::endl;
             _this->_data_len--;
             _this->rx_buffer_[4 + _this->_data_cnt++] = data;
             if (_this->_data_len == 0)
                 _this->serial_parse_state_ = 5;
         }
-            /* 校验累加和 */
         else if (_this->serial_parse_state_ == 5)
         {
-            //std::cout<<"parse state: 5"<<std::endl;
             _this->serial_parse_state_ = 0;
             _this->rx_buffer_[4 + _data_cnt] = data;
-            //std::cout<<"data_state = 5"<<std::endl;
-            _this->DataReceiveAnalysis(rx_buffer_, _data_cnt + 5, __this);  //调用数据分析函数,总长比索引+1
+            _this->DataReceiveAnalysis(rx_buffer_, _data_cnt + (uint8_t)5, __this);  //调用数据分析函数,总长比索引+1
         }
-            /* 若有错误重新等待接收帧头 */
         else{
             _this->serial_parse_state_ = 0;
         }
     }
 
 
-    void SerialCommunication::DataReceiveAnalysis(const uint8_t *data_buf, uint8_t num, void* __this)
+    void SerialCommunication::DataReceiveAnalysis(const uint8_t* data_buf, uint8_t num, void* __this)
     {
         auto* _this = (SerialCommunication*)__this;
         uint8_t sum = 0;
-        /* 首先计算校验累加和 */
         for (uint8_t i = 0; i<(num - 1); i++){
             sum += *(data_buf + i);
         }
-        /* 判断校验累加和 若不同则舍弃*/
-        if (!(sum == *(data_buf + num - 1))) {
+        if (sum != *(data_buf + num - 1)) {
             return;
         }
-        /* 判断帧头 */
         if (!(*(data_buf) == _this->receive_head_high_ && *(data_buf + 1) == _this->receive_head_low_))
         {
             return;
         }
-        /* 判断功能字：*/
         uint8_t serial_data_flag = *(data_buf+2);
-        //int flags = serial_data_flag;
         //std::cout<<"flag: "<<(int)serial_data_flag<<std::endl;
         //LOG(INFO)<<"flag: "<<(int)serial_data_flag<<std::endl;
         std::map<uint8_t , CallBackFunction>::iterator iter;
@@ -275,7 +251,6 @@ namespace serial_communication{
 
     void SerialCommunication::SetCallBackFunction(serial_communication::callBack callBack1, uint8_t flag,
                                                   void *this_) {
-        //CallBackFunction c_f(callBack1, flag, this_);
         std::map<uint8_t , CallBackFunction>::iterator iter;
         iter = callback_function_directory_.find(flag);
         if(iter != callback_function_directory_.end()){

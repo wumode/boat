@@ -2,3 +2,5 @@
 cmake-build-debug/
 log/
 scripts/static/map.js
+*.key
+points.txt

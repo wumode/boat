@@ -17,7 +17,7 @@ clone:
 
 build:
 
-```shell
+```bash
 mkdir build
 cd build
 cmake ..
@@ -88,7 +88,7 @@ socket通信封装在类SocketCommunication中, 发送和接收的例子在*send
 `sudo build/./Ship`
 
 ### 日志
-log/Ship.INFO
+*log/Ship.INFO*
 
 ### 许可证
 
@@ -108,8 +108,8 @@ limitations under the License.
 
 ### 作者
 
-WuMo wumo1999@gmail.com
+[WuMo](mailto://wumo1999@gmail.com) 
 
 ### Contact
 
-https://www.westsite.cn:8001/?p=7
+[https://www.westsite.cn:8001/?p=7](https://www.westsite.cn:8001/?p=7)

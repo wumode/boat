@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 # -*- author:wumo -*-
 
-import matplotlib.pyplot as plt
+
 import numpy as np
 from flask import Flask, request, render_template, redirect
 import time
@@ -14,14 +14,18 @@ import hashlib
 from urllib import parse
 import requests
 
-AK = "YYY0vwUqhSqAIVNy8xvVuqRqVg4G71Aq"
-SK = "R8svft34jVZIxYVkEN79WinOi8Lc3RVg"
+
+f = open("baidu_dev.key", "r")
+keys = f.readlines()
+AK = keys[0][:-1]
+SK = keys[1][:-1]
+AK_2 = keys[2][:-1]
 
 
 def WGS84_TO_BD09(gps84):
     param = {"coords": "%f,%f" % (gps84[1], gps84[0]), "ak": AK, "from": 1, "to": 5, "output": "json"}
     url_request = "/geoconv/v1/?coords=%s&ak=%s&from=%d&to=%d&output=%s" % (param["coords"],
-        param["ak"], param["from"], param["to"], param["output"])
+                                                                            param["ak"], param["from"], param["to"], param["output"])
     encodedStr = parse.quote(url_request, safe="/:=&?#+!$,;'@()*[]")
     rawStr = encodedStr + SK
     SN = hashlib.md5(parse.quote_plus(rawStr).encode("utf-8")).hexdigest()
@@ -43,21 +47,13 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def MapShow():
-    url_unquote_path = 'index.html'
-    return render_template('index.html')
+    global AK_2
+    return render_template('index.html', ak=AK_2)
 
 
 if __name__ == '__main__':
-    # print(end-start)
-    # a = utm.from_latlon(32.35972, 125.68415)
-    # print(a)
-    # b = utm.to_latlon(a[0], a[1], 50, 'S')
-    # print(b)
-    # WGS84_TO_BD09([37.0, 122.0])
-    # exit(0)
     point_file = open("points.txt", "r")
     map_js = open("static/map.js", "w+")
-    # print(type(s))
     pattern = re.compile(r'(\d+.?\d*),(\d+.?\d*)')
     s_s = point_file.readlines()
     lat_list = []
@@ -74,7 +70,6 @@ if __name__ == '__main__':
             gps_list.append((float(matchObj.group(1)), float(matchObj.group(2))))
             utm_pos = utm.from_latlon(float(matchObj.group(1)), float(matchObj.group(2)))
             print(utm_pos)
-
             # print(utm_pos[0], utm_pos[1])
             lon_list.append(utm_pos[1])
             lat_list.append(utm_pos[0])
@@ -319,7 +314,6 @@ var convertData = function (data) {
     lat = np.asanyarray(lat_list)
     lon = np.asanyarray(lon_list)
     print(gps_list[0])
-    #exit(0)
     a = min(lat)
 
     xy_max = max(int(max(lat)), int(max(lon)))
@@ -328,16 +322,4 @@ var convertData = function (data) {
     xy_max += 2
     x = range(xy_min, xy_max, 10)
     y = range(xy_min, xy_max, 10)
-
-    # plt.xlim(xy_min, xy_max)
-    # plt.ylim(xy_min, xy_max)
-    # plt.figure(figsize=(6, 6))
-    # plt.plot(lat_list, lon_list, 'green')
-    # plt.scatter(lat_list, lon_list, marker='o')
-    # plt.xlabel('x')
-    # plt.ylabel('y')
-    #
-    # plt.grid(True)
-    # plt.axis('tight')
-    # plt.show()
     app.run(host='127.0.0.1', port=5000)
