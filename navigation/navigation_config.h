@@ -104,13 +104,6 @@ typedef struct VelocityData{
 }VelocityData;
 
 
-typedef enum BoatMode{
-    remote_mode = 1,
-    navigation_mode,
-    track_mode,
-    attack_mode
-}BoatMode;
-
 typedef struct NavigationParameter{
     float steering_coefficient;
     float corner_threshold;

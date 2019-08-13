@@ -111,6 +111,13 @@ typedef struct GpsInitialization{
     GpsPosition gpsPosition;
 }GpsInitialization;
 
+typedef enum BoatMode{
+    remote_mode = 1,
+    navigation_mode,
+    track_mode,
+    attack_mode
+}BoatMode;
+
 typedef struct BoatParams{
     SerialParams serialParams;
     SocketParams socketParams;

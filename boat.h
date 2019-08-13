@@ -27,16 +27,13 @@
 #include <unistd.h>
 #include <thread>
 #include <navigation.h>
-//#include <json/json.h>
 #include <json.hpp>
 #include <serial_communication.h>
 #include <socket_communication.h>
 #include "boat_config.h"
 #ifndef SHIP_BOAT_H
 #define SHIP_BOAT_H
-//
-//#define PORT 8888
-//#define SIZE 1000
+
 
 namespace navigation {
     /**
@@ -52,9 +49,6 @@ namespace navigation {
         static void HardWareInitializationCallBack(uint8_t* buffer_ptr_, void* __this);
         static void LockingCallback(uint8_t* buffer_ptr_, void* __this);
         static void SocketReceiveCallBack(uint8_t* buffer_ptr_, void* __this);
-        void VelocityPublish_(VelocityData& velocity_data);
-        void ControlPowerPublish_(ControlPowerTrans& control_power_trans);
-        void StopPublish_(StopTrans& stopTrans);
 
         void Control();
 
@@ -63,6 +57,9 @@ namespace navigation {
         void AnalysisRemoteInfo(const RemoteChannelTrans& channel, volatile bool* stop);
         void RemoteVelocityAnalyze_(const RemoteChannelTrans& channel, VelocityData* v);
         bool LoadBoatConfig_(const std::string &config_xml_path, BoatParams& boatParams);
+        void VelocityPublish_(VelocityData& velocity_data);
+        void ControlPowerPublish_(ControlPowerTrans& control_power_trans);
+        void StopPublish_(StopTrans& stopTrans);
         void EmpowerPublish_(EmpowerTrans& empowerTrans);
         void SocketShowPublish_();
         //volatile bool serial_thread_;   //串口线程运行的标志
@@ -84,15 +81,12 @@ namespace navigation {
         VelocityData velocity_data_;
         BoatMode boat_mode_;    //运行模式，自主航行/遥控
         MeasurementVector boat_measurement_vector_;     //观测值向量
-        //RemoteChannelTrans remote_channel_info_serial_thread_;
         RemoteChannelTrans remote_channel_data_main_thread_;
         EmpowerTrans empower_trans_;
         LockingTrans locking_trans_;
         StopTrans stop_trans_;
         ControlPowerTrans control_power_trans_;
-        //SocketReceive socket_receive_main_thread_;
         BoatParams boat_params_;
-        //volatile bool socket_receive_updated_;
         bool main_thread_;
         volatile bool stop;  //停止
 

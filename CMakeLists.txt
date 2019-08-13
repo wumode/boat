@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_BUILD_TYPE "Release")
 #add_definitions(-Wall)
 
-add_definitions(-D DEBUG)
+#add_definitions(-D DEBUG)
 
 include_directories(geo_to_utm/datum)
 include_directories(geo_to_utm/utm)
@@ -13,7 +13,6 @@ include_directories(kalman_filter)
 include_directories(navigation)
 include_directories(3rdparty/tiny_xml)
 #include_directories(3rdparty/Eigen)
-include_directories(c_socket)
 include_directories(3rdparty/nlohmann)
 include_directories(3rdparty)
 include_directories(serial_communication)
@@ -38,7 +37,7 @@ add_executable(Ship
         boat_config.h
         )
 
-target_link_libraries(Ship serial pthread wiringPi rt crypt glog
+target_link_libraries(Ship serial pthread rt crypt glog
         datum
         utm
         Navigation

@@ -102,7 +102,7 @@ namespace navigation
             LOG(ERROR) << "Failed to load file: No root element." << std::endl;
             return false;
         }
-        LOG(INFO) << "load file: " << config_xml_path << std::endl;
+        LOG(INFO) << "Load file: " << config_xml_path << std::endl;
         TiXmlElement* gps_xml = xmlRoot->FirstChildElement("gps");
         TiXmlElement* point_xml = gps_xml->FirstChildElement("point");
         while (point_xml){
@@ -332,9 +332,7 @@ namespace navigation
      ///自主航行的所有计算在NavigationCalculation中调用
     void Navigation::NavigationCalculation(){
         float route_angle;
-        //std::cout<<" key: "<<key_position_gps_num_;
         float distance = CalcDistanceUtm(&key_position_utm_, &now_state_.position);
-        //LOG(INFO)<<" distance: "<<distance;
         if(distance<navigation_parameter_.min_distance){
             if(key_position_gps_num_ == locus_points_.size()-1)
             {
@@ -347,12 +345,11 @@ namespace navigation
             }
         }
         route_angle = CalcAngleUtm(&key_position_utm_, &now_state_.position);
-        if(fabs(now_state_.attitude_angle)>100*M_PI){
+        if(fabs(now_state_.attitude_angle)>1000*M_PI){
             now_state_.attitude_angle = 0.0;
             LOG(ERROR)<<"attitude_angle error: "<<now_state_.attitude_angle<<std::endl;
         }
         yaw = CalcYaw(&route_angle, &now_state_.attitude_angle);
-         LOG(INFO)<<"calc end";
     }
 
 

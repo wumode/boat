@@ -31,6 +31,8 @@
 #include <climits>
 #include <glog/logging.h>
 
+#define SERIAL_SIZE 256
+
 namespace serial_communication {
     typedef int (*callBack)(uint8_t *, void *);
 
@@ -71,8 +73,8 @@ namespace serial_communication {
         std::string port_;
         uint32_t baud_rate_;
         volatile bool is_open_;
-        uint8_t rx_buffer_[256];
-        uint8_t tx_buffer_[256];
+        uint8_t rx_buffer_[SERIAL_SIZE];
+        uint8_t tx_buffer_[SERIAL_SIZE];
         uint8_t _data_len, _data_cnt;
         uint8_t serial_parse_state_;
         uint8_t receive_head_high_, receive_head_low_;

@@ -38,8 +38,8 @@ namespace serial_communication{
         is_sending_= false;
         _data_len = 0;
         _data_cnt = 0;
-        memset(rx_buffer_,'\0', 256);
-        memset(tx_buffer_, '\0', 256);
+        memset(rx_buffer_,'\0', SERIAL_SIZE);
+        memset(tx_buffer_, '\0', SERIAL_SIZE);
         serial_parse_state_ = 0;
         receive_head_high_ = 0xAA;
         receive_head_low_ = 0xAF;
@@ -56,8 +56,8 @@ namespace serial_communication{
         baud_rate_ = baud_rate;
         _data_len = 0;
         _data_cnt = 0;
-        memset(rx_buffer_,'\0', 256);
-        memset(tx_buffer_, '\0', 256);
+        memset(rx_buffer_,'\0', SERIAL_SIZE);
+        memset(tx_buffer_, '\0', SERIAL_SIZE);
         serial_parse_state_ = 0;
         receive_head_high_ = 0xAA;
         receive_head_low_ = 0xAF;
@@ -155,7 +155,7 @@ namespace serial_communication{
 
     void* SerialCommunication::SerialPortReceive(void* __this) {
         auto* _this = (SerialCommunication*)__this;
-        uint8_t serial_data_buffer[256];
+        uint8_t serial_data_buffer[SERIAL_SIZE];
         int size_read;
         try {
             while (_this->serial_thread_){
