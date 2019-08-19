@@ -82,7 +82,7 @@ namespace serial_communication{
         {
             ser_ptr_->setPort(port_);
             ser_ptr_->setBaudrate(baud_rate_);
-            serial::Timeout to = serial::Timeout::simpleTimeout(0);
+            serial::Timeout to = serial::Timeout::simpleTimeout(serial::Timeout::max());
             ser_ptr_->setTimeout(to);
             ser_ptr_->setParity(serial::parity_none);
             ser_ptr_->setStopbits(serial::stopbits_one);
@@ -90,8 +90,10 @@ namespace serial_communication{
         }
         catch (serial::IOException& e)
         {
-            std::cout<<"Unable to open port "<<port_<<" without params"<<std::endl;
-            LOG(ERROR)<<"Unable to open port "<<port_<<" without params"<<std::endl;
+            std::cerr<<"Unable to open port "<<port_<<" without params"<<std::endl;
+//#ifdef LOG
+//            LOG(ERROR)<<"Unable to open port "<<port_<<" without params"<<std::endl;
+//#endif
             return false;
         }
         serial_thread_ = true;
@@ -99,7 +101,9 @@ namespace serial_communication{
         pthread_t pth;
         pthread_create(&pth, nullptr,SerialPortReceive, (void*)this);
         std::cout<<"Start serial receive thread"<<std::endl;
-        LOG(INFO)<<"Start serial receive thread"<<std::endl;
+//#ifdef LOG
+//        LOG(INFO)<<"Start serial receive thread"<<std::endl;
+//#endif
         return true;
     }
 
@@ -113,7 +117,7 @@ namespace serial_communication{
             //设置串口属性，并打开串口
             ser_ptr_->setPort(port);
             ser_ptr_->setBaudrate(baud_rate);
-            serial::Timeout to = serial::Timeout::simpleTimeout(0);
+            serial::Timeout to = serial::Timeout::simpleTimeout(serial::Timeout::max());
             ser_ptr_->setTimeout(to);
             ser_ptr_->setParity(serial::parity_none);
             ser_ptr_->setStopbits(serial::stopbits_one);
@@ -121,7 +125,10 @@ namespace serial_communication{
         }
         catch (serial::IOException& e)
         {
-            LOG(ERROR)<<"Unable to open port "<<port<<std::endl;
+//#ifdef LOG
+//            LOG(ERROR)<<"Unable to open port "<<port<<std::endl;
+//#endif
+            std::cout<<"Unable to open port "<<port<<std::endl;
             return false;
         }
         port_ = port;
@@ -130,7 +137,9 @@ namespace serial_communication{
         is_open_ = true;
         pthread_t pth;
         pthread_create(&pth, nullptr,SerialPortReceive, (void*)this);
-        LOG(INFO)<<"Start serial receive thread"<<std::endl;
+//#ifdef LOG
+//        LOG(INFO)<<"Start serial receive thread"<<std::endl;
+//#endif
         std::cout<<"Start serial receive thread"<<std::endl;
         return true;
     }
@@ -149,7 +158,9 @@ namespace serial_communication{
             std::cout<<"Wait for serial close"<<std::endl;
             std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)500));
         }
-        LOG(INFO)<<"Stop serial receive thread"<<std::endl;
+//#ifdef LOG
+//        LOG(INFO)<<"Stop serial receive thread"<<std::endl;
+//#endif
         std::cout<<"Stop serial receive thread"<<std::endl;
     }
 
@@ -170,7 +181,10 @@ namespace serial_communication{
             }
         }
         catch(serial::SerialException& e){
-            LOG(ERROR)<<"serial::SerialException error in receive";
+//#ifdef LOG
+//            LOG(ERROR)<<"serial::SerialException error in receive";
+//#endif
+            std::cerr<<"serial::SerialException error in receive"<<std::endl;
         }
 
         _this->ser_ptr_->close();

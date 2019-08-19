@@ -183,12 +183,12 @@ namespace navigation{
         velocity_data_.velocity_x = 0.0;
         velocity_data_.velocity_angle = 0.0;
 
-         serial_measurement_mutex_ptr_ = new pthread_mutex_t;
-         serial_channel_mutex_ptr_ = new pthread_mutex_t;
-         route_updated_mutex_ptr_ = new pthread_mutex_t;
-         pthread_mutex_init(serial_measurement_mutex_ptr_, nullptr); //线程锁初始化
-         pthread_mutex_init(serial_channel_mutex_ptr_, nullptr); //线程锁初始化
-         pthread_mutex_init(route_updated_mutex_ptr_, nullptr); //线程锁初始化
+        serial_measurement_mutex_ptr_ = new pthread_mutex_t;
+        serial_channel_mutex_ptr_ = new pthread_mutex_t;
+        route_updated_mutex_ptr_ = new pthread_mutex_t;
+        pthread_mutex_init(serial_measurement_mutex_ptr_, nullptr); //线程锁初始化
+        pthread_mutex_init(serial_channel_mutex_ptr_, nullptr); //线程锁初始化
+        pthread_mutex_init(route_updated_mutex_ptr_, nullptr); //线程锁初始化
 
         ser_com_ptr_ = new serial_communication::SerialCommunication(boat_params_.serialParams.port, boat_params_.serialParams.baud);
         ser_com_ptr_ ->SetCallBackFunction((serial_communication::callBack)GpsMsgsCallback, GPS_FLAG, this);
@@ -483,12 +483,12 @@ namespace navigation{
      ///GPS回调，由串口线程调用，将串口GPS信息转化为滤波器更新需要的观测值
     void boat::GpsMsgsCallback(uint8_t* buffer_ptr_, void* __this){
         auto* _this = (boat*)__this;
-         GpsDataTrans gps_trans_data;
-         GpsDataTrans* gps_trans;
-         gps_trans = &gps_trans_data;
-         memcpy(gps_trans, buffer_ptr_, sizeof(GpsDataTrans));
-         LOG(INFO)<<"Gps call back -- longitude: "<<gps_trans->longitude<<" latitude: "<<gps_trans->latitude;
-         //std::cout<<"Gps call back -- longitude: "<<gps_trans->longitude<<" latitude: "<<gps_trans->latitude <<std::endl;
+        GpsDataTrans gps_trans_data;
+        GpsDataTrans* gps_trans;
+        gps_trans = &gps_trans_data;
+        memcpy(gps_trans, buffer_ptr_, sizeof(GpsDataTrans));
+        LOG(INFO)<<"Gps call back -- longitude: "<<gps_trans->longitude<<" latitude: "<<gps_trans->latitude;
+        //std::cout<<"Gps call back -- longitude: "<<gps_trans->longitude<<" latitude: "<<gps_trans->latitude <<std::endl;
         //auto* gps_trans = (GpsDataTrans*)buffer_ptr_;
         if(gps_trans->longitude>360.0 || gps_trans->longitude<0.0 || gps_trans->latitude>90.0 || gps_trans->latitude< -90.0){
             LOG(ERROR)<<"Gps transmission error";

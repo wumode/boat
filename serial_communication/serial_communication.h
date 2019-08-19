@@ -104,10 +104,10 @@ namespace serial_communication {
                 ser_ptr_->write((const uint8_t*)tx_buffer_, data_length+5);
             }
             catch (serial::SerialException& e){
-                char s[32];
-                sprintf(s, "%p", ser_ptr_);
-                LOG(ERROR)<<"ser_ptr: "<<s;
-                LOG(ERROR)<<"serial::SerialException error in send, data length: "<<data_length+5;
+//#ifdef LOG
+//                LOG(ERROR)<<"serial::SerialException error in send, data length: "<<data_length+5;
+//#endif
+                std::cerr<<"serial::SerialException error in send, data length: "<<data_length+5<<std::endl;
                 CloseSerialReceiveThread();
                 StartSerialReceiveThread();
             }

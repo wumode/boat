@@ -44,3 +44,10 @@ target_link_libraries(Ship serial pthread rt crypt glog
         SerialCommunication
         SocketCommunication)
 
+add_executable(test
+        test.cc
+        serial_communication/serial_communication.h
+        serial_communication/serial_communication.cc)
+
+target_link_libraries(test serial pthread glog
+        SerialCommunication)
