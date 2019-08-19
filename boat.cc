@@ -23,106 +23,111 @@
 #include "boat.h"
 
 //using namespace std;
+namespace navigation {
 
+    void to_json(json &j, const navigation::GpsPosition &gpsPosition) {
+        j = json{{"latitude",  gpsPosition.latitude},
+                 {"longitude", gpsPosition.longitude}};
+    }
 
-void to_json(json& j, const GpsPosition& gpsPosition){
-    j = json{{"latitude", gpsPosition.latitude}, {"longitude", gpsPosition.longitude}};
+    void from_json(const json &j, navigation::GpsPosition &gpsPosition) {
+        gpsPosition.longitude = j.at("longitude").get<float>();
+        gpsPosition.latitude = j.at("latitude").get<float>();
+    }
+
+    void to_json(json &j, const navigation::UtmPosition &utmPosition) {
+        j = json{{"x",          utmPosition.x},
+                 {"y",          utmPosition.y},
+                 {"GridZone",   (int) utmPosition.gridZone},
+                 {"Hemisphere", (int) utmPosition.hemisphere}};
+    }
+
+    void from_json(const json &j, navigation::UtmPosition &utmPosition) {
+        utmPosition.x = j.at("x").get<float>();
+        utmPosition.y = j.at("y").get<float>();
+        utmPosition.gridZone = (GridZone) j.at("GridZone").get<int>();
+        utmPosition.hemisphere = (Hemisphere) j.at("GridZone").get<int>();
+    }
+
+    void to_json(json &j, const navigation::LinearAcceleration &linearAcceleration) {
+        j = json{{"x", linearAcceleration.x},
+                 {"y", linearAcceleration.y}};
+    }
+
+    void from_json(const json &j, navigation::LinearAcceleration &linearAcceleration) {
+        linearAcceleration.x = j.at("x").get<float>();
+        linearAcceleration.y = j.at("y").get<float>();
+    }
+
+    void to_json(json &j, const navigation::AngularVelocity &angular_velocity) {
+        j = json{{"z", angular_velocity.z}};
+    }
+
+    void from_json(const json &j, navigation::AngularVelocity &angular_velocity) {
+        angular_velocity.z = j.at("z").get<float>();
+    }
+
+    void to_json(json &j, const navigation::Angle &angle) {
+        j = json{{"roll",  angle.roll},
+                 {"pitch", angle.pitch},
+                 {"yaw",   angle.yaw}};
+    }
+
+    void from_json(const json &j, navigation::Angle &angle) {
+        angle.yaw = j.at("yaw").get<float>();
+        angle.pitch = j.at("pitch").get<float>();
+        angle.roll = j.at("roll").get<float>();
+    }
+
+    void to_json(json &j, const navigation::ImuData &imuData) {
+        j = json{{"angle",               imuData.angle},
+                 {"angular_velocity",    imuData.angular_velocity},
+                 {"linear_acceleration", imuData.linear_acceleration}};
+    }
+
+    void from_json(const json &j, navigation::ImuData &imuData) {
+        imuData.angle = j.at("angle").get<navigation::Angle>();
+        imuData.angular_velocity = j.at("angular_velocity").get<navigation::AngularVelocity>();
+        imuData.linear_acceleration = j.at("linear_acceleration").get<navigation::LinearAcceleration>();
+    }
+
+    void to_json(json &j, const SocketShow &socketShow) {
+        j = json{{"gps_position",        socketShow.gps_position},
+                 {"raw_gps_position",    socketShow.raw_gps_position},
+                 {"utm_position",        socketShow.utm_position},
+                 {"route_gps_positions", socketShow.route_gps_positions},
+                 {"locking",             socketShow.locking},
+                 {"imu_data",            socketShow.imu_data},
+                 {"speed",               socketShow.speed}};
+    }
+
+    void from_json(const json &j, SocketShow &socketShow) {
+        socketShow.imu_data = j.at("imu_data").get<navigation::ImuData>();
+        socketShow.gps_position = j.at("gps_position").get<navigation::GpsPosition>();
+        socketShow.raw_gps_position = j.at("raw_gps_position").get<navigation::GpsPosition>();
+        socketShow.utm_position = j.at("utm_position").get<navigation::UtmPosition>();
+        socketShow.route_gps_positions = j.at("route_gps_positions").get<std::vector<navigation::GpsPosition>>();
+        socketShow.locking = j.at("locking").get<uint8_t>();
+        socketShow.speed = j.at("speed").get<float>();
+    }
+
+    void to_json(json &j, const SocketReceive &socketReceive) {
+        j = json{{"mode",                socketReceive.mode},
+                 {"empower",             socketReceive.empower},
+                 {"route_gps_positions", socketReceive.route_gps_positions},
+                 {"route_updated",       socketReceive.route_updated},
+                 {"stop",                socketReceive.stop}};
+    }
+
+    void from_json(const json &j, SocketReceive &socketReceive) {
+        socketReceive.route_gps_positions = j.at("route_gps_positions").get<std::vector<navigation::GpsPosition>>();
+        socketReceive.empower = j.at("empower").get<uint8_t>();
+        socketReceive.mode = j.at("mode").get<uint8_t>();
+        socketReceive.route_updated = j.at("route_updated").get<uint8_t>();
+        socketReceive.stop = j.at("stop").get<uint8_t>();
+    }
+
 }
-
-void from_json(const json& j, GpsPosition& gpsPosition){
-    gpsPosition.longitude = j.at("longitude").get<float>();
-    gpsPosition.latitude = j.at("latitude").get<float>();
-}
-
-void to_json(json& j, const UtmPosition& utmPosition){
-    j = json{{"x", utmPosition.x},
-             {"y", utmPosition.y},
-             {"GridZone", (int)utmPosition.gridZone},
-             {"Hemisphere", (int)utmPosition.hemisphere}};
-}
-
-void from_json(const json& j, UtmPosition& utmPosition){
-    utmPosition.x = j.at("x").get<float>();
-    utmPosition.y = j.at("y").get<float>();
-    utmPosition.gridZone = (GridZone)j.at("GridZone").get<int>();
-    utmPosition.hemisphere = (Hemisphere)j.at("GridZone").get<int>();
-}
-
-void to_json(json& j, const LinearAcceleration& linearAcceleration){
-    j = json{{"x", linearAcceleration.x},
-             {"y", linearAcceleration.y}};
-}
-
-void from_json(const json& j, LinearAcceleration& linearAcceleration){
-    linearAcceleration.x = j.at("x").get<float>();
-    linearAcceleration.y = j.at("y").get<float>();
-}
-
-void to_json(json& j, const AngularVelocity& angular_velocity){
-    j = json{{"z", angular_velocity.z}};
-}
-
-void from_json(const json& j, AngularVelocity& angular_velocity){
-    angular_velocity.z =  j.at("z").get<float>();
-}
-
-void to_json(json& j, const Angle& angle){
-    j = json{{"roll", angle.roll}, {"pitch", angle.pitch}, {"yaw", angle.yaw}};
-}
-
-void from_json(const json& j, Angle& angle){
-    angle.yaw = j.at("yaw").get<float>();
-    angle.pitch = j.at("pitch").get<float>();
-    angle.roll = j.at("roll").get<float>();
-}
-
-void to_json(json& j, const ImuData& imuData){
-    j = json{{"angle", imuData.angle}, {"angular_velocity", imuData.angular_velocity}, {"linear_acceleration", imuData.linear_acceleration}};
-}
-
-void from_json(const json& j, ImuData& imuData){
-    imuData.angle = j.at("angle").get<Angle>();
-    imuData.angular_velocity = j.at("angular_velocity").get<AngularVelocity>();
-    imuData.linear_acceleration = j.at("linear_acceleration").get<LinearAcceleration>();
-}
-
-void to_json(json& j, const SocketShow& socketShow){
-    j = json{{"gps_position", socketShow.gps_position},
-             {"raw_gps_position", socketShow.raw_gps_position},
-             {"utm_position", socketShow.utm_position},
-             {"route_gps_positions", socketShow.route_gps_positions},
-             {"locking", socketShow.locking},
-             {"imu_data", socketShow.imu_data},
-             {"speed", socketShow.speed}};
-}
-
-void from_json(const json& j, SocketShow& socketShow){
-    socketShow.imu_data = j.at("imu_data").get<ImuData>();
-    socketShow.gps_position = j.at("gps_position").get<GpsPosition>();
-    socketShow.raw_gps_position = j.at("raw_gps_position").get<GpsPosition>();
-    socketShow.utm_position = j.at("utm_position").get<UtmPosition>();
-    socketShow.route_gps_positions = j.at("route_gps_positions").get<std::vector<GpsPosition>>();
-    socketShow.locking = j.at("locking").get<uint8_t >();
-    socketShow.speed = j.at("speed").get<float>();
-}
-
-void to_json(json& j, const SocketReceive& socketReceive){
-    j = json{{"mode", socketReceive.mode},
-             {"empower", socketReceive.empower},
-             {"route_gps_positions", socketReceive.route_gps_positions},
-             {"route_updated", socketReceive.route_updated},
-             {"stop", socketReceive.stop}};
-}
-
-void from_json(const json& j, SocketReceive& socketReceive){
-    socketReceive.route_gps_positions = j.at("route_gps_positions").get<std::vector<GpsPosition>>();
-    socketReceive.empower = j.at("empower").get<uint8_t >();
-    socketReceive.mode = j.at("mode").get<uint8_t >();
-    socketReceive.route_updated = j.at("route_updated").get<uint8_t >();
-    socketReceive.stop = j.at("stop").get<uint8_t >();
-}
-
-
 namespace navigation{
     /**
      * @param navigation_config_path

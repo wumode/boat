@@ -78,8 +78,8 @@ namespace navigation {
         std::vector<GpsPosition> locus_points_; //目标点向量
         NavigationParameter navigation_parameter_;  //自主航行参数
         uint32_t key_position_gps_num_;  //目标点计数
-        Flag mark_point_flag_;
-        Flag stop_motor_;
+        uint8_t mark_point_flag_;
+        uint8_t stop_motor_;
         std::ofstream* point_file_ptr_ = nullptr;
 
         std::chrono::steady_clock::time_point now_timestamp_;   //时刻，卡尔曼滤波器更新用

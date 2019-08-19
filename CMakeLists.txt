@@ -50,4 +50,5 @@ add_executable(test
         serial_communication/serial_communication.cc)
 
 target_link_libraries(test serial pthread glog
-        SerialCommunication)
+        SerialCommunication
+        Navigation)

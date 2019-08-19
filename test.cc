@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <chrono>
+#include "point/point.h"
 //#include <glog/logging.h>
 
 typedef struct TestMsg{
@@ -21,54 +22,52 @@ static void TestCallback(uint8_t* buffer_ptr_, void* __this){
     std::cout<<"rec: "<<testMsg->a<<" "<<(int)testMsg->b<<std::endl;
 }
 
+TestMsg test_return_fun(TestMsg& t) {
+    return t;
+}
+
+int& test_and(int& a){
+    return a;
+}
 
 int main(int argc, char* argv[]){
-    TestMsg t_m_s;
-    TestMsg t_m_r;
-    t_m_s.a = 15;
-    t_m_s.b = 16;
-    uint8_t flag = 0xf1;
-    //google::InitGoogleLogging((const char *)argv[0]);
-    //google::SetLogDestination(google::GLOG_INFO, "./log/log");
-    std::cout<<"a"<<std::endl;
-    serial_communication::SerialCommunication ser;
-    ser.SetCallBackFunction((serial_communication::callBack)TestCallback, flag, (void*)&t_m_r);
-    ser.StartSerialReceiveThread("/dev/ttyUSB0", 460800);
-
-    while(1){
-        ser.SendData(t_m_s, flag);
-        std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)500));
-    }
-
-//    uint8_t serial_data_buffer[SERIAL_SIZE];
-//    bool serial_thread_ = true;
-//    int size_read;
-//    serial::Serial* ser_ptr_;
-//    ser_ptr_ = new serial::Serial;
-//    std::string port = "/dev/ttyUSB0";
-//    uint32_t baud_rate = 460800;
-//    ser_ptr_->setPort(port);
-//    ser_ptr_->setBaudrate(baud_rate);
-//    serial::Timeout to = serial::Timeout::simpleTimeout(serial::Timeout::max());
-//    ser_ptr_->setTimeout(to);
-//    ser_ptr_->setParity(serial::parity_none);
-//    ser_ptr_->setStopbits(serial::stopbits_one);
-//    ser_ptr_->open();
-//    try {
-//        while (serial_thread_){
-//            size_read = ser_ptr_->read(serial_data_buffer,1);
-//            if(size_read){
-//                std::cout<<(int)serial_data_buffer[0];
-//            }
+//    TestMsg t_m_s;
+//    TestMsg t_m_r;
+//    t_m_s.a = 15;
+//    t_m_s.b = 16;
+//    uint8_t flag = 0xf1;
+//    //google::InitGoogleLogging((const char *)argv[0]);
+//    //google::SetLogDestination(google::GLOG_INFO, "./log/log");
+//    std::cout<<"a"<<std::endl;
+//    serial_communication::SerialCommunication ser;
+//    ser.SetCallBackFunction((serial_communication::callBack)TestCallback, flag, (void*)&t_m_r);
+//    ser.StartSerialReceiveThread("/dev/ttyUSB0", 460800);
 //
-//            else{
-//                ser_ptr_->flushInput();
-//            }
-//            std::cout<<"while"<<std::endl;
-//        }
+//    while(1){
+//        ser.SendData(t_m_s, flag);
+//        std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)500));
 //    }
-//    catch (serial::SerialException& e){
-//        std::cerr<<"err"<<std::endl;
-//    }
-    //google::ShutdownGoogleLogging();
+    navigation::point::Point p1;
+    navigation::point::Point p2;
+    //p2 = p1;
+    navigation::UtmPosition u1, u2;
+    navigation::GpsPosition g1, g2;
+    g2.latitude = 37.0;
+    g2.longitude = 122.0;
+    g1.latitude = 37.001;
+    g1.longitude = 122.001;
+    p1 = g1;
+    p2 = g2;
+    u1 = p1.Utm();
+    u2 = p2.Utm();
+    u1.x = 10.0;
+    u2.x = 0.0;
+    u1.y = 10.0;
+    u2.y = 0.0;
+    p2 = u2;
+    p1 = u1;
+    std::cout<<p1<<std::endl;
+    std::cout<<p2<<std::endl;
+    std::cout<<navigation::point::Distance(&p1, &p2)<<std::endl;
+    std::cout<<navigation::point::CalcAngle(&p1, &p2)*180.0/M_PI<<std::endl;
 }
