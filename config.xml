@@ -34,7 +34,7 @@
     </parameter>
     <boat>
         <gps_initialization>
-            <hardware_flag>1</hardware_flag>
+            <hardware_flag>0</hardware_flag>
             <point>
                 <latitude>45.774410</latitude>
                 <longitude>126.675870</longitude>
@@ -44,7 +44,7 @@
         <mode>1</mode>
         <socket>
             <send_frequency>3</send_frequency>
-            <host>192.168.43.101</host>
+            <host>192.168.123.103</host>
             <port>6666</port>
         </socket>
         <serial>

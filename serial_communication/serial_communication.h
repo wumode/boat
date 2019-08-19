@@ -67,9 +67,9 @@ namespace serial_communication {
         void DataReceivePrepare(uint8_t data, void* __this);
         //bool WriteData();
 
-        volatile bool serial_thread_;   //串口线程运行的标志
+        volatile bool serial_thread_;
         volatile bool is_sending_;
-        serial::Serial* ser_ptr_; //指向串口的指针
+        serial::Serial* ser_ptr_;
         std::string port_;
         uint32_t baud_rate_;
         volatile bool is_open_;
