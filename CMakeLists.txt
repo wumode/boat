@@ -5,6 +5,15 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_BUILD_TYPE "Release")
 #add_definitions(-Wall)
 
+configure_file (
+        "${PROJECT_SOURCE_DIR}/config.h.in"
+        "${PROJECT_SOURCE_DIR}/config.h"
+)
+
+option (USE_GLOG
+        "Use google glog" ON)
+
+
 #add_definitions(-D DEBUG)
 
 include_directories(geo_to_utm/datum)
@@ -37,18 +46,23 @@ add_executable(Ship
         boat_config.h
         )
 
-target_link_libraries(Ship serial pthread rt crypt glog
-        datum
-        utm
+target_link_libraries(Ship rt crypt
         Navigation
         SerialCommunication
         SocketCommunication)
 
+if (USE_GLOG)
+    target_link_libraries(Ship glog)
+endif (USE_GLOG)
+
 add_executable(test
         test.cc
-        serial_communication/serial_communication.h
-        serial_communication/serial_communication.cc)
+        )
 
-target_link_libraries(test serial pthread glog
+target_link_libraries(test
         SerialCommunication
         Navigation)
+
+if (USE_GLOG)
+    target_link_libraries(test glog)
+endif ()

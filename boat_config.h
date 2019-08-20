@@ -8,7 +8,7 @@
 #ifndef __SYSTEM_STM32F10X_H
 typedef unsigned char u8;
 #endif
-
+#include "config.h"
 
 //IMU数据
 namespace navigation{

@@ -7,7 +7,10 @@
 #include <iostream>
 #include <chrono>
 #include "point/point.h"
-//#include <glog/logging.h>
+#include "config.h"
+#ifdef USE_GLOG
+    #include <glog/logging.h>
+#endif
 
 typedef struct TestMsg{
     uint32_t a;
@@ -31,6 +34,11 @@ int& test_and(int& a){
 }
 
 int main(int argc, char* argv[]){
+#ifdef USE_GLOG
+    google::InitGoogleLogging((const char *)argv[0]);
+    google::SetLogDestination(google::GLOG_INFO, "./log/log");
+    LOG(INFO)<<"run";
+#endif
 //    TestMsg t_m_s;
 //    TestMsg t_m_r;
 //    t_m_s.a = 15;
@@ -70,4 +78,7 @@ int main(int argc, char* argv[]){
     std::cout<<p2<<std::endl;
     std::cout<<navigation::point::Distance(&p1, &p2)<<std::endl;
     std::cout<<navigation::point::CalcAngle(&p1, &p2)*180.0/M_PI<<std::endl;
+#ifdef USE_GLOG
+    google::ShutdownGoogleLogging();
+#endif
 }

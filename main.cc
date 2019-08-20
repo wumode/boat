@@ -25,8 +25,12 @@
 #include <cstdlib>
 #include <ctime>
 #include <chrono>
-#include <glog/logging.h>
 #include "boat.h"
+
+#ifdef USE_GLOG
+    #include <glog/logging.h>
+#endif
+
 
 using namespace std;
 
@@ -38,9 +42,11 @@ int main(int argc, char* argv[])
     config_path = "config.xml";
     com = "/dev/ttyUSB0";
     //baud = 460800;
+#ifdef USE_GLOG
     google::InitGoogleLogging((const char *)argv[0]);
     google::SetLogDestination(google::GLOG_INFO, "./log/log");
     LOG(INFO)<<"run";
+#endif
     if(argc==2){
         config_path = (std::string)argv[1];
     } else if(argc == 3){
@@ -54,7 +60,9 @@ int main(int argc, char* argv[])
     navigation::boat boat(config_path);
     //status = boat.StartSerialThread(com, bound);
     boat.Control();
+#ifdef USE_GLOG
     google::ShutdownGoogleLogging();
+#endif
     //boat.KillSerialThread();
     return 0;
 }

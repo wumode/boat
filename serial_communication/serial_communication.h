@@ -29,7 +29,6 @@
 #include <thread>
 #include <map>
 #include <climits>
-#include <glog/logging.h>
 
 #define SERIAL_SIZE 256
 
