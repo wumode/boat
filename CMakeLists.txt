@@ -14,7 +14,7 @@ option (USE_GLOG
         "Use google glog" ON)
 
 
-#add_definitions(-D DEBUG)
+add_definitions(-D DEBUG)
 
 include_directories(geo_to_utm/datum)
 include_directories(geo_to_utm/utm)
@@ -26,12 +26,14 @@ include_directories(3rdparty/nlohmann)
 include_directories(3rdparty)
 include_directories(serial_communication)
 include_directories(socket_communication)
+include_directories(system_detection)
 
 
 add_subdirectory(navigation)
 add_subdirectory(geo_to_utm)
 add_subdirectory(serial_communication)
 add_subdirectory(socket_communication)
+add_subdirectory(system_detection)
 
 add_executable(Ship
         main.cc
@@ -55,14 +57,15 @@ if (USE_GLOG)
     target_link_libraries(Ship glog)
 endif (USE_GLOG)
 
-add_executable(test
+add_executable(Test
         test.cc
         )
 
-target_link_libraries(test
+target_link_libraries(Test
         SerialCommunication
-        Navigation)
+        Navigation
+        SystemDetection)
 
 if (USE_GLOG)
-    target_link_libraries(test glog)
+    target_link_libraries(Test glog)
 endif ()

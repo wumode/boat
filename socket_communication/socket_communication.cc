@@ -52,7 +52,7 @@ namespace socket_communication{
     SocketCommunication::~SocketCommunication() {
         if(client_socket_ptr_){
             CloseSocketReceiveThread();
-            free(client_socket_ptr_);
+            delete client_socket_ptr_;
         }
         callback_function_directory_.clear();
     }
@@ -146,7 +146,7 @@ namespace socket_communication{
             read(*_this->client_socket_ptr_, _this->rx_buffer_, SOCKET_SIZE-1);
             _this->CallFunction(_this->rx_buffer_, (void*)_this);
         }
-        free(_this->client_socket_ptr_);
+        delete _this->client_socket_ptr_;
         _this->client_socket_ptr_ = nullptr;
         return nullptr;
     }

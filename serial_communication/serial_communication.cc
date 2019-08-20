@@ -68,7 +68,7 @@ namespace serial_communication{
     SerialCommunication::~SerialCommunication(){
         if(ser_ptr_){
             CloseSerialReceiveThread();
-            free(ser_ptr_);
+            delete ser_ptr_;
         }
         callback_function_directory_.clear();
     };
@@ -189,7 +189,7 @@ namespace serial_communication{
 
         _this->ser_ptr_->close();
         _this->is_open_ = false;
-        free(_this->ser_ptr_);
+        delete _this->ser_ptr_;
         _this->ser_ptr_ = nullptr;
         return nullptr;
     }

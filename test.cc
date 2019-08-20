@@ -6,7 +6,9 @@
 
 #include <iostream>
 #include <chrono>
+#include <unistd.h>
 #include "point/point.h"
+#include "system_detection.h"
 #include "config.h"
 #ifdef USE_GLOG
     #include <glog/logging.h>
@@ -39,6 +41,17 @@ int main(int argc, char* argv[]){
     google::SetLogDestination(google::GLOG_INFO, "./log/log");
     LOG(INFO)<<"run";
 #endif
+//    system_detection::CoreTemperature c1;
+//    int i = 0;
+//    for (int i = 0; i < 10; ++i) {
+//        std::cout<<c1.Temperature()<<std::endl;
+//        std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)5000));
+//    }
+
+    system_detection::SystemDetection s1;
+    std::cout<<s1.Temperature()<<std::endl;
+    printf("now pid is %d \n", getpid());
+    return 0;
 //    TestMsg t_m_s;
 //    TestMsg t_m_r;
 //    t_m_s.a = 15;

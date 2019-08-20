@@ -187,7 +187,7 @@ namespace navigation
         if(mark_point_flag_){
             mark_point_flag_ = 0;
             point_file_ptr_->close();
-            free(point_file_ptr_);
+            delete point_file_ptr_;
             point_file_ptr_ = nullptr;
         }
         //std::cout<<"ReSetMarkPointFlag"<<std::endl;
