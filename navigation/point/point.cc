@@ -24,6 +24,52 @@
 
 
 namespace navigation{
+    namespace pose{
+        Pose::Pose() {
+            attitude_.yaw = 0.0;
+            attitude_.roll = 0.0;
+            attitude_.pitch = 0.0;
+            attitude_initialized_ = false;
+            position_initialized_ = false;
+            initialized_ = attitude_initialized_&&position_initialized_;
+        }
+
+        Pose::Pose(navigation::point::Point &p, navigation::Angle &a) {
+            position_ = p;
+            attitude_ = a;
+            attitude_initialized_ = true;
+            position_initialized_ = true;
+            initialized_ = attitude_initialized_&&position_initialized_;
+        }
+
+        Pose::Pose(const navigation::pose::Pose &p) {
+            attitude_ = p.attitude_;
+            position_ = p.position_;
+            position_initialized_ = p.position_initialized_;
+            attitude_initialized_ = p.attitude_initialized_;
+            initialized_ = p.initialized_;
+        }
+
+        navigation::Angle Pose::Attitude() const {
+            return attitude_;
+        }
+
+        navigation::point::Point Pose::Position() const {
+            return position_;
+        }
+
+        void Pose::SetAttitude(navigation::Angle &a) {
+            attitude_ = a;
+            attitude_initialized_= true;
+            initialized_ = attitude_initialized_ && position_initialized_;
+        }
+
+        void Pose::SetPosition(navigation::point::Point &p) {
+            position_ = p;
+            position_initialized_ = true;
+            initialized_ = attitude_initialized_ && position_initialized_;
+        }
+    }
     namespace point{
         double Distance(Point* point1, Point* point2){
             double a,b;

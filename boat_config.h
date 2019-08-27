@@ -116,7 +116,8 @@ namespace navigation{
         remote_mode = 1,
         navigation_mode,
         track_mode,
-        attack_mode
+        attack_mode,
+        kDynamicPositioningMode
     }BoatMode;
 
     typedef struct BoatParams{

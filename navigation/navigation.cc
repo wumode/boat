@@ -61,20 +61,23 @@ namespace navigation
         //19-4-9
         GpsToUtm(&now_location_gps_, &measurement_vector_.position);
         GpsToUtm(&key_position_gps_, &key_position_utm_);
-        now_state_.position = measurement_vector_.position;
+        now_state_.position.utm_position = measurement_vector_.position;
 
-        initial_yaw_ = CalcAngleUtm(&key_position_utm_,&now_state_.position);
-        now_state_.attitude_angle = initial_yaw_;
+        initial_yaw_ = CalcAngleUtm(&key_position_utm_,&now_state_.position.utm_position);
+        now_state_.angle.yaw = initial_yaw_;
         now_state_.angular_velocity.z = 0;
         now_state_.line_velocity.x = 0.0;
         now_state_.line_velocity.y = 0.0;
+        now_state_.angle.pitch = 0.0;
+        now_state_.angle.roll = 0.0;
+        now_state_.position.height = 0.0;
 
         measurement_vector_.imu_data.angle.yaw = initial_yaw_;
         measurement_vector_.imu_data.linear_acceleration.x = 0.0;
         measurement_vector_.imu_data.linear_acceleration.y = 0.0;
         measurement_vector_.imu_data.angular_velocity.z = 0.0;
 
-        GpsToUtm(&now_location_gps_, &now_state_.position);
+        GpsToUtm(&now_location_gps_, &now_state_.position.utm_position);
         GpsToUtm(&key_position_gps_, &key_position_utm_);
         now_timestamp_ = std::chrono::steady_clock::now();
 
@@ -204,8 +207,8 @@ namespace navigation
     bool Navigation::KalmanFilterInitialization_(){
         //last_timestamp_ = now_timestamp_;
         Eigen::VectorXd x_in(6, 1);
-        x_in << now_state_.position.x, now_state_.position.y, now_state_.attitude_angle,0.0, 0.0, 0.0;
-        LOG(INFO)<<"kalman init --- "<<"utm x: "<<now_state_.position.x<<" utm y: "<<now_state_.position.y<<std::endl;
+        x_in << now_state_.position.utm_position.x, now_state_.position.utm_position.y, now_state_.angle.yaw, 0.0, 0.0, 0.0;
+        LOG(INFO)<<"kalman init --- "<<"utm x: "<<now_state_.position.utm_position.x<<" utm y: "<<now_state_.position.utm_position.y<<std::endl;
         kf_.Initialization(x_in);
         //std::cout<<" x_in: "<<x_in<<" ";
         Eigen::MatrixXd P_in(6, 6);
@@ -306,9 +309,9 @@ namespace navigation
         kf_.MeasurementUpdate(z);
         Eigen::VectorXd x_out = kf_.GetX();
 
-        now_state_.position.x = x_out(0);
-        now_state_.position.y = x_out(1);
-        now_state_.attitude_angle = x_out(2);
+        now_state_.position.utm_position.x = x_out(0);
+        now_state_.position.utm_position.y = x_out(1);
+        now_state_.angle.yaw = x_out(2);
         now_state_.line_velocity.x = x_out(3);
         now_state_.line_velocity.y = x_out(4);
          //LOG(INFO)<<"kalman output --- "<<"utm x: "<<now_state_.position.x<<"utm y: "<<now_state_.position.y<<std::endl;
@@ -331,8 +334,8 @@ namespace navigation
      */
      ///自主航行的所有计算在NavigationCalculation中调用
     void Navigation::NavigationCalculation(){
-        float route_angle;
-        float distance = CalcDistanceUtm(&key_position_utm_, &now_state_.position);
+        double route_angle;
+        double distance = CalcDistanceUtm(&key_position_utm_, &now_state_.position.utm_position);
         if(distance<navigation_parameter_.min_distance){
             if(key_position_gps_num_ == locus_points_.size()-1)
             {
@@ -344,12 +347,12 @@ namespace navigation
                 GpsToUtm(&key_position_gps_, &key_position_utm_);
             }
         }
-        route_angle = CalcAngleUtm(&key_position_utm_, &now_state_.position);
-        if(fabs(now_state_.attitude_angle)>1000*M_PI){
-            now_state_.attitude_angle = 0.0;
-            LOG(ERROR)<<"attitude_angle error: "<<now_state_.attitude_angle<<std::endl;
+        route_angle = CalcAngleUtm(&key_position_utm_, &now_state_.position.utm_position);
+        if(fabs(now_state_.angle.yaw)>1000*M_PI){
+            now_state_.angle.yaw = 0.0;
+            LOG(ERROR)<<"attitude_angle error: "<<now_state_.angle.yaw<<std::endl;
         }
-        yaw = CalcYaw(&route_angle, &now_state_.attitude_angle);
+        yaw = CalcYaw(&route_angle, &now_state_.angle.yaw);
     }
 
 

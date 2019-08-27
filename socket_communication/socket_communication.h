@@ -24,15 +24,12 @@
 #define SHIP_SOCKETCOMMUNICATION_H
 
 #include <string>
-#include <serial/serial.h>
 #include <iostream>
 #include <thread>
 #include <map>
 #include <json.hpp>
 #include <climits>
 #include <arpa/inet.h>
-#include <stdio.h>
-#include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -99,12 +96,13 @@ namespace socket_communication {
             const uint8_t * str_send;
             string_send = j.dump();
             str_send = (const uint8_t *)string_send.c_str();
-            LOG(INFO) << "socket send: "<<str_send << std::endl;
+            //LOG(INFO) << "socket send: "<<str_send << std::endl;
             while(is_sending_){
                 std::this_thread::sleep_for(std::chrono:: microseconds (500));
             }
             is_sending_ = true;
-            write(*client_socket_ptr_, str_send, strlen((const char*)str_send));
+            char temp;
+            temp = write(*client_socket_ptr_, str_send, strlen((const char*)str_send));
             //std::cout<<"write"<<std::endl;
 //            ser_ptr_->write((const uint8_t*)tx_buffer_, data_length+5);
             is_sending_ = false;

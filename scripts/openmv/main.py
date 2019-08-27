@@ -21,13 +21,13 @@ down_servo_zero_position = 1440
 up_servo.pulse_width(up_servo_zero_position)
 down_servo.pulse_width(down_servo_zero_position)
 
-kp_up = -2.6
-ki_up = -0.42
-kd_up = -0.43
+kp_up = -0.08
+ki_up = -0.45
+kd_up = -0.0
 
-kp_down = 3.19
-ki_down = 0.46
-kd_down = 0.43
+kp_down = 0.08
+ki_down = 0.45
+kd_down = 0.02
 
 #kp_down = 2.5
 #ki_down = 0
@@ -61,7 +61,7 @@ mode_choose = -1
 mode_choose_last = -1
 mode_flag = 0
 stop_flag = 0
-EXPOSURE_TIME_SCALE = 0.50 #曝光值
+EXPOSURE_TIME_SCALE = 0.80 #曝光值
 
 # up_servo.pulse_width(1600)
 
@@ -119,11 +119,12 @@ while(True):
     # mode_choose = 2
     # continue
     if mode_choose != 1 and mode_choose != 2 and mode_choose != 3:
-        print("while: %d" % mode_choose)
+        # print("while: %d" % mode_choose)
         mode_choose = mode_choose_last
-        print("real: %d" % mode_choose)
+        # print("real: %d" % mode_choose)
     # print("NOW: %d" % mode_choose)
     mode_choose_last = mode_choose
+    # mode_choose = 2
     if mode_choose == 2:#打气球程序段
         # clock.tick()
         img = sensor.snapshot()

@@ -31,6 +31,18 @@
 
 namespace navigation
 {
+    typedef struct Angle{
+        volatile double roll = 0.0;
+        volatile double pitch = 0.0;
+        volatile double yaw = 0.0;
+    }Angle;
+
+    typedef struct fAngle{
+        volatile float roll = 0.0;
+        volatile float pitch = 0.0;
+        volatile float yaw = 0.0;
+    }fAngle;
+
     typedef struct GpsPosition{
         volatile double latitude = 0.0;
         volatile double longitude = 0.0;
@@ -42,6 +54,11 @@ namespace navigation
         GridZone gridZone = GRID_AUTO;
         Hemisphere hemisphere = HEMI_AUTO;
     }UtmPosition;
+
+    typedef struct Position{
+        UtmPosition utm_position;
+        double height;
+    }Position;
 
     inline void GpsToUtm(const GpsPosition* gps_position, UtmPosition* utm_position){
         double lat = gps_position->latitude/180.0*M_PI;
@@ -76,12 +93,10 @@ namespace navigation
     }
 
     namespace point{
-
         enum class CoordinateSystem{
             kWgs84Coordinate = 1,
             kUtmCoordinate = 2
         };
-
         class Point {
         public:
             Point();
@@ -108,6 +123,27 @@ namespace navigation
 
         double Distance(Point* point1, Point* point2);
         double CalcAngle(Point* end_point, Point* starting_point);
+    }
+
+    namespace pose{
+        class Pose{
+        public:
+            Pose();
+            Pose(navigation::point::Point& p, navigation::Angle& a);
+            Pose(const Pose& p);
+            navigation::Angle Attitude() const;
+            navigation::point::Point Position() const;
+            void SetPosition(navigation::point::Point& p);
+            void SetAttitude(Angle& a);
+
+
+        private:
+            navigation::point::Point position_;
+            navigation::Angle attitude_;
+            bool initialized_;
+            bool attitude_initialized_;
+            bool position_initialized_;
+        };
     }
 }
 

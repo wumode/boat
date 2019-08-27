@@ -28,9 +28,53 @@
 #include <string>
 #include <cstring>
 #include <unistd.h>
+#include <pwd.h>
+
+#define VMRSS_LINE 17
+#define VMSIZE_LINE 13
+#define PROCESS_ITEM 14
 
 namespace system_detection{
+    typedef struct {
+        unsigned long user;
+        unsigned long nice;
+        unsigned long system;
+        unsigned long idle;
+    }Total_Cpu_Occupy_t;
 
+    typedef struct {
+        unsigned int pid;
+        unsigned long utime;  //user time
+        unsigned long stime;  //kernel time
+        unsigned long cutime; //all user time
+        unsigned long cstime; //all dead time
+    }Proc_Cpu_Occupy_t;
+
+    class ProcessInformation{
+    public:
+        ProcessInformation();
+        explicit ProcessInformation(int pid);
+        explicit ProcessInformation(const char* process_name);
+        ProcessInformation(const char* process_name, const char* user);
+        int Pid();
+        float Cpu();
+        uint32_t Mem();
+        uint32_t VirtualMem();
+
+    private:
+        uint16_t pid_;
+        float pcpu_;     //CPU占用率
+        uint32_t procmem_;   //进程占用内存
+        uint32_t virtualmem_;    //进程占用虚拟内存
+        const char* get_items(const char*buffer ,unsigned int item);
+        unsigned long get_cpu_total_occupy();
+        unsigned long get_cpu_proc_occupy(unsigned int pid);
+        float get_proc_cpu(unsigned int pid);
+        unsigned int get_proc_mem(unsigned int pid);
+        unsigned int get_proc_virtualmem(unsigned int pid);
+        int get_pid(const char* process_name, const char* user = nullptr);
+        std::string User();
+    };
     class CoreTemperature{
     public:
         CoreTemperature();

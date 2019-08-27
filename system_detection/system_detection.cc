@@ -23,6 +23,228 @@
 #include "system_detection.h"
 
 namespace system_detection{
+    ProcessInformation::ProcessInformation() {
+        pid_ = getpid();
+        pcpu_ = get_proc_cpu(pid_);
+        procmem_ = get_proc_mem(pid_);
+        virtualmem_ = get_proc_virtualmem(pid_);
+    }
+
+    ProcessInformation::ProcessInformation(int pid){
+        pid_ = pid;
+        pcpu_ = get_proc_cpu(pid_);
+        procmem_ = get_proc_mem(pid_);
+        virtualmem_ = get_proc_virtualmem(pid_);
+    }
+
+    ProcessInformation::ProcessInformation(const char *process_name) {
+        pid_= get_pid(process_name);
+        pcpu_ = get_proc_cpu(pid_);
+        procmem_ = get_proc_mem(pid_);
+        virtualmem_ = get_proc_virtualmem(pid_);
+    }
+
+    ProcessInformation::ProcessInformation(const char *process_name, const char *user) {
+        pid_= get_pid(process_name, user);
+        pcpu_ = get_proc_cpu(pid_);
+        procmem_ = get_proc_mem(pid_);
+        virtualmem_ = get_proc_virtualmem(pid_);
+    }
+
+    float ProcessInformation::Cpu() {
+        pcpu_ = get_proc_cpu(pid_);
+        return pcpu_;
+    }
+
+    uint32_t ProcessInformation::Mem() {
+        procmem_ = get_proc_mem(pid_);
+        return procmem_;
+    }
+
+    uint32_t ProcessInformation::VirtualMem() {
+        virtualmem_ = get_proc_virtualmem(pid_);
+        return virtualmem_;
+    }
+
+    int ProcessInformation::Pid() {
+        return pid_;
+    }
+
+    const char* ProcessInformation::get_items(const char*buffer ,unsigned int item){
+        const char *p =buffer;
+        int len = strlen(buffer);
+        int count = 0;
+        for (int i=0; i<len;i++){
+            if (' ' == *p){
+                count ++;
+                if(count == item -1){
+                    p++;
+                    break;
+                }
+            }
+            p++;
+        }
+        return p;
+    }
+
+
+//获取总的CPU时间
+    unsigned long ProcessInformation::get_cpu_total_occupy(){
+
+        FILE *fd;
+        char buff[1024]={0};
+        Total_Cpu_Occupy_t t;
+
+        fd =fopen("/proc/stat","r");
+        if (nullptr == fd){
+            return 0;
+        }
+        char* temp;
+        temp = fgets(buff,sizeof(buff),fd);
+        char name[64]={0};
+        sscanf(buff,"%s %ld %ld %ld %ld",name,&t.user,&t.nice,&t.system,&t.idle);
+        fclose(fd);
+
+        return (t.user + t.nice + t.system + t.idle);
+    }
+
+
+//获取进程的CPU时间
+    unsigned long ProcessInformation::get_cpu_proc_occupy(unsigned int pid){
+
+        char file_name[64]={0};
+        Proc_Cpu_Occupy_t t;
+        FILE *fd;
+        char line_buff[1024]={0};
+        sprintf(file_name,"/proc/%d/stat",pid);
+
+        fd = fopen(file_name,"r");
+        if(nullptr == fd){
+            return 0;
+        }
+        char* temp;
+        temp = fgets(line_buff,sizeof(line_buff),fd);
+
+        sscanf(line_buff,"%u",&t.pid);
+        const char *q =get_items(line_buff,PROCESS_ITEM);
+        sscanf(q,"%ld %ld %ld %ld",&t.utime,&t.stime,&t.cutime,&t.cstime);
+        fclose(fd);
+
+        return (t.utime + t.stime + t.cutime + t.cstime);
+    }
+
+
+//获取CPU占用率
+    float ProcessInformation::get_proc_cpu(unsigned int pid){
+
+        unsigned long totalcputime1,totalcputime2;
+        unsigned long procputime1,procputime2;
+
+        totalcputime1=get_cpu_total_occupy();
+        procputime1=get_cpu_proc_occupy(pid);
+
+        usleep(200000);
+
+        totalcputime2=get_cpu_total_occupy();
+        procputime2=get_cpu_proc_occupy(pid);
+
+        float pcpu = 0.0;
+        if(0 != totalcputime2-totalcputime1){
+            pcpu=100.0 * (procputime2-procputime1)/(totalcputime2-totalcputime1);
+        }
+
+        return pcpu;
+    }
+
+
+    //获取进程占用内存
+    unsigned int ProcessInformation::get_proc_mem(unsigned int pid){
+
+        char file_name[64]={0};
+        FILE *fd;
+        char line_buff[512]={0};
+        sprintf(file_name,"/proc/%d/status",pid);
+
+        fd =fopen(file_name,"r");
+        if(nullptr == fd){
+            return 0;
+        }
+
+        char name[64];
+        int vmrss;
+        char* temp;
+        for (int i=0; i<VMRSS_LINE-1;i++){
+            temp = fgets(line_buff,sizeof(line_buff),fd);
+        }
+
+        temp = fgets(line_buff,sizeof(line_buff),fd);
+        sscanf(line_buff,"%s %d",name,&vmrss);
+        fclose(fd);
+
+        return vmrss;
+    }
+
+    unsigned int ProcessInformation::get_proc_virtualmem(unsigned int pid){
+
+        char file_name[64]={0};
+        FILE *fd;
+        char line_buff[512]={0};
+        sprintf(file_name,"/proc/%d/status",pid);
+
+        fd =fopen(file_name,"r");
+        if(nullptr == fd){
+            return 0;
+        }
+
+        char name[64];
+        int vmsize;
+        char* temp;
+        for (int i=0; i<VMSIZE_LINE-1;i++){
+            temp = fgets(line_buff,sizeof(line_buff),fd);
+        }
+
+        temp = fgets(line_buff,sizeof(line_buff),fd);
+        sscanf(line_buff,"%s %d",name,&vmsize);
+        fclose(fd);
+
+        return vmsize;
+    }
+
+    int ProcessInformation::get_pid(const char* process_name, const char* user )
+    {
+        if(user == nullptr){
+            user = User().c_str();
+        }
+
+        char cmd[512];
+        if (user){
+            sprintf(cmd, "pgrep %s -u %s", process_name, user);
+        }
+
+        FILE *pstr = popen(cmd,"r");
+
+        if(pstr == nullptr){
+            return 0;
+        }
+
+        char buff[512];
+        ::memset(buff, 0, sizeof(buff));
+        if(NULL == fgets(buff, 512, pstr)){
+            return 0;
+        }
+
+        return atoi(buff);
+    }
+
+    std::string ProcessInformation::User()
+    {
+        uid_t user_id;
+        struct passwd* pwd;
+        user_id=getuid();
+        pwd=getpwuid(user_id);
+        return pwd->pw_name;
+    }
+
     CoreTemperature::CoreTemperature() {
         core_temperature_ = 0.0;
         temperature_file_path_ = "/sys/class/thermal/thermal_zone0/temp";

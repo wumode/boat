@@ -31,8 +31,8 @@ namespace navigation {
     }
 
     void from_json(const json &j, navigation::GpsPosition &gpsPosition) {
-        gpsPosition.longitude = j.at("longitude").get<float>();
-        gpsPosition.latitude = j.at("latitude").get<float>();
+        gpsPosition.longitude = j.at("longitude").get<double>();
+        gpsPosition.latitude = j.at("latitude").get<double>();
     }
 
     void to_json(json &j, const navigation::UtmPosition &utmPosition) {
@@ -43,8 +43,8 @@ namespace navigation {
     }
 
     void from_json(const json &j, navigation::UtmPosition &utmPosition) {
-        utmPosition.x = j.at("x").get<float>();
-        utmPosition.y = j.at("y").get<float>();
+        utmPosition.x = j.at("x").get<double>();
+        utmPosition.y = j.at("y").get<double>();
         utmPosition.gridZone = (GridZone) j.at("GridZone").get<int>();
         utmPosition.hemisphere = (Hemisphere) j.at("GridZone").get<int>();
     }
@@ -55,8 +55,8 @@ namespace navigation {
     }
 
     void from_json(const json &j, navigation::LinearAcceleration &linearAcceleration) {
-        linearAcceleration.x = j.at("x").get<float>();
-        linearAcceleration.y = j.at("y").get<float>();
+        linearAcceleration.x = j.at("x").get<double>();
+        linearAcceleration.y = j.at("y").get<double>();
     }
 
     void to_json(json &j, const navigation::AngularVelocity &angular_velocity) {
@@ -64,7 +64,7 @@ namespace navigation {
     }
 
     void from_json(const json &j, navigation::AngularVelocity &angular_velocity) {
-        angular_velocity.z = j.at("z").get<float>();
+        angular_velocity.z = j.at("z").get<double>();
     }
 
     void to_json(json &j, const navigation::Angle &angle) {
@@ -74,9 +74,9 @@ namespace navigation {
     }
 
     void from_json(const json &j, navigation::Angle &angle) {
-        angle.yaw = j.at("yaw").get<float>();
-        angle.pitch = j.at("pitch").get<float>();
-        angle.roll = j.at("roll").get<float>();
+        angle.yaw = j.at("yaw").get<double>();
+        angle.pitch = j.at("pitch").get<double>();
+        angle.roll = j.at("roll").get<double>();
     }
 
     void to_json(json &j, const navigation::ImuData &imuData) {
@@ -129,6 +129,24 @@ namespace navigation {
 
 }
 namespace navigation{
+    namespace mode{
+        DynamicPositioning::DynamicPositioning() {
+            az_lower_limit_ = 0.0;
+            az_upper_limit_ = 0.0;
+        }
+//        DynamicPositioning::DynamicPositioning(navigation::pose::Pose &pose) {
+//            pose_ = pose;
+//        }
+
+        DynamicPositioning::DynamicPositioning(navigation::pose::Pose &pose, double kp, double ki, double kd, double az_upper_limit, double az_lower_limit) {
+            az_lower_limit_ = az_lower_limit;
+            az_upper_limit_ = az_upper_limit;
+            pose_ = pose;
+            yaw_pid_controller_ = algorithm::PidController(kp, ki, kd);
+            yaw_pid_controller_.SetLimit(az_upper_limit_, az_lower_limit_);
+        }
+    }
+
     /**
      * @param navigation_config_path
      */
@@ -282,6 +300,7 @@ namespace navigation{
             case (int)navigation_mode:
             case (int)track_mode:
             case (int)attack_mode:
+            case (int)kDynamicPositioningMode:
                 boatParams.boatMode = (BoatMode)mode_flag;
                 break;
             default:
@@ -334,6 +353,7 @@ namespace navigation{
                 case (int)navigation_mode:
                 case (int)track_mode:
                 case (int)attack_mode:
+                case (int)kDynamicPositioningMode:
                     _this->boat_mode_ = (BoatMode)s_r.mode;
                     LOG(INFO)<<"switch boat mode: "<<_this->boat_mode_;
                     break;
@@ -408,13 +428,13 @@ namespace navigation{
         if(socket_com_ptr_->IsOpen()){
             SocketShow s_s;
             GpsPosition gps_p;
-            UtmToGps(&now_state_.position, &gps_p);
+            UtmToGps(&now_state_.position.utm_position, &gps_p);
             //LOG(INFO)<<"socket send --- "<<"utm x: "<<now_state_.position.x<<"utm y: "<<now_state_.position.y<<std::endl;
             GetLocusPoints_(s_s.route_gps_positions);
             s_s.imu_data = imu_data_;
-            s_s.imu_data.angle.yaw = now_state_.attitude_angle;
+            s_s.imu_data.angle.yaw = now_state_.angle.yaw;
             s_s.locking = locking_trans_.locking;
-            s_s.utm_position = now_state_.position;
+            s_s.utm_position = now_state_.position.utm_position;
             s_s.raw_gps_position = gps_data_.gps_position;
             s_s.gps_position = gps_p;
             s_s.speed = gps_data_.speed;
@@ -465,7 +485,7 @@ namespace navigation{
         _this->imu_data_.linear_acceleration.x = imu_trans->linear_acceleration_x;
         _this->imu_data_.linear_acceleration.y = imu_trans->linear_acceleration_y;
 
-        float a_a = _this->now_state_.attitude_angle;
+        float a_a = _this->now_state_.angle.yaw;
         ax = cos(_this->imu_data_.angle.pitch)*_this->imu_data_.linear_acceleration.x*cos(a_a)-
                 _this->imu_data_.linear_acceleration.y*sin(a_a);
         ay = cos(_this->imu_data_.angle.pitch)*_this->imu_data_.linear_acceleration.x*sin(a_a)+

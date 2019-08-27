@@ -27,6 +27,8 @@ include_directories(3rdparty)
 include_directories(serial_communication)
 include_directories(socket_communication)
 include_directories(system_detection)
+include_directories(algorithm)
+include_directories(3rdparty/socket)
 
 
 add_subdirectory(navigation)
@@ -34,6 +36,7 @@ add_subdirectory(geo_to_utm)
 add_subdirectory(serial_communication)
 add_subdirectory(socket_communication)
 add_subdirectory(system_detection)
+add_subdirectory(algorithm)
 
 add_executable(Ship
         main.cc
@@ -51,7 +54,8 @@ add_executable(Ship
 target_link_libraries(Ship rt crypt
         Navigation
         SerialCommunication
-        SocketCommunication)
+        SocketCommunication
+        Algorithm)
 
 if (USE_GLOG)
     target_link_libraries(Ship glog)
@@ -64,8 +68,12 @@ add_executable(Test
 target_link_libraries(Test
         SerialCommunication
         Navigation
-        SystemDetection)
+        SystemDetection
+        Algorithm)
 
 if (USE_GLOG)
     target_link_libraries(Test glog)
 endif ()
+
+add_executable(server c_socket/server.cc)
+add_executable(client c_socket/client.cc)

@@ -62,7 +62,8 @@ namespace socket_communication{
         *client_socket_ptr_ = socket(AF_INET, SOCK_STREAM, 0);
         if (*client_socket_ptr_ == -1) {
             //perror("socket");
-            LOG(ERROR)<<"socket error\n";
+            //LOG(ERROR)<<"socket error\n";
+            std::cerr<<"socket error"<<std::endl;
             return false;
         }
         struct sockaddr_in addr;
@@ -74,7 +75,8 @@ namespace socket_communication{
         int addrlen = sizeof(addr);
         int listen_socket = connect(*client_socket_ptr_, (struct sockaddr *)&addr, addrlen);
         if (listen_socket == -1) {
-            LOG(ERROR)<<"connect "<<host_<<":"<<port_<<" error\n";
+            //LOG(ERROR)<<"connect "<<host_<<":"<<port_<<" error";
+            std::cerr<<"connect "<<host_<<":"<<port_<<" error"<<std::endl;
             return false;
         }
         is_open_ = true;
@@ -89,7 +91,8 @@ namespace socket_communication{
         *client_socket_ptr_ = socket(AF_INET, SOCK_STREAM, 0);
         if (*client_socket_ptr_ == -1) {
             //perror("socket");
-            LOG(ERROR)<<"socket error\n";
+            //LOG(ERROR)<<"socket error";
+            std::cerr<<"socket error"<<std::endl;
             return false;
         }
         struct sockaddr_in addr;
@@ -102,7 +105,8 @@ namespace socket_communication{
         int addrlen = sizeof(addr);
         int listen_socket = connect(*client_socket_ptr_, (struct sockaddr *)&addr, addrlen);
         if (listen_socket == -1) {
-            LOG(ERROR)<<"connect "<<host_<<":"<<port_<<" error\n";
+            //LOG(ERROR)<<"connect "<<host_<<":"<<port_<<" error";
+            std::cerr<<"connect "<<host_<<":"<<port_<<" error"<<std::endl;
             return false;
         }
         host_ = host;
@@ -143,9 +147,11 @@ namespace socket_communication{
         //char buf[SIZE];
         while (_this->socket_thread_){
             memset(_this->rx_buffer_,'\0', SOCKET_SIZE);
-            read(*_this->client_socket_ptr_, _this->rx_buffer_, SOCKET_SIZE-1);
+            char temp;
+            temp = read(*_this->client_socket_ptr_, _this->rx_buffer_, SOCKET_SIZE-1);
             _this->CallFunction(_this->rx_buffer_, (void*)_this);
         }
+        close(*_this->client_socket_ptr_);
         delete _this->client_socket_ptr_;
         _this->client_socket_ptr_ = nullptr;
         return nullptr;
@@ -153,7 +159,9 @@ namespace socket_communication{
 
     void SocketCommunication::CloseSocketReceiveThread() {
         socket_thread_ = false;
-        while(client_socket_ptr_!= nullptr);
+        while(client_socket_ptr_!= nullptr){
+            std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)50));
+        };
         is_open_ = false;
     }
 

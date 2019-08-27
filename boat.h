@@ -20,8 +20,6 @@
 //
 
 #include <arpa/inet.h>
-#include <stdio.h>
-#include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -30,12 +28,26 @@
 #include <json.hpp>
 #include <serial_communication.h>
 #include <socket_communication.h>
+#include <algorithm.h>
 #include "boat_config.h"
 #ifndef SHIP_BOAT_H
 #define SHIP_BOAT_H
 
 
 namespace navigation {
+    namespace mode{
+        class DynamicPositioning{
+        public:
+            DynamicPositioning();
+            //DynamicPositioning(navigation::pose::Pose& pose);
+            DynamicPositioning(navigation::pose::Pose& pose, double kp, double ki, double kd, double az_upper_limit_, double az_lower_limit_);
+        private:
+            navigation::pose::Pose pose_;
+            algorithm::PidController yaw_pid_controller_;
+            double az_upper_limit_;
+            double az_lower_limit_;
+        };
+    }
     /**
      * @class Boat: 船类
      * @param navigation_config_path: 配置文件路径

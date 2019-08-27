@@ -4,5 +4,7 @@ build/
 log/
 scripts/static/map.js
 *.key
+*.dat
 config.h
 points.txt
+test.py

@@ -31,53 +31,73 @@
 #include "point/point.h"
 
 
-
 namespace navigation{
 
-typedef struct LinearAcceleration{
-    volatile float x;
-    volatile float y;
-    //float z;
-}LinearAcceleration;
+    typedef struct LinearAcceleration{
+        volatile double x;
+        volatile double y;
+        volatile double z;
+    }LinearAcceleration;
 
-typedef struct LinearVelocity{
-    volatile float x;
-    volatile float y;
-    //float z;
-}LinearVelocity;
+    typedef struct LinearVelocity{
+        volatile double x;
+        volatile double y;
+        volatile double z;
+    }LinearVelocity;
 
-typedef struct AngularVelocity{
-    //float x;
-    //float y;
-    volatile float z;
-}AngularVelocity;
+    typedef struct AngularVelocity{
+        volatile double x;
+        volatile double y;
+        volatile double z;
+    }AngularVelocity;
 
-typedef struct Angle{
-    volatile float roll;
-    volatile float pitch;
-    volatile float yaw;
-}Angle;
+    typedef struct fLinearAcceleration{
+        volatile float x;
+        volatile float y;
+        volatile float z;
+    }fLinearAcceleration;
 
-typedef struct ImuData{
-    Angle angle;
-    AngularVelocity angular_velocity;
-    LinearAcceleration linear_acceleration;
-}ImuData;
+    typedef struct fLinearVelocity{
+        volatile float x;
+        volatile float y;
+        volatile float z;
+    }fLinearVelocity;
 
+    typedef struct fAngularVelocity{
+        volatile float x;
+        volatile float y;
+        volatile float z;
+    }fAngularVelocity;
 
+    typedef struct Velocity{
+        AngularVelocity angular_velocity;
+        LinearVelocity linear_velocity;
+    }Velocity;
 
-typedef struct GpsData
-{
-    navigation::GpsPosition gps_position;
-    volatile float speed;
-}GpsData;
+    typedef struct ImuData{
+        navigation::Angle angle;
+        navigation::AngularVelocity angular_velocity;
+        navigation::LinearAcceleration linear_acceleration;
+    }ImuData;
 
-typedef struct StateVector{
-    navigation::UtmPosition position;                //UTM坐标
-    float attitude_angle;               //姿态角
-    LinearVelocity line_velocity;       //线速度
-    AngularVelocity angular_velocity;   //角速度
-}StateVector;
+    typedef struct fGpsPosition{
+        volatile float latitude = 0.0;
+        volatile float longitude = 0.0;
+    }fGpsPosition;
+
+    typedef struct GpsData
+    {
+        navigation::GpsPosition gps_position;
+        volatile double speed;
+    }GpsData;
+
+    typedef struct StateVector{
+        //navigation::UtmPosition position;                //UTM坐标
+        navigation::Position position;
+        Angle angle;              //姿态角
+        LinearVelocity line_velocity;       //线速度
+        AngularVelocity angular_velocity;   //角速度
+    }StateVector;
 
 typedef struct MeasurementVector
 {
@@ -105,7 +125,6 @@ typedef struct MarkPointParameter{
     float period;
 }MarkPointParameter;
 
-
 inline void GpsToUtmPartition(const GpsPosition* gpsPosition, GridZone* gridZone, Hemisphere* hemisphere){
     double lat = gpsPosition->latitude/180.0*M_PI;
     double lon = gpsPosition->longitude/180.0*M_PI;
@@ -115,15 +134,15 @@ inline void GpsToUtmPartition(const GpsPosition* gpsPosition, GridZone* gridZone
 }
 
 inline float CalcDistanceUtm(UtmPosition* key_position,UtmPosition* now_position){
-    float a,b;
+    double a,b;
     a = key_position->x - now_position->x;
     b = key_position->y - now_position->y;
     return sqrt(a*a+b*b);
 }
 
 
-inline float CalcYaw(const float* route_angle, const float* attitude_angle){
-    float attitude = *attitude_angle;
+inline double CalcYaw(const double* route_angle, const volatile double* attitude_angle){
+    double attitude = *attitude_angle;
     if(fabs(attitude)>1024*M_PI){
         return 0.0;
     }
