@@ -33,6 +33,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <cerrno>
 #include <glog/logging.h>
 
 #define SOCKET_SIZE 2048
@@ -61,6 +62,7 @@ namespace socket_communication {
         static void* SocketPortReceive(void* __this);
         bool StartSocketReceiveThread();
         bool StartSocketReceiveThread(const std::string& host, uint16_t port);
+        bool StartSocketReceiveThread(const std::string& host, uint16_t port, void* __this);
         void CloseSocketReceiveThread();
         void SetCallBackFunction(callBack callBack1, uint8_t flag, void* this_);
         template <typename T> void SendData(const T& data, uint8_t flag);
@@ -106,6 +108,8 @@ namespace socket_communication {
             //std::cout<<"write"<<std::endl;
 //            ser_ptr_->write((const uint8_t*)tx_buffer_, data_length+5);
             is_sending_ = false;
+        } else{
+            std::cerr<<"Failed to send data, socket has closed"<<std::endl;
         }
     };
 }

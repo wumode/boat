@@ -83,7 +83,7 @@ namespace navigation{
         navigation::UtmPosition utm_position;
         uint8_t locking;
         navigation::ImuData imu_data;
-        float speed;
+        double speed;
     }SocketShow;
 
 

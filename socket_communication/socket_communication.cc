@@ -58,9 +58,50 @@ namespace socket_communication{
     }
 
     bool SocketCommunication::StartSocketReceiveThread() {
-        client_socket_ptr_ = new int;
-        *client_socket_ptr_ = socket(AF_INET, SOCK_STREAM, 0);
-        if (*client_socket_ptr_ == -1) {
+        return StartSocketReceiveThread(host_, port_);
+    }
+
+    bool SocketCommunication::StartSocketReceiveThread(const std::string &host, uint16_t port) {
+//        client_socket_ptr_ = new int;
+//        *client_socket_ptr_ = socket(AF_INET, SOCK_STREAM, 0);
+//        if (*client_socket_ptr_ == -1) {
+//            //perror("socket");
+//            //LOG(ERROR)<<"socket error\n";
+//            std::cerr<<"socket error"<<std::endl;
+//            return false;
+//        }
+//        struct sockaddr_in addr;
+//        memset(&addr, 0, sizeof(addr));
+//        addr.sin_family = AF_INET;
+//        addr.sin_port = htons(port_);
+//        addr.sin_addr.s_addr = htonl(INADDR_ANY);
+//        inet_aton(host_.c_str(), &(addr.sin_addr));
+//        int addrlen = sizeof(addr);
+//        int listen_socket = connect(*client_socket_ptr_, (struct sockaddr *)&addr, addrlen);
+//        if (listen_socket == -1) {
+//            //LOG(ERROR)<<"connect "<<host_<<":"<<port_<<" error";
+//            std::cerr<<"connect "<<host_<<":"<<port_<<" error"<<std::endl;
+//            return false;
+//        }
+//        struct timeval timeout={0,1000};
+//        int ret=setsockopt(*client_socket_ptr_,SOL_SOCKET,SO_SNDTIMEO,(const char*)&timeout,sizeof(timeout));
+//        if(ret == -1){
+//            std::cerr<<"Failed to set socket timeout"<<std::endl;
+//        }
+//        is_open_ = true;
+//        socket_thread_ = true;
+//        pthread_t pth;
+//        pthread_create(&pth, nullptr,SocketPortReceive, (void*)this);
+        port_ = port;
+        host_ = host;
+        return StartSocketReceiveThread(host_, port_, this);;
+    }
+
+    bool SocketCommunication::StartSocketReceiveThread(const std::string &host, uint16_t port, void *__this) {
+        auto* _this = (SocketCommunication*)__this;
+        _this->client_socket_ptr_ = new int;
+        *_this->client_socket_ptr_ = socket(AF_INET, SOCK_STREAM, 0);
+        if (*_this->client_socket_ptr_ == -1) {
             //perror("socket");
             //LOG(ERROR)<<"socket error\n";
             std::cerr<<"socket error"<<std::endl;
@@ -69,52 +110,27 @@ namespace socket_communication{
         struct sockaddr_in addr;
         memset(&addr, 0, sizeof(addr));
         addr.sin_family = AF_INET;
-        addr.sin_port = htons(port_);
+        addr.sin_port = htons(_this->port_);
         addr.sin_addr.s_addr = htonl(INADDR_ANY);
-        inet_aton(host_.c_str(), &(addr.sin_addr));
+        inet_aton(_this->host_.c_str(), &(addr.sin_addr));
         int addrlen = sizeof(addr);
-        int listen_socket = connect(*client_socket_ptr_, (struct sockaddr *)&addr, addrlen);
+        int listen_socket = connect(*_this->client_socket_ptr_, (struct sockaddr *)&addr, addrlen);
         if (listen_socket == -1) {
             //LOG(ERROR)<<"connect "<<host_<<":"<<port_<<" error";
-            std::cerr<<"connect "<<host_<<":"<<port_<<" error"<<std::endl;
+            std::cerr<<"connect "<<_this->host_<<":"<<_this->port_<<" error"<<std::endl;
             return false;
         }
-        is_open_ = true;
-        socket_thread_ = true;
+        struct timeval timeout={0,1000};
+        int ret=setsockopt(*_this->client_socket_ptr_,SOL_SOCKET,SO_SNDTIMEO,(const char*)&timeout,sizeof(timeout));
+        if(ret == -1){
+            std::cerr<<"Failed to set socket timeout"<<std::endl;
+        }
+        _this->is_open_ = true;
+        _this->socket_thread_ = true;
         pthread_t pth;
         pthread_create(&pth, nullptr,SocketPortReceive, (void*)this);
-        return true;
-    }
-
-    bool SocketCommunication::StartSocketReceiveThread(const std::string &host, uint16_t port) {
-        client_socket_ptr_ = new int;
-        *client_socket_ptr_ = socket(AF_INET, SOCK_STREAM, 0);
-        if (*client_socket_ptr_ == -1) {
-            //perror("socket");
-            //LOG(ERROR)<<"socket error";
-            std::cerr<<"socket error"<<std::endl;
-            return false;
-        }
-        struct sockaddr_in addr;
-        memset(&addr, 0, sizeof(addr));
-        addr.sin_family = AF_INET;
-        addr.sin_port = htons(port);
-        addr.sin_addr.s_addr = htonl(INADDR_ANY);
-        inet_aton(host.c_str(), &(addr.sin_addr));
-
-        int addrlen = sizeof(addr);
-        int listen_socket = connect(*client_socket_ptr_, (struct sockaddr *)&addr, addrlen);
-        if (listen_socket == -1) {
-            //LOG(ERROR)<<"connect "<<host_<<":"<<port_<<" error";
-            std::cerr<<"connect "<<host_<<":"<<port_<<" error"<<std::endl;
-            return false;
-        }
-        host_ = host;
-        port_ = port;
-        socket_thread_ = true;
-        is_open_ = true;
-        pthread_t pth;
-        pthread_create(&pth, nullptr,SocketPortReceive, (void*)this);
+        _this->port_ = port;
+        _this->host_ = host;
         return true;
     }
 
@@ -144,16 +160,33 @@ namespace socket_communication{
 
     void* SocketCommunication::SocketPortReceive(void *__this) {
         auto* _this = (SocketCommunication*)__this;
-        //char buf[SIZE];
+        int socket_closed = 0;
         while (_this->socket_thread_){
             memset(_this->rx_buffer_,'\0', SOCKET_SIZE);
             char temp;
             temp = read(*_this->client_socket_ptr_, _this->rx_buffer_, SOCKET_SIZE-1);
+            std::cout<<"temp: "<<(int)temp<<std::endl;
+            if(temp ==0)
+            {
+                std::cerr<<"Socket closed"<<std::endl;
+                socket_closed = 1;
+                break;
+            }
             _this->CallFunction(_this->rx_buffer_, (void*)_this);
         }
         close(*_this->client_socket_ptr_);
         delete _this->client_socket_ptr_;
         _this->client_socket_ptr_ = nullptr;
+        //_this->socket_thread_ = false;
+        _this->is_open_ = false;
+        if(socket_closed){
+            while (_this->socket_thread_){
+                if(_this->StartSocketReceiveThread(_this->host_, _this->port_, _this)){
+                    break;
+                }
+                std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)10000));
+            }
+        }
         return nullptr;
     }
 

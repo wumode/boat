@@ -26,6 +26,10 @@
 #include <chrono>
 
 namespace algorithm {
+    typedef struct Limit{
+        double upper_limit = 0.0;
+        double lower_limit = 0.0;
+    }Limit;
     typedef struct PidStatus{
         double P;
         double I;
@@ -42,6 +46,7 @@ namespace algorithm {
         PidController();
         PidController(double kp, double ki, double kd);
         PidController(double kp, double ki, double kd, double upper_limit, double lower_limit);
+        PidController(double kp, double ki, double kd, const Limit& limit);
         PidController(const PidController& p);
         double& P();
         double& I();
@@ -51,6 +56,7 @@ namespace algorithm {
         double Update(double& input);
         double Update(double& input, double& target);
         void SetLimit(double upper_limit, double lower_limit);
+        void SetLimit(const Limit& limit);
         void SocketShow(const std::string &host, uint16_t port);
         void CloseSocketShow();
         static void SocketReceiveCallBack(uint8_t* buffer_ptr_, void* __this);
@@ -66,9 +72,8 @@ namespace algorithm {
         double output_;
         double input_;
         double target_;
-        double upper_limit_;
-        double lower_limit_;
-        bool limit_;
+        Limit limit_;
+        bool is_limit_;
         bool debug_;
         int end_;
         socket_communication::SocketCommunication* socket_com_ptr_;

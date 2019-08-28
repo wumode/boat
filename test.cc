@@ -118,13 +118,14 @@ int main(int argc, char *argv[])
     //outfile.open("test.dat",  std::ios::out | std::ios::trunc);
     double target = 3.0;
     char str1[100];
-    while(n<20){
+    while(n<200){
         me = 10 * sin(0.05 * in);
         in = p1.Update(me, target);
         //sprintf(str1, "%.4f, %.4f, %.4f\n", in, me, target);
         //outfile << str1;
         std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)50000));
         n++;
+        std::cout<<n<<std::endl;
     }
     p1.CloseSocketShow();
     //outfile.close();

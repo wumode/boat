@@ -24,7 +24,6 @@
 
 //using namespace std;
 namespace navigation {
-
     void to_json(json &j, const navigation::GpsPosition &gpsPosition) {
         j = json{{"latitude",  gpsPosition.latitude},
                  {"longitude", gpsPosition.longitude}};
@@ -108,7 +107,7 @@ namespace navigation {
         socketShow.utm_position = j.at("utm_position").get<navigation::UtmPosition>();
         socketShow.route_gps_positions = j.at("route_gps_positions").get<std::vector<navigation::GpsPosition>>();
         socketShow.locking = j.at("locking").get<uint8_t>();
-        socketShow.speed = j.at("speed").get<float>();
+        socketShow.speed = j.at("speed").get<double>();
     }
 
     void to_json(json &j, const SocketReceive &socketReceive) {
@@ -131,19 +130,61 @@ namespace navigation {
 namespace navigation{
     namespace mode{
         DynamicPositioning::DynamicPositioning() {
-            az_lower_limit_ = 0.0;
-            az_upper_limit_ = 0.0;
+            max_distance_ = 3.0;
         }
 //        DynamicPositioning::DynamicPositioning(navigation::pose::Pose &pose) {
 //            pose_ = pose;
 //        }
 
-        DynamicPositioning::DynamicPositioning(navigation::pose::Pose &pose, double kp, double ki, double kd, double az_upper_limit, double az_lower_limit) {
-            az_lower_limit_ = az_lower_limit;
-            az_upper_limit_ = az_upper_limit;
-            pose_ = pose;
+        DynamicPositioning::DynamicPositioning(navigation::pose::Pose &pose, double kp, double ki, double kd,
+                double max_distance) {
+
+            target_pose_ = pose;
             yaw_pid_controller_ = algorithm::PidController(kp, ki, kd);
-            yaw_pid_controller_.SetLimit(az_upper_limit_, az_lower_limit_);
+            max_distance_ = max_distance;
+            yaw_pid_controller_.Target() = 0.0;
+        }
+
+        DynamicPositioning::DynamicPositioning(const navigation::mode::DynamicPositioning &D) {
+            limit_.y_limit = D.limit_.y_limit;
+            limit_.x_limit = D.limit_.x_limit;
+            limit_.z_limit = D.limit_.z_limit;
+            yaw_pid_controller_ = D.yaw_pid_controller_;
+            target_pose_ = D.target_pose_;
+            max_distance_ = D.max_distance_;
+            target_linear_velocity_ = D.target_linear_velocity_;
+        }
+
+        void DynamicPositioning::Limit(const navigation::AngularVelocityLimit &limit) {
+            limit_.x_limit = limit.x_limit;
+            limit_.y_limit = limit.y_limit;
+            limit_.z_limit = limit.z_limit;
+            yaw_pid_controller_.SetLimit(limit_.z_limit);
+        }
+
+        void DynamicPositioning::MaxDistance(double d) {
+            max_distance_ = d;
+        }
+
+        void DynamicPositioning::TargetLinearVelocity(navigation::LinearVelocity l) {
+            target_linear_velocity_ = l;
+        }
+
+        int DynamicPositioning::Update(const navigation::pose::Pose& target, const navigation::pose::Pose& input,
+                navigation::Velocity& v) {
+            double distance = navigation::point::Distance(target.Position(), input.Position());
+            if(distance>max_distance_){
+                return -1;
+            }
+            target_pose_ = target;
+            double yaw = CalcYaw(target_pose_.Attitude().yaw, input.Attitude().yaw);
+            v.angular_velocity.z = yaw_pid_controller_.Update(yaw);
+            v.linear_velocity = target_linear_velocity_;
+            return 0;
+        }
+
+        int DynamicPositioning::Update(const navigation::pose::Pose &input, navigation::Velocity &v) {
+            return Update(target_pose_, input, v);
         }
     }
 
@@ -151,7 +192,7 @@ namespace navigation{
      * @param navigation_config_path
      */
      ///Boat的构造函数，将配置文件路径传入父类，初始化传感器值
-    boat::boat(std::string navigation_config_path) :navigation::Navigation(navigation_config_path){
+    boat::boat(std::string& navigation_config_path) :navigation::Navigation(navigation_config_path){
         hardware_initialized_ = false;
         LoadBoatConfig_(navigation_config_path, boat_params_);
         boat_mode_ = boat_params_.boatMode;
@@ -450,31 +491,31 @@ namespace navigation{
      ///IMU信息回调，由串口线程调用，将串口IMU信息转化为滤波器更新需要的观测值
     void boat::ImuMsgsCallback(uint8_t* buffer_ptr_, void* __this) {
         auto* _this = (boat*)__this;
-         ImuDataTrans imu_trans_data;
-         ImuDataTrans* imu_trans;
-         imu_trans = &imu_trans_data;
-         memcpy(imu_trans, buffer_ptr_, sizeof(ImuDataTrans));
-         LOG(INFO)<<"Imu call back --"
+        ImuDataTrans imu_trans_data;
+        ImuDataTrans* imu_trans;
+        imu_trans = &imu_trans_data;
+        memcpy(imu_trans, buffer_ptr_, sizeof(ImuDataTrans));
+        LOG(INFO)<<"Imu call back --"
             <<" pitch: "<<imu_trans->pitch
             <<" roll: "<<imu_trans->roll
             <<" angular_velocity_z:"<<imu_trans->angular_velocity_z
             <<" linear_acceleration_x: "<<imu_trans->linear_acceleration_x
             <<" linear_acceleration_y: "<<imu_trans->linear_acceleration_y;
         //auto* imu_trans = (ImuDataTrans*)buffer_ptr_;
-        float ax, ay;
-        if(fabs(imu_trans->roll) > 1000*M_PI){
+        double ax, ay;
+        if(fabsf(imu_trans->roll) > 10000*M_PI){
             imu_trans->roll = 0.0;
         }
-        if(fabs(imu_trans->pitch) > 1000*M_PI){
+        if(fabsf(imu_trans->pitch) > 10000*M_PI){
             imu_trans->pitch = 0.0;
         }
-        if(fabs(imu_trans->angular_velocity_z)>1000*M_PI){
+        if(fabsf(imu_trans->angular_velocity_z)>10000*M_PI){
             imu_trans->angular_velocity_z = 0.0;
         }
-        if(fabs(imu_trans->linear_acceleration_y)>1000*M_PI){
+        if(fabsf(imu_trans->linear_acceleration_y)>10000*M_PI){
             imu_trans->linear_acceleration_y = 0.0;
         }
-        if(fabs(imu_trans->linear_acceleration_x)>1000*M_PI){
+        if(fabsf(imu_trans->linear_acceleration_x)>10000*M_PI){
             imu_trans->linear_acceleration_x = 0.0;
         }
         //float yaw_raw = imu_trans->yaw;
@@ -485,7 +526,7 @@ namespace navigation{
         _this->imu_data_.linear_acceleration.x = imu_trans->linear_acceleration_x;
         _this->imu_data_.linear_acceleration.y = imu_trans->linear_acceleration_y;
 
-        float a_a = _this->now_state_.angle.yaw;
+        double a_a = _this->now_state_.angle.yaw;
         ax = cos(_this->imu_data_.angle.pitch)*_this->imu_data_.linear_acceleration.x*cos(a_a)-
                 _this->imu_data_.linear_acceleration.y*sin(a_a);
         ay = cos(_this->imu_data_.angle.pitch)*_this->imu_data_.linear_acceleration.x*sin(a_a)+
@@ -498,7 +539,7 @@ namespace navigation{
         _this->boat_measurement_vector_.imu_data.linear_acceleration.y = ay;
         _this->boat_measurement_vector_.imu_data.angular_velocity.z = _this->imu_data_.angular_velocity.z;
         pthread_mutex_unlock(_this->serial_measurement_mutex_ptr_);
-     }
+    }
 
     /**
      * @brief GpsMsgsCallback
@@ -596,8 +637,8 @@ namespace navigation{
         int fre = 125;
         int v_a_s = v_a/fre;
         int v_x_s = v_x/fre;
-        v->velocity_x =  0.006f * v_x_s*fre;
-        v->velocity_angle = 0.003f * v_a_s*fre;
+        v->velocity_x =  0.006 * v_x_s*fre;
+        v->velocity_angle = 0.003 * v_a_s*fre;
         //std::cout<<"pub: v_x: "<<v->velocity_x<<"v_a: "<<v->velocity_angle<<std::endl;
         //LOG(INFO)<<"pub: v_x: "<<v->velocity_x<<"v_a: "<<v->velocity_angle<<std::endl;
     }
@@ -676,6 +717,7 @@ namespace navigation{
                 control_power_trans_.host = 1;
                 //LOG(INFO)<<"Navi calc before "<<now_state_.attitude_angle;
                 NavigationCalculation();
+                NavigationVelocityAnalyze_(yaw, velocity_data_);
                 //std::cout<<" yaw: "<<yaw<<std::endl;
                 //LOG(INFO)<<"Navi calc after "<<now_state_.attitude_angle;
                 if(route_updated_){
@@ -684,7 +726,6 @@ namespace navigation{
                     pthread_mutex_unlock(route_updated_mutex_ptr_);
                     route_updated_ = 0;
                 }
-                NavigationVelocityAnalyze_(yaw, velocity_data_);
                 //LOG(INFO)<<"Navi anal";
             }
             else if(boat_mode_ == remote_mode){

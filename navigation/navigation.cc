@@ -249,16 +249,16 @@ namespace navigation
      * @param v_data
      */
      ///计算自主航行速度
-    void Navigation::NavigationVelocityAnalyze_(const float &navigation_yaw, VelocityData &v_data) {
-        float yaw_abs = fabsf(navigation_yaw);
-        float s = navigation_yaw/yaw_abs;
+    void Navigation::NavigationVelocityAnalyze_(const double &navigation_yaw, VelocityData &v_data) {
+        double yaw_abs = fabs(navigation_yaw);
+        double s = navigation_yaw/yaw_abs;
         if(yaw_abs>navigation_parameter_.corner_threshold){
             v_data.velocity_angle = s*navigation_parameter_.steering_coefficient*navigation_parameter_.corner_threshold;
         } else{
             v_data.velocity_angle = navigation_parameter_.steering_coefficient*navigation_yaw;
         }
         v_data.velocity_x = navigation_parameter_.base_velocity - navigation_parameter_.steering_deceleration_coefficient
-                *fabsf(v_data.velocity_angle);
+                *fabs(v_data.velocity_angle);
         if(stop_motor_){
             LOG(INFO)<<"stop"<<std::endl;
             v_data.velocity_x = 0;
@@ -348,11 +348,13 @@ namespace navigation
             }
         }
         route_angle = CalcAngleUtm(&key_position_utm_, &now_state_.position.utm_position);
-        if(fabs(now_state_.angle.yaw)>1000*M_PI){
+        if(fabs(now_state_.angle.yaw)>10000*M_PI){
             now_state_.angle.yaw = 0.0;
-            LOG(ERROR)<<"attitude_angle error: "<<now_state_.angle.yaw<<std::endl;
+#ifdef USE_GLOG
+            LOG(ERROR)<<"attitude_yaw error: "<<now_state_.angle.yaw<<std::endl;
+#endif
         }
-        yaw = CalcYaw(&route_angle, &now_state_.angle.yaw);
+        yaw = CalcYaw(route_angle, now_state_.angle.yaw);
     }
 
 

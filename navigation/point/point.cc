@@ -72,13 +72,25 @@ namespace navigation{
     }
     namespace point{
         double Distance(Point* point1, Point* point2){
-            double a,b;
+            double a,b,c;
             UtmPosition u1, u2;
             u1 = point1->Utm();
             u2 = point2->Utm();
             a = u1.x - u2.x;
             b = u1.y - u2.y;
-            return sqrt(a*a+b*b);
+            c = point1->Height() - point2->Height();
+            return sqrt(a*a+b*b+c*c);
+        }
+
+        double Distance(const Point& point1,const Point& point2){
+            double a,b,c;
+            UtmPosition u1, u2;
+            u1 = point1.Utm();
+            u2 = point2.Utm();
+            a = u1.x - u2.x;
+            b = u1.y - u2.y;
+            c = point1.Height() - point2.Height();
+            return sqrt(a*a+b*b+c*c);
         }
 
         double CalcAngle(Point* end_point, Point* starting_point){
@@ -98,17 +110,20 @@ namespace navigation{
             utm_.y = 0.0;
             gps_.latitude = 0.0;
             gps_.longitude = 0.0;
+            height_ = 0.0;
             initialized_ = false;
         }
         Point::Point(const navigation::GpsPosition& gpsPosition) {
             gps_ = gpsPosition;
             navigation::GpsToUtm(&gps_, &utm_);
+            height_ = 0.0;
             initialized_ = true;
         }
 
         Point::Point(const navigation::UtmPosition& utmPosition) {
             utm_ = utmPosition;
             navigation::UtmToGps(&utm_, &gps_);
+            height_ = 0.0;
             initialized_ = true;
         }
 
@@ -116,6 +131,7 @@ namespace navigation{
             gps_.longitude = longitude;
             gps_.latitude = latitude;
             navigation::GpsToUtm(&gps_, &utm_);
+            height_ = 0.0;
             initialized_ = true;
         }
 
@@ -125,6 +141,7 @@ namespace navigation{
             utm_.hemisphere = hemisphere;
             utm_.gridZone = zone;
             navigation::UtmToGps(&utm_, &gps_);
+            height_ = 0.0;
             initialized_ = true;
         }
 
@@ -132,7 +149,7 @@ namespace navigation{
             utm_ = P.Utm();
             gps_ = P.Gps();
             initialized_ = P.Initialized();
-            //std::cout<<"copy"<<std::endl;
+            height_ = P.height_;
         }
 
         UtmPosition Point::Utm() const {
@@ -143,6 +160,15 @@ namespace navigation{
             return gps_;
         }
 
+        double Point::Height() const{
+            return height_;
+        }
+
+        double Point::Height(double h) {
+            height_ = h;
+            return height_;
+        }
+
         bool Point::Initialized() const {
             return initialized_;
         }
@@ -150,6 +176,7 @@ namespace navigation{
         Point& Point::operator=(const Point &P) {
             gps_ = P.Gps();
             utm_ = P.Utm();
+            height_ = P.height_;
             initialized_ = P.Initialized();
             //std::cout<<"operator ="<<std::endl;
             return *this;
@@ -158,6 +185,7 @@ namespace navigation{
         Point& Point::operator=(const UtmPosition &utmPosition) {
             utm_ = utmPosition;
             UtmToGps();
+            height_ = 0.0;
             initialized_ = true;
             return *this;
         }
@@ -165,13 +193,15 @@ namespace navigation{
         Point& Point::operator=(const GpsPosition& gpsPosition) {
             gps_ = gpsPosition;
             GpsToUtm();
+            height_ = 0.0;
             initialized_ = true;
             return *this;
         }
 
         std::ostream &operator<<(std::ostream &output, const Point &P) {
             output<<"gps longitude: "<<std::fixed << std::setprecision(7)<<P.gps_.longitude<<" latitude: "<<P.gps_.latitude<<std::endl;
-            output<<"utm x: "<<P.utm_.x<<" y: "<<P.utm_.x<<" grid zone: "<<P.utm_.gridZone<<" hemisphere: "<<P.utm_.hemisphere;
+            output<<"utm x: "<<P.utm_.x<<" y: "<<P.utm_.x<<" grid zone: "<<P.utm_.gridZone<<" hemisphere: "<<P.utm_.hemisphere<<std::endl;
+            output<<"height: "<<P.height_;
             return output;
         }
 
@@ -179,6 +209,7 @@ namespace navigation{
             double lat = gps_.latitude/180.0*M_PI;
             double lon = gps_.longitude/180.0*M_PI;
             const Ellipse* e = standard_ellipse(ELLIPSE_WGS84);
+            utm_.gridZone = GRID_AUTO;
             geographic_to_grid(e->a, e->e2, lat, lon, &utm_.gridZone, &utm_.hemisphere, &utm_.y, &utm_.x);
         }
 

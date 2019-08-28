@@ -25,7 +25,6 @@
 
 #include <chrono>
 #include <iostream>
-#include <stdio.h>
 #include <iomanip>
 #include <bitset>
 #include <string>
@@ -51,7 +50,7 @@ namespace navigation {
 
     protected:
         void UpdateMeasurementVector(MeasurementVector& measurementVector);
-        void NavigationVelocityAnalyze_(const float &navigation_yaw, VelocityData &v_data);
+        void NavigationVelocityAnalyze_(const double &navigation_yaw, VelocityData &v_data);
         void Filter();
         void NavigationCalculation();
         void MarkGpsPosition();
@@ -59,9 +58,9 @@ namespace navigation {
         void UpdateLocusPoints_(std::vector<GpsPosition>& l_p, uint32_t num);
         void GetLocusPoints_(std::vector<GpsPosition>& l_p);
 
-        float initial_yaw_;     //初始偏航角
+        double initial_yaw_;     //初始偏航角
         StateVector now_state_; //姿态
-        float yaw;              //偏航角
+        double yaw;              //偏航角
         MarkPointParameter mark_point_parameter_;
         GpsPosition key_position_gps_;  //目标点gps坐标
         GpsPosition now_location_gps_;  //位置gps坐标

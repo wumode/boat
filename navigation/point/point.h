@@ -32,9 +32,9 @@
 namespace navigation
 {
     typedef struct Angle{
-        volatile double roll = 0.0;
-        volatile double pitch = 0.0;
-        volatile double yaw = 0.0;
+        double roll = 0.0;
+        double pitch = 0.0;
+        double yaw = 0.0;
     }Angle;
 
     typedef struct fAngle{
@@ -44,8 +44,8 @@ namespace navigation
     }fAngle;
 
     typedef struct GpsPosition{
-        volatile double latitude = 0.0;
-        volatile double longitude = 0.0;
+        double latitude = 0.0;
+        double longitude = 0.0;
     }GpsPosition;
 
     typedef struct UtmPosition{
@@ -112,17 +112,21 @@ namespace navigation
             friend std::ostream &operator<<(std::ostream &output, const Point &D );
             UtmPosition Utm () const;
             GpsPosition Gps() const;
+            double Height() const;
+            double Height(double h);
             bool Initialized() const;
         private:
             bool initialized_;
             GpsPosition gps_;
             UtmPosition utm_;
+            double height_;
             void GpsToUtm();
             void UtmToGps();
         };
 
-        double Distance(Point* point1, Point* point2);
-        double CalcAngle(Point* end_point, Point* starting_point);
+        //double Distance(Point* point1, Point* point2);
+        double Distance(const navigation::point::Point& point1, const Point& point2);
+        double CalcAngle(navigation::point::Point* end_point, Point* starting_point);
     }
 
     namespace pose{
@@ -135,7 +139,6 @@ namespace navigation
             navigation::point::Point Position() const;
             void SetPosition(navigation::point::Point& p);
             void SetAttitude(Angle& a);
-
 
         private:
             navigation::point::Point position_;

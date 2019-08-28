@@ -15,10 +15,12 @@ def Tcplink(sock, addr):
     input_list = []
     output_list = []
     time_list = []
+    i = 0
     while True:
+        i += 1
         data = sock.recv(1024)
         data = str(data, 'utf-8')
-        print(data)
+        print(i, data)
         res = json.loads(data)
         sock.send("w".encode('utf-8'))
         target_list.append(res[u'target'])

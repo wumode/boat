@@ -56,9 +56,9 @@ namespace algorithm{
         output_ = 0.0;
         input_ = 0.0;
         target_ = 0.0;
-        limit_ = false;
-        upper_limit_ = 0.0;
-        lower_limit_ = 0.0;
+        is_limit_ = false;
+        limit_.upper_limit = 0.0;
+        limit_.lower_limit = 0.0;
         debug_ = false;
         socket_com_ptr_ = nullptr;
         start_timestamp_ = std::chrono::steady_clock::now();
@@ -73,9 +73,9 @@ namespace algorithm{
         output_ = 0.0;
         input_ = 0.0;
         target_ = 0.0;
-        limit_ = false;
-        upper_limit_ = 0.0;
-        lower_limit_ = 0.0;
+        is_limit_ = false;
+        limit_.upper_limit = 0.0;
+        limit_.lower_limit = 0.0;
         debug_ = false;
         socket_com_ptr_ = nullptr;
         start_timestamp_ = std::chrono::steady_clock::now();
@@ -86,16 +86,35 @@ namespace algorithm{
     PidController::PidController(double kp, double ki, double kd, double upper_limit,
                                  double lower_limit) :kp_(kp),
                                                       ki_(ki),
-                                                      kd_(kd),
-                                                      upper_limit_(upper_limit),
-                                                      lower_limit_(lower_limit) {
+                                                      kd_(kd){
+        limit_.upper_limit = upper_limit;
+        limit_.lower_limit = lower_limit;
         error_ = 0.0;
         last_error_ = 0.0;
         last_last_error_ = 0.0;
         output_ = 0.0;
         input_ = 0.0;
         target_ = 0.0;
-        limit_ = true;
+        is_limit_ = true;
+        debug_ = false;
+        socket_com_ptr_ = nullptr;
+        start_timestamp_ = std::chrono::steady_clock::now();
+        now_timestamp_ = start_timestamp_;
+        end_ = 0;
+    }
+
+    PidController::PidController(double kp, double ki, double kd, const algorithm::Limit &limit) {
+        kp_ = kp;
+        kd_ = kd;
+        ki_ = ki;
+        limit_ = limit;
+        error_ = 0.0;
+        last_error_ = 0.0;
+        last_last_error_ = 0.0;
+        output_ = 0.0;
+        input_ = 0.0;
+        target_ = 0.0;
+        is_limit_ = true;
         debug_ = false;
         socket_com_ptr_ = nullptr;
         start_timestamp_ = std::chrono::steady_clock::now();
@@ -119,8 +138,7 @@ namespace algorithm{
         kd_ = p.kd_;
         ki_ = p.ki_;
         kp_ = p.kp_;
-        upper_limit_ = p.upper_limit_;
-        lower_limit_ = p.lower_limit_;
+        is_limit_ = p.is_limit_;
     }
 
     double& PidController::P() {
@@ -147,11 +165,11 @@ namespace algorithm{
         input_ = input;
         error_ = target_ - input_;
         output_ += kp_*(error_ - last_error_) + ki_*error_ + kd_ * (error_ - 2*last_error_ + last_last_error_);
-        if(limit_){
-            if(output_<lower_limit_){
-                output_ = lower_limit_;
-            } else if (output_>upper_limit_){
-                output_ = upper_limit_;
+        if(is_limit_){
+            if(output_<limit_.lower_limit){
+                output_ = limit_.lower_limit;
+            } else if (output_>limit_.upper_limit){
+                output_ = limit_.upper_limit;
             }
         }
         last_last_error_ = last_error_;
@@ -168,9 +186,14 @@ namespace algorithm{
     }
 
     void PidController::SetLimit(double upper_limit, double lower_limit) {
-        limit_ = true;
-        upper_limit_ = upper_limit;
-        lower_limit_ = lower_limit;
+        is_limit_ = true;
+        limit_.upper_limit = upper_limit;
+        limit_.lower_limit = lower_limit;
+    }
+
+    void PidController::SetLimit(const algorithm::Limit &limit) {
+        is_limit_ = true;
+        limit_ = limit;
     }
 
     void PidController::SocketShow(const std::string &host, uint16_t port) {

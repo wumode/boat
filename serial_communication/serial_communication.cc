@@ -82,7 +82,7 @@ namespace serial_communication{
         {
             ser_ptr_->setPort(port_);
             ser_ptr_->setBaudrate(baud_rate_);
-            serial::Timeout to = serial::Timeout::simpleTimeout(serial::Timeout::max());
+            serial::Timeout to = serial::Timeout::simpleTimeout(5);
             ser_ptr_->setTimeout(to);
             ser_ptr_->setParity(serial::parity_none);
             ser_ptr_->setStopbits(serial::stopbits_one);
@@ -117,7 +117,7 @@ namespace serial_communication{
             //设置串口属性，并打开串口
             ser_ptr_->setPort(port);
             ser_ptr_->setBaudrate(baud_rate);
-            serial::Timeout to = serial::Timeout::simpleTimeout(serial::Timeout::max());
+            serial::Timeout to = serial::Timeout::simpleTimeout(5);
             ser_ptr_->setTimeout(to);
             ser_ptr_->setParity(serial::parity_none);
             ser_ptr_->setStopbits(serial::stopbits_one);

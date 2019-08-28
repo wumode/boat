@@ -34,39 +34,39 @@
 namespace navigation{
 
     typedef struct LinearAcceleration{
-        volatile double x;
-        volatile double y;
-        volatile double z;
+        double x;
+        double y;
+        double z;
     }LinearAcceleration;
 
     typedef struct LinearVelocity{
-        volatile double x;
-        volatile double y;
-        volatile double z;
+        double x = 0.0;
+        double y = 0.0;
+        double z = 0.0;
     }LinearVelocity;
 
     typedef struct AngularVelocity{
-        volatile double x;
-        volatile double y;
-        volatile double z;
+        double x;
+        double y;
+        double z;
     }AngularVelocity;
 
     typedef struct fLinearAcceleration{
-        volatile float x;
-        volatile float y;
-        volatile float z;
+        float x;
+        float y;
+        float z;
     }fLinearAcceleration;
 
     typedef struct fLinearVelocity{
-        volatile float x;
-        volatile float y;
-        volatile float z;
+        float x;
+        float y;
+        float z;
     }fLinearVelocity;
 
     typedef struct fAngularVelocity{
-        volatile float x;
-        volatile float y;
-        volatile float z;
+        float x;
+        float y;
+        float z;
     }fAngularVelocity;
 
     typedef struct Velocity{
@@ -107,22 +107,22 @@ typedef struct MeasurementVector
 }MeasurementVector;
 
 typedef struct VelocityData{
-    volatile float velocity_x;
-    volatile float velocity_angle;
+    volatile double velocity_x;
+    volatile double velocity_angle;
 }VelocityData;
 
 
 typedef struct NavigationParameter{
-    float steering_coefficient;
-    float corner_threshold;
-    float min_distance;
-    float base_velocity;
-    float steering_deceleration_coefficient;    //转向减速系数
+    double steering_coefficient;
+    double corner_threshold;
+    double min_distance;
+    double base_velocity;
+    double steering_deceleration_coefficient;    //转向减速系数
 }NavigationParameter;
 
 typedef struct MarkPointParameter{
     int mark_flag;
-    float period;
+    double period;
 }MarkPointParameter;
 
 inline void GpsToUtmPartition(const GpsPosition* gpsPosition, GridZone* gridZone, Hemisphere* hemisphere){
@@ -133,7 +133,7 @@ inline void GpsToUtmPartition(const GpsPosition* gpsPosition, GridZone* gridZone
     geographic_to_grid(e->a, e->e2, lat, lon, gridZone, hemisphere, &N, &E);
 }
 
-inline float CalcDistanceUtm(UtmPosition* key_position,UtmPosition* now_position){
+inline double CalcDistanceUtm(UtmPosition* key_position,UtmPosition* now_position){
     double a,b;
     a = key_position->x - now_position->x;
     b = key_position->y - now_position->y;
@@ -141,9 +141,9 @@ inline float CalcDistanceUtm(UtmPosition* key_position,UtmPosition* now_position
 }
 
 
-inline double CalcYaw(const double* route_angle, const volatile double* attitude_angle){
-    double attitude = *attitude_angle;
-    if(fabs(attitude)>1024*M_PI){
+inline double CalcYaw(const double& route_angle, const double& attitude_angle){
+    double attitude = attitude_angle;
+    if(fabs(attitude)>10000*M_PI){
         return 0.0;
     }
     while((attitude)<0){
@@ -152,14 +152,13 @@ inline double CalcYaw(const double* route_angle, const volatile double* attitude
     while((attitude)>2*M_PI){
         (attitude) -= 2*M_PI;
     }
-    float yaw;
-    yaw = *route_angle - attitude;
+    double yaw;
+    yaw = route_angle - attitude;
     if(yaw>M_PI){
         yaw -= 2 * M_PI;
     } else if(yaw<-M_PI){
         yaw += 2 * M_PI;
     }
-    //printf("yaw: %0.5f\n", yaw);
     return yaw;
 }
 }

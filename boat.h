@@ -35,17 +35,30 @@
 
 
 namespace navigation {
+    typedef struct AngularVelocityLimit{
+        algorithm::Limit z_limit;
+        algorithm::Limit y_limit;
+        algorithm::Limit x_limit;
+    }AngularVelocityLimit;
+
     namespace mode{
         class DynamicPositioning{
         public:
             DynamicPositioning();
             //DynamicPositioning(navigation::pose::Pose& pose);
-            DynamicPositioning(navigation::pose::Pose& pose, double kp, double ki, double kd, double az_upper_limit_, double az_lower_limit_);
+            DynamicPositioning(navigation::pose::Pose& pose, double kp, double ki, double kd, double max_distance);
+            DynamicPositioning(const DynamicPositioning& D);
+            int Update(const navigation::pose::Pose& target, const navigation::pose::Pose& input, navigation::Velocity& v);
+            int Update(const navigation::pose::Pose& input, navigation::Velocity& v);
+            void Limit(const navigation::AngularVelocityLimit& limit);
+            void MaxDistance(double d);
+            void TargetLinearVelocity(LinearVelocity l);
         private:
-            navigation::pose::Pose pose_;
+            navigation::pose::Pose target_pose_;
             algorithm::PidController yaw_pid_controller_;
-            double az_upper_limit_;
-            double az_lower_limit_;
+            navigation::AngularVelocityLimit limit_;
+            LinearVelocity target_linear_velocity_;
+            double max_distance_;
         };
     }
     /**
@@ -54,7 +67,7 @@ namespace navigation {
      */
     class boat: public navigation::Navigation{
     public:
-        explicit boat(std::string navigation_config_path);
+        explicit boat(std::string& navigation_config_path);
         static void ImuMsgsCallback(uint8_t* buffer_ptr_, void* __this);
         static void GpsMsgsCallback(uint8_t* buffer_ptr_, void* __this);
         static void RemoteControlSignalCallback(uint8_t* buffer_ptr_, void* __this);
