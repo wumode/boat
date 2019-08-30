@@ -72,12 +72,15 @@ namespace navigation {
         static void GpsMsgsCallback(uint8_t* buffer_ptr_, void* __this);
         static void RemoteControlSignalCallback(uint8_t* buffer_ptr_, void* __this);
         static void HardWareInitializationCallBack(uint8_t* buffer_ptr_, void* __this);
+        static void SocketHandShakeCallBack(uint8_t* buffer_ptr_, void* __this);
         static void LockingCallback(uint8_t* buffer_ptr_, void* __this);
         static void SocketReceiveCallBack(uint8_t* buffer_ptr_, void* __this);
-
+        static void SocketHandShake2CallBack(uint8_t* buffer_ptr_, void* __this);
         void Control();
 
     private:
+        void SocketHandShake_();
+        void SocketHandShake_(void* __this);
         void HardWareInitialization_(const std::string& com, unsigned int bound);
         void AnalysisRemoteInfo(const RemoteChannelTrans& channel, volatile bool* stop);
         void RemoteVelocityAnalyze_(const RemoteChannelTrans& channel, VelocityData* v);
@@ -89,6 +92,7 @@ namespace navigation {
         void SocketShowPublish_();
         //volatile bool serial_thread_;   //串口线程运行的标志
         volatile bool hardware_initialized_;
+        volatile bool socket_handshake_ok_;
         volatile uint8_t route_updated_;
         //volatile bool socket_thread_;   //socket线程运行标志
         serial_communication::SerialCommunication* ser_com_ptr_;
@@ -114,6 +118,7 @@ namespace navigation {
         BoatParams boat_params_;
         bool main_thread_;
         volatile bool stop;  //停止
+        uint8_t behavior_;
 
         ///debug
 //        std::chrono::steady_clock::time_point now_call_timestamp_;

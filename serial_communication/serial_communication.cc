@@ -94,6 +94,8 @@ namespace serial_communication{
 //#ifdef LOG
 //            LOG(ERROR)<<"Unable to open port "<<port_<<" without params"<<std::endl;
 //#endif
+            delete ser_ptr_;
+            ser_ptr_ = nullptr;
             return false;
         }
         serial_thread_ = true;
@@ -129,6 +131,8 @@ namespace serial_communication{
 //            LOG(ERROR)<<"Unable to open port "<<port<<std::endl;
 //#endif
             std::cout<<"Unable to open port "<<port<<std::endl;
+            delete ser_ptr_;
+            ser_ptr_ = nullptr;
             return false;
         }
         port_ = port;

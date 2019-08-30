@@ -1,7 +1,6 @@
 # -*- coding:utf-8 -*-
 # -*- author:wumo -*-
 
-
 import numpy as np
 from flask import Flask, request, render_template, redirect
 import time

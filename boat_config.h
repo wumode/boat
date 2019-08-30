@@ -84,8 +84,9 @@ namespace navigation{
         uint8_t locking;
         navigation::ImuData imu_data;
         double speed;
+        uint8_t id;
+        uint8_t receiver_id;
     }SocketShow;
-
 
     typedef struct SocketReceive{
         std::vector<navigation::GpsPosition> route_gps_positions;
@@ -93,7 +94,16 @@ namespace navigation{
         uint8_t empower;
         uint8_t route_updated;
         uint8_t stop;
+        uint8_t behavior;
+        uint8_t receiver_id;
     }SocketReceive;
+
+    typedef enum SocketHeader{
+        kHandShake1 = 1,
+        kHandShake2 = 2,
+        kHandShake3 = 3,
+        kNormalData = 4
+    }SocketHeader;
 
     typedef struct SerialParams{
         std::string port;
@@ -121,6 +131,7 @@ namespace navigation{
     }BoatMode;
 
     typedef struct BoatParams{
+        uint8_t id;
         SerialParams serialParams;
         SocketParams socketParams;
         BoatMode boatMode;
@@ -128,5 +139,24 @@ namespace navigation{
         GpsInitialization gpsInitialization;
     }BoatParams;
 
+    typedef struct SocketHandShake{
+        uint8_t identity;   /// 1 boat 2 server 3 user
+        uint8_t id;
+        uint8_t ok;
+    }SocketHandShake;
+
+    typedef struct SocketHandShake2{
+        uint8_t identity;
+        uint8_t error_type;
+    }SocketHandShake2;
+
+    typedef enum SocketErrorType{
+        kErrorFree = 0,
+        kMissHandShake = 1
+    }SocketErrorType;
+
+    typedef enum Behavior{
+        kAttack = 1
+    }Behavior;
 }
 #endif //SHIP_BOAT_CONFIG_H

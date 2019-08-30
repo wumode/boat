@@ -22,7 +22,6 @@
 
 #include "boat.h"
 
-//using namespace std;
 namespace navigation {
     void to_json(json &j, const navigation::GpsPosition &gpsPosition) {
         j = json{{"latitude",  gpsPosition.latitude},
@@ -97,7 +96,9 @@ namespace navigation {
                  {"route_gps_positions", socketShow.route_gps_positions},
                  {"locking",             socketShow.locking},
                  {"imu_data",            socketShow.imu_data},
-                 {"speed",               socketShow.speed}};
+                 {"speed",               socketShow.speed},
+                 {"id",                  socketShow.id},
+                 {"receiver_id",         socketShow.receiver_id}};
     }
 
     void from_json(const json &j, SocketShow &socketShow) {
@@ -108,6 +109,8 @@ namespace navigation {
         socketShow.route_gps_positions = j.at("route_gps_positions").get<std::vector<navigation::GpsPosition>>();
         socketShow.locking = j.at("locking").get<uint8_t>();
         socketShow.speed = j.at("speed").get<double>();
+        socketShow.id = j.at("id").get<uint8_t>();
+        socketShow.receiver_id = j.at("receiver_id").get<uint8_t>();
     }
 
     void to_json(json &j, const SocketReceive &socketReceive) {
@@ -115,7 +118,9 @@ namespace navigation {
                  {"empower",             socketReceive.empower},
                  {"route_gps_positions", socketReceive.route_gps_positions},
                  {"route_updated",       socketReceive.route_updated},
-                 {"stop",                socketReceive.stop}};
+                 {"stop",                socketReceive.stop},
+                 {"behavior",            socketReceive.behavior},
+                 {"receiver_id",         socketReceive.receiver_id}};
     }
 
     void from_json(const json &j, SocketReceive &socketReceive) {
@@ -124,8 +129,30 @@ namespace navigation {
         socketReceive.mode = j.at("mode").get<uint8_t>();
         socketReceive.route_updated = j.at("route_updated").get<uint8_t>();
         socketReceive.stop = j.at("stop").get<uint8_t>();
+        socketReceive.behavior = j.at("behavior").get<uint8_t>();
+        socketReceive.receiver_id = j.at("receiver_id").get<uint8_t>();
     }
 
+    void to_json(json& j, const SocketHandShake& socketHandShake){
+        j = json{{"identity", socketHandShake.identity},
+                 {"id",       socketHandShake.id},
+                 {"ok",       socketHandShake.ok}};
+    }
+    void from_json(const json& j, SocketHandShake& socketHandShake){
+        socketHandShake.identity = j.at("identity").get<uint8_t>();
+        socketHandShake.ok = j.at("ok").get<uint8_t>();
+        socketHandShake.id = j.at("id").get<uint8_t>();
+    }
+
+    void to_json(json& j, const SocketHandShake2& socketHandShake2){
+        j = json{{"identity",   socketHandShake2.identity},
+                 {"error_type", socketHandShake2.error_type}};
+    }
+
+    void from_json(const json& j, SocketHandShake2& socketHandShake2){
+        socketHandShake2.identity = j.at("identity").get<uint8_t>();
+        socketHandShake2.error_type = j.at("error_type").get<uint8_t>();
+    }
 }
 namespace navigation{
     namespace mode{
@@ -194,8 +221,10 @@ namespace navigation{
      ///Boat的构造函数，将配置文件路径传入父类，初始化传感器值
     boat::boat(std::string& navigation_config_path) :navigation::Navigation(navigation_config_path){
         hardware_initialized_ = false;
+        socket_handshake_ok_ = false;
         LoadBoatConfig_(navigation_config_path, boat_params_);
         boat_mode_ = boat_params_.boatMode;
+        behavior_ = 0;
         ///debug
         if(boat_params_.gpsInitialization.hardware_flag){
             HardWareInitialization_(boat_params_.serialParams.port, boat_params_.serialParams.baud);
@@ -232,12 +261,10 @@ namespace navigation{
         gps_data_.gps_position = now_location_gps_;
         gps_data_.speed = 0.0f;
         UtmPosition utmPosition;
-//       utmPosition.gridZone = GRID_AUTO;
-//       utmPosition.hemisphere = HEMI_AUTO;
 
-         LOG(INFO)<<"Init gps --- longitude: "<<gps_data_.gps_position.longitude<<" latitude: "<<gps_data_.gps_position.latitude;
-         GpsToUtm(&gps_data_.gps_position, &utmPosition);
-         boat_measurement_vector_.position = utmPosition;
+        LOG(INFO)<<"Init gps --- longitude: "<<gps_data_.gps_position.longitude<<" latitude: "<<gps_data_.gps_position.latitude;
+        GpsToUtm(&gps_data_.gps_position, &utmPosition);
+        boat_measurement_vector_.position = utmPosition;
 
         LOG(INFO)<<"Init utm --- x: "<<boat_measurement_vector_.position.x<<" y: "<<boat_measurement_vector_.position.y<<" z: "<<boat_measurement_vector_.position.gridZone;
         boat_measurement_vector_.imu_data.angle.yaw = initial_yaw_;
@@ -264,15 +291,90 @@ namespace navigation{
             exit(-1);
         }
         socket_com_ptr_ = new socket_communication::SocketCommunication(boat_params_.socketParams.host, boat_params_.socketParams.port);
-        socket_com_ptr_->SetCallBackFunction((socket_communication::callBack)SocketReceiveCallBack, 1, this);
-         //std::cout<<"er"<<std::endl;
-        if(!socket_com_ptr_->StartSocketReceiveThread()){
+         if(!socket_com_ptr_->StartSocketReceiveThread()){
              exit(-1);
-        }
+         }
+        SocketHandShake_();
+        socket_com_ptr_->SetCallBackFunction((socket_communication::callBack)SocketReceiveCallBack, kNormalData, this);
+        socket_com_ptr_->SetCallBackFunction((socket_communication::callBack)SocketHandShake2CallBack, kHandShake2, this);
+         //std::cout<<"er"<<std::endl;
 //        now_call_timestamp_ = std::chrono::steady_clock::now();
 //        last_call_timestamp_ = std::chrono::steady_clock::now();
         std::cout<<"Initialized!"<<std::endl;
          LOG(INFO)<<"Initialized!"<<std::endl;
+    }
+
+    void boat::SocketHandShake_() {
+        SocketHandShake_(this);
+    }
+
+    void boat::SocketHandShake_(void *__this) {
+        auto* _this = (boat*)__this;
+        _this->socket_com_ptr_->SetCallBackFunction((socket_communication::callBack)SocketHandShakeCallBack, kHandShake1, _this);
+        std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)500));
+        SocketHandShake s;
+        s.ok = 1;
+        s.identity = 1;
+        s.id = boat_params_.id;
+        std::cout<<"Wait for socket handshake"<<std::endl;
+#ifdef USE_GLOG
+        LOG(INFO)<<"Wait for socket handshake"<<std::endl;
+#endif
+        int n = 0;
+        while(!_this->socket_handshake_ok_){
+            if(n % 10 == 0){
+                _this->socket_com_ptr_->SendData(s, kHandShake1);
+            }
+            std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)5000));
+            n++;
+        }
+        std::cout<<"Socket handshake ok"<<std::endl;
+#ifdef USE_GLOG
+        LOG(INFO)<<"Socket handshake ok"<<std::endl;
+#endif
+        _this->socket_com_ptr_->RemoveCallBackFunction(kHandShake1);
+    }
+
+    void boat::SocketHandShake2CallBack(uint8_t *buffer_ptr_, void *__this) {
+        std::cout<<"error callback"<<std::endl;
+        auto* _this = (boat*)__this;
+        std::string string_rec = (const char*)buffer_ptr_;
+        json j;
+        try {
+            j = json::parse(string_rec);
+        }
+        catch (nlohmann::detail::parse_error& e){
+#ifdef USE_GLOG
+            LOG(ERROR)<<"SocketHandShake2 parse error, data: "<<string_rec<<std::endl;
+#endif
+            std::cerr<<"SocketHandShake2 parse error, data: "<<string_rec<<std::endl;
+            return;
+        }
+        SocketHandShake2 s_h2;
+        try {
+            s_h2 = j;
+        }
+        catch (nlohmann::detail::type_error& e){
+#ifdef USE_GLOG
+            LOG(ERROR)<<"SocketHandShake2 parse error, data: "<<string_rec<<std::endl;
+#endif
+            std::cerr<<"SocketHandShake2 parse error, data: "<<string_rec<<std::endl;
+            return;
+        }
+        if (s_h2.identity == 2){
+            switch(s_h2.error_type){
+                case (uint8_t)kMissHandShake:
+                    _this->socket_handshake_ok_ = false;
+                    _this->SocketHandShake_(_this);
+                    break;
+                default:
+                    std::cerr<<"Undefined socket error type: "<<s_h2.error_type<<std::endl;
+#ifdef USE_GLOG
+                    LOG(ERROR) <<"Undefined socket error type: "<<s_h2.error_type<<std::endl;
+#endif
+                    break;
+            }
+        }
     }
 
     /**
@@ -288,21 +390,64 @@ namespace navigation{
         if(!res){
             exit(-1);
         }
-        std::cout<<"wait for hardware initialized"<<std::endl;
-        LOG(INFO)<<"wait for hardware initialized"<<std::endl;
+        std::cout<<"Wait for hardware initialized"<<std::endl;
+#ifdef USE_GLOG
+        LOG(INFO)<<"Wait for hardware initialized"<<std::endl;
+#endif
         while(!hardware_initialized_){
             std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)500));
         }
-        std::cout<<"hardware initialized"<<std::endl;
-        LOG(INFO)<<"hardware initialized"<<std::endl;
+        std::cout<<"Hardware initialized"<<std::endl;
+#ifdef USE_GLOG
+        LOG(INFO)<<"Hardware initialized"<<std::endl;
+#endif
         ser.CloseSerialReceiveThread();
+    }
+
+    void boat::SocketHandShakeCallBack(uint8_t *buffer_ptr_, void *__this) {
+        auto* _this = (boat*)__this;
+        std::cout<<"Socket handshake callback"<<std::endl;
+        std::string string_rec = (const char*)buffer_ptr_;
+        json j;
+        try {
+            j = json::parse(string_rec);
+        }
+        catch (nlohmann::detail::parse_error& e){
+#ifdef USE_GLOG
+            LOG(ERROR)<<"SocketHandShake parse error, data: "<<string_rec<<std::endl;
+#endif
+            std::cerr<<"SocketHandShake parse error, data: "<<string_rec<<std::endl;
+            return;
+        }
+        SocketHandShake s_r;
+        try {
+            s_r = j;
+        }
+        catch (nlohmann::detail::type_error& e){
+#ifdef USE_GLOG
+            LOG(ERROR)<<"SocketHandShake parse error, data: "<<string_rec<<std::endl;
+#endif
+            std::cerr<<"SocketHandShake parse error, data: "<<string_rec<<std::endl;
+            return;
+        }
+        if(s_r.identity == 2 && s_r.ok){
+            _this->socket_handshake_ok_ = true;
+        } else if(s_r.identity == 2 && s_r.ok == 0){
+#ifdef USE_GLOG
+            LOG(ERROR)<<"socket_handshake_ok_: "<<(int)s_r.ok<<std::endl;
+#endif
+            std::cerr<<"socket_handshake_ok_: "<<(int)s_r.ok<<std::endl;
+            exit(-2);
+        }
     }
 
     void boat::HardWareInitializationCallBack(uint8_t *buffer_ptr_, void *__this) {
         auto* _this = (boat*)__this;
         GpsDataTrans gps_trans;
         memcpy(&gps_trans, buffer_ptr_, sizeof(GpsDataTrans));
+#ifdef USE_GLOG
         LOG(INFO)<<"initialize callback"<<std::endl;
+#endif
         if(gps_trans.latitude == 0.0 && gps_trans.longitude==0.0){
             return;
         }
@@ -310,8 +455,10 @@ namespace navigation{
         g_p.latitude = gps_trans.latitude;
         g_p.longitude = gps_trans.longitude;
         GpsToUtmPartition(&g_p, &_this->utm_zone_, &_this->hemisphere_);
+#ifdef USE_GLOG
         LOG(INFO)<<"utm zone: "<<_this->utm_zone_<<" hemisphere: "<<_this->hemisphere_<<std::endl;
         LOG(INFO)<<"initialize call back -- longitude: "<<gps_trans.longitude<<" latitude: "<<gps_trans.latitude;
+#endif
         _this->gps_data_.gps_position.latitude = gps_trans.latitude;
         _this->gps_data_.gps_position.longitude = gps_trans.longitude;
         _this->now_location_gps_ = _this->gps_data_.gps_position;
@@ -346,7 +493,9 @@ namespace navigation{
                 break;
             default:
                 std::cerr<<"Undefined mode: "<<mode_flag<<std::endl;
+#ifdef USE_GLOG
                 LOG(ERROR) <<"Undefined mode: "<<mode_flag<<std::endl;
+#endif
                 break;
         }
         TiXmlElement* socket_xml = boat_xml->FirstChildElement("socket");
@@ -373,23 +522,50 @@ namespace navigation{
         boatParams.gpsInitialization.gpsPosition.longitude = (float)std::strtod(gps_initialization_point_xml->FirstChildElement("longitude")->GetText(), nullptr);
 
         TiXmlElement* frequency_xml = boat_xml->FirstChildElement("frequency");
+        TiXmlElement* id_xml = boat_xml->FirstChildElement("id");
         boatParams.frequency = (uint32_t)std::stoi(frequency_xml->GetText());
+        boatParams.id = (uint8_t)std::stoi(id_xml->GetText());
         config_xml.Clear();
         return true;
     }
 
-    void boat::SocketReceiveCallBack(uint8_t* buffer_ptr_, void* __this){
+    void boat::SocketReceiveCallBack(uint8_t* buffer_ptr_, void* __this) {
         auto* _this = (boat*)__this;
         std::string string_rec = (const char*)buffer_ptr_;
+#ifdef USE_GLOG
         LOG(INFO)<<"socket receive: "<<string_rec<<std::endl;
+#endif
         std::cout<<"socket receive: "<<string_rec<<std::endl;
-        json j = json::parse(string_rec);
-        SocketReceive s_r = j;
-        if(s_r.empower!=_this->empower_trans_.empower){
+        json j;
+        try {
+            j = json::parse(string_rec);
+        }
+        catch (nlohmann::detail::parse_error& e) {
+#ifdef USE_GLOG
+            LOG(ERROR)<<"Dara parse error, data: "<<string_rec<<std::endl;
+#endif
+            std::cerr<<"Dara parse error, data: "<<string_rec<<std::endl;
+            return;
+        }
+        SocketReceive s_r;
+        try {
+            s_r = j;
+        }
+        catch (nlohmann::detail::type_error& e) {
+#ifdef USE_GLOG
+            LOG(ERROR)<<"Dara parse error, data: "<<string_rec<<std::endl;
+#endif
+            std::cerr<<"Dara parse error, data: "<<string_rec<<std::endl;
+            return;
+        }
+        if(s_r.receiver_id != _this->boat_params_.id) {
+            return;
+        }
+        if(s_r.empower!=_this->empower_trans_.empower) {
             _this->empower_trans_.empower = s_r.empower;
         }
-        if(s_r.mode!=_this->boat_mode_){
-            switch (s_r.mode){
+        if(s_r.mode!=_this->boat_mode_) {
+            switch (s_r.mode) {
                 case (int)remote_mode:
                 case (int)navigation_mode:
                 case (int)track_mode:
@@ -435,7 +611,7 @@ namespace navigation{
             velocity_data.velocity_x = -9.9f;
         }
         LOG(INFO)<<"Velocity publish v_x: "<<velocity_data.velocity_x<<" v_a: "<<velocity_data.velocity_angle<<std::endl;
-        std::cout<<"Velocity publish v_x: "<<velocity_data.velocity_x<<" v_a: "<<velocity_data.velocity_angle<<std::endl;
+        //std::cout<<"Velocity publish v_x: "<<velocity_data.velocity_x<<" v_a: "<<velocity_data.velocity_angle<<std::endl;
         if(ser_com_ptr_){
             ser_com_ptr_->SendData(velocity_data, VELOCITY_FLAG);
         }
@@ -443,7 +619,7 @@ namespace navigation{
 
     void boat::ControlPowerPublish_(ControlPowerTrans& control_power_trans){
         LOG(INFO)<<"Control power publish: "<<(int)control_power_trans.host;
-        std::cout<<"Control power publish: "<<(int)control_power_trans.host<<std::endl;
+        //std::cout<<"Control power publish: "<<(int)control_power_trans.host<<std::endl;
         if(ser_com_ptr_){
             ser_com_ptr_->SendData(control_power_trans, CONTROL_POWER_FLAG);
         }
@@ -451,7 +627,7 @@ namespace navigation{
 
     void boat::EmpowerPublish_(EmpowerTrans& empowerTrans){
         LOG(INFO)<<"Empower publish: "<<(int)empowerTrans.empower;
-        std::cout<<"Empower publish: "<<(int)empowerTrans.empower<<std::endl;
+        //std::cout<<"Empower publish: "<<(int)empowerTrans.empower<<std::endl;
         if(ser_com_ptr_){
             ser_com_ptr_->SendData(empowerTrans, EMPOWER_FLAG);
         }
@@ -459,7 +635,7 @@ namespace navigation{
 
     void boat::StopPublish_(StopTrans& stopTrans){
         LOG(INFO)<<"Stop publish: "<<(int)stopTrans.stop;
-        std::cout<<"Stop publish: "<<(int)stopTrans.stop<<std::endl;
+        //std::cout<<"Stop publish: "<<(int)stopTrans.stop<<std::endl;
         if(ser_com_ptr_){
             ser_com_ptr_->SendData(stopTrans, STOP_FLAG);
         }
@@ -467,6 +643,12 @@ namespace navigation{
 
     void boat::SocketShowPublish_() {
         if(socket_com_ptr_->IsOpen()){
+            //std::cout<<"offline flag: "<<socket_com_ptr_->OfflineReconnection()<<std::endl;
+            if(socket_com_ptr_->OfflineReconnection()){
+                socket_handshake_ok_ = false;
+                SocketHandShake_();
+                socket_com_ptr_->ResetOfflineFlag();
+            }
             SocketShow s_s;
             GpsPosition gps_p;
             UtmToGps(&now_state_.position.utm_position, &gps_p);
@@ -479,7 +661,9 @@ namespace navigation{
             s_s.raw_gps_position = gps_data_.gps_position;
             s_s.gps_position = gps_p;
             s_s.speed = gps_data_.speed;
-            socket_com_ptr_->SendData(s_s, 1);
+            s_s.id = boat_params_.id;
+            s_s.receiver_id = 0;
+            socket_com_ptr_->SendData(s_s, kNormalData);
         }
     }
 
@@ -587,11 +771,13 @@ namespace navigation{
          pthread_mutex_lock(_this->serial_channel_mutex_ptr_);
         _this->remote_channel_data_ = *remote_channel_trans;
          pthread_mutex_unlock(_this->serial_channel_mutex_ptr_);
+#ifdef USE_GLOG
          LOG(INFO)<<"Channel call back: "
          <<remote_channel_trans->channel_1 <<" "
          <<remote_channel_trans->channel_2<<" "
          <<remote_channel_trans->channel_3<<" "
          <<remote_channel_trans->channel_4<<std::endl;
+#endif
         //pthread_mutex_lock(serial_channel_mutex_ptr_);
         //remote_channel_info_main_thread_ = channel_info;
         //pthread_mutex_unlock(serial_channel_mutex_ptr_);
@@ -653,7 +839,7 @@ namespace navigation{
         std::chrono::steady_clock::time_point now_timestamp;
         std::chrono::steady_clock::time_point last_timestamp;
         now_mark_timestamp = std::chrono::steady_clock::now();
-#ifdef DEBUG
+#ifdef USE_DEBUG
         std::chrono::steady_clock::time_point debug_now_timestamp;
         std::chrono::steady_clock::time_point debug_last_timestamp;
         debug_now_timestamp = std::chrono::steady_clock::now();
@@ -673,7 +859,7 @@ namespace navigation{
             std::chrono::duration<double> debug_time_used = std::chrono::duration_cast<std::chrono::duration<double>>(debug_now_timestamp-debug_last_timestamp);
             debug_last_timestamp = debug_now_timestamp;
             double debug_time_count = debug_time_used.count();
-            if(debug_time_count>0.0055){
+            if(debug_time_count>0.0065){
                 std::cout<<"time used: "<<debug_time_count<<std::endl;
                 LOG(WARNING)<<"time used: "<<debug_time_count<<std::endl;
             }
@@ -712,7 +898,7 @@ namespace navigation{
                 }
             }
             //std::cout<<"boat_mode: "<<boat_mode_<<std::endl;
-            LOG(INFO)<<"boat_mode: "<<boat_mode_<<std::endl;
+            //LOG(INFO)<<"boat_mode: "<<boat_mode_<<std::endl;
             if(boat_mode_ == navigation_mode){
                 control_power_trans_.host = 1;
                 //LOG(INFO)<<"Navi calc before "<<now_state_.attitude_angle;
@@ -735,7 +921,11 @@ namespace navigation{
             else if(boat_mode_ == track_mode){
                 control_power_trans_.host = 2;
             }
-            else if(boat_mode_ == attack_mode){
+//            else if(boat_mode_ == attack_mode){
+//                RemoteVelocityAnalyze_(remote_channel_data_main_thread_, &velocity_data_);
+//                control_power_trans_.host = 3;
+//            }
+            if(behavior_ & kAttack){
                 RemoteVelocityAnalyze_(remote_channel_data_main_thread_, &velocity_data_);
                 control_power_trans_.host = 3;
             }
@@ -753,10 +943,6 @@ namespace navigation{
                 std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)50));
                 EmpowerPublish_(empower_trans_);
             }
-            //std::cout<<"sleep"<<std::endl;
-            //LOG(INFO)<<"sleep"<<std::endl;
-            //std::cout<<times<<std::endl;
-            //std::cout<<"v: "<<velocity_data_.velocity_x<<std::endl;
             now_timestamp = std::chrono::steady_clock::now();
             std::chrono::duration<double> time_used = std::chrono::duration_cast<std::chrono::duration<double>>(now_timestamp-last_timestamp);
             time_used_u = (int)((period- time_used.count())*1000000);

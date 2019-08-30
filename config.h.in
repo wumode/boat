@@ -1,1 +1,2 @@
+#cmakedefine USE_DEBUG
 #cmakedefine USE_GLOG

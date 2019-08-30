@@ -98,8 +98,6 @@
 //}
 
 
-
-
 int main(int argc, char *argv[])
 {
     double p = 0;
@@ -114,20 +112,20 @@ int main(int argc, char *argv[])
     double in;
     in = 0.0;
     me = 0.0;
-    p1.SocketShow("127.0.0.1", 6800);
+    p1.SocketShow("192.168.123.2", 9009);
     //outfile.open("test.dat",  std::ios::out | std::ios::trunc);
     double target = 3.0;
     char str1[100];
-    while(n<200){
+    while(n<50){
+//    while(true){
         me = 10 * sin(0.05 * in);
         in = p1.Update(me, target);
         //sprintf(str1, "%.4f, %.4f, %.4f\n", in, me, target);
         //outfile << str1;
-        std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)50000));
+        std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)40000));
         n++;
         std::cout<<n<<std::endl;
     }
     p1.CloseSocketShow();
-    //outfile.close();
     // 向文件写入用户输入的数据
 }

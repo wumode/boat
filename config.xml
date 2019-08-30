@@ -43,14 +43,15 @@
         <frequency>200</frequency>
         <mode>1</mode>
         <socket>
-            <send_frequency>3</send_frequency>
-            <host>192.168.123.103</host>
-            <port>6666</port>
+            <send_frequency>5</send_frequency>
+            <host>192.168.123.2</host>
+            <port>9009</port>
         </socket>
         <serial>
             <send_frequency>50</send_frequency>
             <port>/dev/ttyUSB0</port>
             <baud>460800</baud>
         </serial>
+        <id>1</id>
     </boat>
 </boat>

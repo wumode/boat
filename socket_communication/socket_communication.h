@@ -20,13 +20,14 @@
 // Created by wumode on 19-7-16.
 //
 
-#ifndef SHIP_SOCKETCOMMUNICATION_H
-#define SHIP_SOCKETCOMMUNICATION_H
+#ifndef SHIP_SOCKET_COMMUNICATION_H
+#define SHIP_SOCKET_COMMUNICATION_H
 
 #include <string>
 #include <iostream>
 #include <thread>
 #include <map>
+#include <chrono>
 #include <json.hpp>
 #include <climits>
 #include <arpa/inet.h>
@@ -34,13 +35,24 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <cerrno>
-#include <glog/logging.h>
+
+#ifdef USE_GLOG
+    #include <glog/logging.h>
+#endif
 
 #define SOCKET_SIZE 2048
 
 using nlohmann::json;
 
 namespace socket_communication {
+    typedef struct SocketTransmission{
+        uint8_t header;
+        int64_t time_stamp;
+        std::string data;
+    }SocketTransmission;
+    void to_json(json &j, const SocketTransmission &socketTransmission);
+    void from_json(const json &j, SocketTransmission &socketTransmission);
+
     typedef int (*callBack)(uint8_t *, void *);
 
     class CallBackFunction{
@@ -65,6 +77,9 @@ namespace socket_communication {
         bool StartSocketReceiveThread(const std::string& host, uint16_t port, void* __this);
         void CloseSocketReceiveThread();
         void SetCallBackFunction(callBack callBack1, uint8_t flag, void* this_);
+        int RemoveCallBackFunction(uint8_t flag);
+        void ResetOfflineFlag();
+        bool OfflineReconnection();
         template <typename T> void SendData(const T& data, uint8_t flag);
         void SetHost(const std::string& host);
         void SetPort(uint16_t port);
@@ -81,6 +96,7 @@ namespace socket_communication {
         uint16_t port_;
         //uint32_t baud_rate_;
         volatile bool is_open_;
+        volatile bool offline_reconnection_;
         uint8_t rx_buffer_[SOCKET_SIZE];
         uint8_t tx_buffer_[SOCKET_SIZE];
         //uint8_t _data_len, _data_cnt;
@@ -94,19 +110,26 @@ namespace socket_communication {
     inline void SocketCommunication::SendData(const T& data, uint8_t flag){
         if(is_open_){
             json j = data;
+            std::string string_data;
             std::string string_send;
+            SocketTransmission s_t;
             const uint8_t * str_send;
-            string_send = j.dump();
+            string_data = j.dump();
+            s_t.data = string_data;
+            s_t.header = flag;
+            auto timeNow = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+            s_t.time_stamp = timeNow.count();
+            json q = s_t;
+            string_send = q.dump();
             str_send = (const uint8_t *)string_send.c_str();
             //LOG(INFO) << "socket send: "<<str_send << std::endl;
+            //std::cout << "socket send: "<<str_send << std::endl;
             while(is_sending_){
                 std::this_thread::sleep_for(std::chrono:: microseconds (500));
             }
             is_sending_ = true;
             char temp;
             temp = write(*client_socket_ptr_, str_send, strlen((const char*)str_send));
-            //std::cout<<"write"<<std::endl;
-//            ser_ptr_->write((const uint8_t*)tx_buffer_, data_length+5);
             is_sending_ = false;
         } else{
             std::cerr<<"Failed to send data, socket has closed"<<std::endl;
@@ -115,4 +138,4 @@ namespace socket_communication {
 }
 
 
-#endif //SHIP_SOCKETCOMMUNICATION_H
+#endif //SHIP_SOCKET_COMMUNICATION_H

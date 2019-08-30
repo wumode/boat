@@ -9,12 +9,12 @@ configure_file (
         "${PROJECT_SOURCE_DIR}/config.h.in"
         "${PROJECT_SOURCE_DIR}/config.h"
 )
+option(USE_DEBUG
+        "Debug" ON)
 
 option (USE_GLOG
         "Use google glog" ON)
 
-
-add_definitions(-D DEBUG)
 
 include_directories(geo_to_utm/datum)
 include_directories(geo_to_utm/utm)
