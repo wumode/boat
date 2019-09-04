@@ -46,9 +46,9 @@ namespace navigation{
     }LinearVelocity;
 
     typedef struct AngularVelocity{
-        double x;
-        double y;
-        double z;
+        double x = 0.0;
+        double y = 0.0;
+        double z = 0.0;
     }AngularVelocity;
 
     typedef struct fLinearAcceleration{
@@ -105,11 +105,6 @@ typedef struct MeasurementVector
     ImuData imu_data;                   //IMU数据
     //float attitude_angle;
 }MeasurementVector;
-
-typedef struct VelocityData{
-    volatile double velocity_x;
-    volatile double velocity_angle;
-}VelocityData;
 
 
 typedef struct NavigationParameter{

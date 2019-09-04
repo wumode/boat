@@ -5,13 +5,23 @@
 #ifndef SHIP_BOAT_CONFIG_H
 #define SHIP_BOAT_CONFIG_H
 
-#ifndef __SYSTEM_STM32F10X_H
-typedef unsigned char u8;
-#endif
 #include "config.h"
 
 //IMU数据
 namespace navigation{
+    typedef enum SerialDataType{
+        kIMU_FLAG = 0xf1,
+        kGPS_FLAG = 0xf2,
+        kVELOCITY_FLAG = 0xf3,
+        kCONTROL_POWER_FLAG = 0xf4,
+        kREMOTE_CHANNEL_FLAG = 0xf5,
+        kEMPOWER_FLAG = 0xf6,
+        kLOCKING_FLAG = 0xf7,
+        kINITIALIZED_FLAG = 0xf8,
+        kSTOP_FLAG = 0xf9,
+        kMODE_FLAG = 0xfa,
+        kBEHAVIOR_FLAG = 0xfb
+    }SerialDataType;
     typedef struct ImuDataTrans{
         volatile float roll;
         volatile float pitch;
@@ -21,32 +31,21 @@ namespace navigation{
         volatile float angular_velocity_z;
     }ImuDataTrans;
 //IMU功能字
-#define IMU_FLAG 0xf1
-
-//GPS数据
     typedef struct GpsDataTrans {
         volatile float latitude;
         volatile float longitude;
         volatile float speed;
     }GpsDataTrans;
-//GPS功能字
-#define GPS_FLAG 0xf2
 
-//速度数据
     typedef struct VelocityDataTrans {
         volatile float velocity_x;
         volatile float velocity_angle;
     }VelocityDataTrans;
-//速度功能字
-#define VELOCITY_FLAG 0xf3
-//速度数据长度
 
-//控制权数据
     typedef struct ControlPowerTrans {
         uint8_t host;    //1 树莓派, 2 OpenMV
     }ControlPowerTrans;
 //控制权功能字
-#define CONTROL_POWER_FLAG 0xf4
 
     typedef struct RemoteChannelTrans{
         uint16_t channel_1;
@@ -54,27 +53,31 @@ namespace navigation{
         uint16_t channel_3;
         uint16_t channel_4;
     }RemoteChannelTrans;
-#define REMOTE_CHANNEL_FLAG 0xf5
 
     typedef struct EmpowerTrans{
         volatile uint8_t empower;
     }EmpowerTrans;
-#define EMPOWER_FLAG 0xf6
 
     typedef struct LockingTrans{
         uint8_t locking;
     }LockingTrans;
-#define LOCKING_FLAG 0xf7
 
     typedef struct InitializedTrans{
         uint8_t initialized;
     }InitializedTrans;
-#define INITIALIZED_FLAG 0xf8
+
 
     typedef struct StopTrans{
         volatile uint8_t stop;
     }StopTrans;
-#define STOP_FLAG 0xf9
+
+    typedef struct ModeTrans{
+        uint8_t mode;
+    }ModeTrans;
+
+    typedef struct BehaviorTrans{
+        uint8_t behavior;
+    }BehaviorTrans;
 
     typedef struct SocketShow{
         std::vector<navigation::GpsPosition> route_gps_positions;
@@ -85,7 +88,7 @@ namespace navigation{
         navigation::ImuData imu_data;
         double speed;
         uint8_t id;
-        uint8_t receiver_id;
+        std::vector<uint8_t> receiver_id;
     }SocketShow;
 
     typedef struct SocketReceive{
@@ -95,7 +98,7 @@ namespace navigation{
         uint8_t route_updated;
         uint8_t stop;
         uint8_t behavior;
-        uint8_t receiver_id;
+        std::vector<uint8_t> receiver_id;
     }SocketReceive;
 
     typedef enum SocketHeader{
@@ -150,12 +153,18 @@ namespace navigation{
         uint8_t error_type;
     }SocketHandShake2;
 
+    typedef struct SocketHandShake3{
+        uint8_t identity;
+        std::vector<uint8_t> id_list;
+    }SocketHandShake3;
+
     typedef enum SocketErrorType{
         kErrorFree = 0,
         kMissHandShake = 1
     }SocketErrorType;
 
     typedef enum Behavior{
+        kNoBehavior = 0,
         kAttack = 1
     }Behavior;
 }

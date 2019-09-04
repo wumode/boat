@@ -212,7 +212,7 @@ namespace serial_communication{
             _this->serial_parse_state_ = 2;
             _this->rx_buffer_[1] = data;
         }
-        else if (_this->serial_parse_state_ == 2 && data>0xf0)
+        else if (_this->serial_parse_state_ == 2 && data>0x80)
         {
             _this->serial_parse_state_ = 3;
             _this->rx_buffer_[2] = data;

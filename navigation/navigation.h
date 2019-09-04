@@ -44,13 +44,13 @@ namespace navigation {
      */
     class Navigation {
     public:
-        explicit Navigation(std::string config_path);
+        explicit Navigation(std::string& config_path);
         int SetMarkPointFlag(const std::string& path);
         int ReSetMarkPointFlag();
 
     protected:
         void UpdateMeasurementVector(MeasurementVector& measurementVector);
-        void NavigationVelocityAnalyze_(const double &navigation_yaw, VelocityData &v_data);
+        void NavigationVelocityAnalyze_(const double &navigation_yaw, Velocity &v_data);
         void Filter();
         void NavigationCalculation();
         void MarkGpsPosition();

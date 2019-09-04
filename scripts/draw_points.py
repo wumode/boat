@@ -31,7 +31,7 @@ def WGS84_TO_BD09(gps84):
     param["sn"] = SN
     url_final = "http://api.map.baidu.com" + encodedStr + "&sn=%s" % SN
     r = requests.get(url_final)
-    print(r.json())
+    print(gps84, r.json())
     bd09 = []
     if r.json()['status'] == 0:
         bd09.append(r.json()['result'][0]['y'])

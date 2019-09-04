@@ -24,11 +24,13 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <thread>
+#include <algorithm>
 #include <navigation.h>
 #include <json.hpp>
 #include <serial_communication.h>
 #include <socket_communication.h>
 #include <algorithm.h>
+#include <ctimer.h>
 #include "boat_config.h"
 #ifndef SHIP_BOAT_H
 #define SHIP_BOAT_H
@@ -76,6 +78,7 @@ namespace navigation {
         static void LockingCallback(uint8_t* buffer_ptr_, void* __this);
         static void SocketReceiveCallBack(uint8_t* buffer_ptr_, void* __this);
         static void SocketHandShake2CallBack(uint8_t* buffer_ptr_, void* __this);
+        static void SocketOfflineReconnectedCallBack(uint8_t* buffer_ptr_, void* __this);
         void Control();
 
     private:
@@ -83,33 +86,31 @@ namespace navigation {
         void SocketHandShake_(void* __this);
         void HardWareInitialization_(const std::string& com, unsigned int bound);
         void AnalysisRemoteInfo(const RemoteChannelTrans& channel, volatile bool* stop);
-        void RemoteVelocityAnalyze_(const RemoteChannelTrans& channel, VelocityData* v);
+        void RemoteVelocityAnalyze_(const RemoteChannelTrans& channel, Velocity* v);
         bool LoadBoatConfig_(const std::string &config_xml_path, BoatParams& boatParams);
-        void VelocityPublish_(VelocityData& velocity_data);
+        void VelocityPublish_(Velocity& velocity_data);
         void ControlPowerPublish_(ControlPowerTrans& control_power_trans);
         void StopPublish_(StopTrans& stopTrans);
         void EmpowerPublish_(EmpowerTrans& empowerTrans);
+        void ModePublish_(const BoatMode& mode);
+        void BehaviorPublish_(uint8_t behavior);
         void SocketShowPublish_();
-        //volatile bool serial_thread_;   //串口线程运行的标志
+
         volatile bool hardware_initialized_;
         volatile bool socket_handshake_ok_;
         volatile uint8_t route_updated_;
-        //volatile bool socket_thread_;   //socket线程运行标志
         serial_communication::SerialCommunication* ser_com_ptr_;
         socket_communication::SocketCommunication* socket_com_ptr_;
-        //serial::Serial* ser_ptr_ = nullptr; //指向串口的指针
-        //int* client_socket_ptr_ = nullptr;
         pthread_mutex_t* serial_measurement_mutex_ptr_ = nullptr;   //线程锁指针，保护变量 boat_measurement_vector_
         pthread_mutex_t* serial_channel_mutex_ptr_ = nullptr;   //线程锁指针，保护变量 remote_channel_info_serial_thread_
         pthread_mutex_t* route_updated_mutex_ptr_ = nullptr;
-        //SerialDataInfo* serial_data_info_ptr_;
         ImuData imu_data_;
         GpsData gps_data_;
         RemoteChannelTrans remote_channel_data_;
-        std::vector<GpsPosition> locus_points_main_thread_; //目标点向量
-        VelocityData velocity_data_;
-        BoatMode boat_mode_;    //运行模式，自主航行/遥控
-        MeasurementVector boat_measurement_vector_;     //观测值向量
+        std::vector<GpsPosition> locus_points_main_thread_;
+        Velocity velocity_data_;
+        BoatMode boat_mode_;
+        MeasurementVector boat_measurement_vector_;
         RemoteChannelTrans remote_channel_data_main_thread_;
         EmpowerTrans empower_trans_;
         LockingTrans locking_trans_;

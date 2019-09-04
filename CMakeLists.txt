@@ -29,7 +29,9 @@ include_directories(socket_communication)
 include_directories(system_detection)
 include_directories(algorithm)
 include_directories(3rdparty/socket)
-
+include_directories(3rdparty/transform)
+include_directories(timer)
+include_directories(ctimer)
 
 add_subdirectory(navigation)
 add_subdirectory(geo_to_utm)
@@ -37,6 +39,9 @@ add_subdirectory(serial_communication)
 add_subdirectory(socket_communication)
 add_subdirectory(system_detection)
 add_subdirectory(algorithm)
+add_subdirectory(3rdparty/transform)
+add_subdirectory(timer)
+add_subdirectory(ctimer)
 
 add_executable(Ship
         main.cc
@@ -69,7 +74,10 @@ target_link_libraries(Test
         SerialCommunication
         Navigation
         SystemDetection
-        Algorithm)
+        Algorithm
+        Transform
+        Timer
+        CTimer)
 
 if (USE_GLOG)
     target_link_libraries(Test glog)

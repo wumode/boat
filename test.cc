@@ -1,131 +1,190 @@
-////
-//// Created by wumode on 19-8-19.
-////
-//
-//#include "serial_communication.h"
-//
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
 #include <iostream>
-#include <algorithm.h>
-//#include <chrono>
-//#include <unistd.h>
-//#include "point/point.h"
-//#include "system_detection.h"
-//#include "config.h"
-//#ifdef USE_GLOG
-//    #include <glog/logging.h>
-//#endif
-//
-//typedef struct TestMsg{
-//    uint32_t a;
-//    char b;
-//}TestMsg;
-//
-//static void TestCallback(uint8_t* buffer_ptr_, void* __this){
-//    std::cout<<"call back"<<std::endl;
-//    TestMsg* testMsg;
-//    testMsg = (TestMsg*)__this;
-//    memcpy(testMsg, buffer_ptr_, sizeof(TestMsg));
-//    std::cout<<"rec: "<<testMsg->a<<" "<<(int)testMsg->b<<std::endl;
-//}
-//
-//TestMsg test_return_fun(TestMsg& t) {
-//    return t;
-//}
-//
-//int& test_and(int& a){
-//    return a;
-//}
-//
-//int main(int argc, char* argv[]){
-//#ifdef USE_GLOG
-//    google::InitGoogleLogging((const char *)argv[0]);
-//    google::SetLogDestination(google::GLOG_INFO, "./log/log");
-//    LOG(INFO)<<"run";
-//#endif
-////    system_detection::CoreTemperature c1;
-////    int i = 0;
-////    for (int i = 0; i < 10; ++i) {
-////        std::cout<<c1.Temperature()<<std::endl;
-////        std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)5000));
-////    }
-//
-//    system_detection::SystemDetection s1;
-//    std::cout<<s1.Temperature()<<std::endl;
-//    printf("now pid is %d \n", getpid());
-//    return 0;
-////    TestMsg t_m_s;
-////    TestMsg t_m_r;
-////    t_m_s.a = 15;
-////    t_m_s.b = 16;
-////    uint8_t flag = 0xf1;
-////    //google::InitGoogleLogging((const char *)argv[0]);
-////    //google::SetLogDestination(google::GLOG_INFO, "./log/log");
-////    std::cout<<"a"<<std::endl;
-////    serial_communication::SerialCommunication ser;
-////    ser.SetCallBackFunction((serial_communication::callBack)TestCallback, flag, (void*)&t_m_r);
-////    ser.StartSerialReceiveThread("/dev/ttyUSB0", 460800);
-////
-////    while(1){
-////        ser.SendData(t_m_s, flag);
-////        std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)500));
-////    }
-//    navigation::point::Point p1;
-//    navigation::point::Point p2;
-//    //p2 = p1;
-//    navigation::UtmPosition u1, u2;
-//    navigation::GpsPosition g1, g2;
-//    g2.latitude = 37.0;
-//    g2.longitude = 122.0;
-//    g1.latitude = 37.001;
-//    g1.longitude = 122.001;
-//    p1 = g1;
-//    p2 = g2;
-//    u1 = p1.Utm();
-//    u2 = p2.Utm();
-//    u1.x = 10.0;
-//    u2.x = 0.0;
-//    u1.y = 10.0;
-//    u2.y = 0.0;
-//    p2 = u2;
-//    p1 = u1;
-//    std::cout<<p1<<std::endl;
-//    std::cout<<p2<<std::endl;
-//    std::cout<<navigation::point::Distance(&p1, &p2)<<std::endl;
-//    std::cout<<navigation::point::CalcAngle(&p1, &p2)*180.0/M_PI<<std::endl;
-//#ifdef USE_GLOG
-//    google::ShutdownGoogleLogging();
-//#endif
-//}
+#include "transform.h"
+#include <thread>
+#include <csignal>
+#include <chrono>
+#include <timer.h>
+#include <ctimer.h>
+
+using namespace std;
+static void on_signal_term(int sig){
+    cout << "on SIGTERM:" << std::this_thread::get_id() << endl;
+    pthread_exit(NULL);
+}
+void threadPosixKill(void){
+    signal(SIGTERM, on_signal_term);
+    thread* t = new thread( [](){
+        int counter = 0;
+        while(true){
+            ++counter;
+            std::cout<<counter<<std::endl;
+            this_thread::sleep_for( chrono::microseconds(5000) );
+        }
+    });
+    pthread_t tid = t->native_handle();
+    cout << "tid=" << tid << endl;
+    // 确保子线程已经在运行。
+    this_thread::sleep_for( chrono::seconds(1) );
+    pthread_kill(tid, SIGTERM);
+    t->join();
+    delete t;
+    cout << "thread destroyed." << endl;
+}
+double tests[][4] = {
+        // wgsLat, wgsLng, gcjLat, gcjLng
+        {37.52586, 122.07697, 37.53267730351087, 122.08859696767021}, // shanghai
+        {22.543847, 113.912316, 22.540796131694766, 113.9171765808363}, // shenzhen
+        {39.911954, 116.377817, 39.91334545536069, 116.38404722455657}, // beijing
+};
+
+class Test1{
+public:
+    Test1();
+    ~Test1();
+
+private:
+    int* a;
+};
+
+Test1::Test1() {
+    a = new int;
+    *a = 8;
+}
+
+Test1::~Test1() {
+    std::cout<<"free a: "<<*a<<std::endl;
+    delete a;
+}
+
+void didHeartbeatThread(int arg){
+    Test1 t1;
+    std::cout<<"a "<<arg<<std::endl;
+}
 
 
-int main(int argc, char *argv[])
-{
-    double p = 0;
-    double i = 2.5;
-    double d = 0.00;
-    double up = 40.0;
-    double low = -40.0;
-    algorithm::PidController p1(p, i, d);
-    p1.SetLimit(up, low);
-    uint32_t n = 0;
-    double me;
-    double in;
-    in = 0.0;
-    me = 0.0;
-    p1.SocketShow("192.168.123.2", 9009);
-    //outfile.open("test.dat",  std::ios::out | std::ios::trunc);
-    double target = 3.0;
-    char str1[100];
-    while(n<50){
-//    while(true){
-        me = 10 * sin(0.05 * in);
-        in = p1.Update(me, target);
-        //sprintf(str1, "%.4f, %.4f, %.4f\n", in, me, target);
-        //outfile << str1;
-        std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)40000));
-        n++;
-        std::cout<<n<<std::endl;
+void didHeartbeatThread1(int arg){
+    Test1 t2;
+    std::cout<<"b "<<arg<<std::endl;
+}
+
+int main() {
+    clock_t b;
+    clock_t e;
+    std::chrono::steady_clock::time_point st;
+    std::chrono::steady_clock::time_point en;
+
+    int t;
+    int arg = 8;
+    auto *pTimer = new CTimer("timer1");
+    auto *pTimer2 = new CTimer("timer2");
+    pTimer->AsyncLoop(100, didHeartbeatThread, arg);	//异步循环执行，间隔时间10毫秒
+    pTimer2->AsyncLoop(5000, didHeartbeatThread1, arg);
+    st = std::chrono::steady_clock::now();
+    std::this_thread::sleep_for(chrono::seconds(1));
+    pTimer->Cancel();
+    pTimer2->Cancel();
+    en = std::chrono::steady_clock::now();
+    std::chrono::duration<double> debug_time_used = std::chrono::duration_cast<std::chrono::duration<double>>(en-st);
+    double debug_time_count = debug_time_used.count();
+    printf("%f s\n", debug_time_count);
+
+    //while(true); // Keep main thread active
+    //threadPosixKill();
+    return 0;
+    size_t s = sizeof(tests) / sizeof(tests[0]);
+    int i;
+
+    for (i = 0; i < s; i++) {
+        double wgsLat = tests[i][0], wgsLng = tests[i][1];
+        double gcjLat, gcjLng;
+        wgs2gcj(wgsLat, wgsLng, &gcjLat, &gcjLng);
+        char got[1024], target[1024];
+        sprintf(got, "%.06f,%.06f", gcjLat, gcjLng);
+        sprintf(target, "%.06f,%.06f", tests[i][2], tests[i][3]);
+        if (strcmp(got, target) != 0) {
+            printf("wgs2gcj test %d: %s != %s\n", i, got, target);
+        }
     }
-    p1.CloseSocketShow();
-    // 向文件写入用户输入的数据
+
+    for (i = 0; i < s; i++) {
+        double gcjLat = tests[i][2], gcjLng = tests[i][3];
+        double wgsLat, wgsLng;
+        gcj2wgs(gcjLat, gcjLng, &wgsLat, &wgsLng);
+        double d = distance(wgsLat, wgsLng, tests[i][0], tests[i][1]);
+        if (d > 5) {
+            printf("gcj2wgs test %d: distance %f\n", i, d);
+        }
+    }
+
+    for (i = 0; i < s; i++) {
+        double gcjLat = tests[i][2], gcjLng = tests[i][3];
+        double wgsLat, wgsLng;
+        gcj2wgs_exact(gcjLat, gcjLng, &wgsLat, &wgsLng);
+        double d = distance(wgsLat, wgsLng, tests[i][0], tests[i][1]);
+        if (d > 0.5) {
+            printf("gcj2wgs_exact test %d: distance %f\n", i, d);
+        }
+    }
+
+
+    double lat, lng;
+    int n;
+
+    b = clock();
+    for (i = 0; i < 10; i++) {
+        wgs2gcj(tests[0][0], tests[0][1], &lat, &lng);
+    }
+    e = clock();
+    n = (int)(CLOCKS_PER_SEC / (e - b)) * 10;
+    b = clock();
+    for (i = 0; i < n; i++) {
+        wgs2gcj(tests[0][0], tests[0][1], &lat, &lng);
+    }
+    e = clock();
+    t = (int)(((double)(e - b) / CLOCKS_PER_SEC) * 1e9 / n);
+    printf("wgs2gcj\t%d\t%d ns/op\n", n, t);
+    printf("lat: %0.6f-lng: %0.6f\n" , lat, lng);
+    b = clock();
+    for (i = 0; i < 10; i++) {
+        gcj2wgs(tests[0][0], tests[0][1], &lat, &lng);
+    }
+    e = clock();
+    n = (int)(CLOCKS_PER_SEC / (e - b)) * 10;
+    b = clock();
+    for (i = 0; i < n; i++) {
+        gcj2wgs(tests[0][2], tests[0][3], &lat, &lng);
+    }
+    e = clock();
+    t = (int)(((double)(e - b) / CLOCKS_PER_SEC) * 1e9 / n);
+    printf("gcj2wgs\t%d\t%d ns/op\n", n, t);
+    printf("lat: %0.6f-lng: %0.6f\n" , lat, lng);
+    b = clock();
+    for (i = 0; i < 10; i++) {
+        gcj2wgs_exact(tests[0][0], tests[0][1], &lat, &lng);
+    }
+    e = clock();
+    n = (int)(CLOCKS_PER_SEC / (e - b)) * 10;
+    b = clock();
+    for (i = 0; i < n; i++) {
+        gcj2wgs_exact(tests[0][2], tests[0][3], &lat, &lng);
+    }
+    e = clock();
+    t = (int)(((double)(e - b) / CLOCKS_PER_SEC) * 1e9 / n);
+    printf("gcj2wgs_exact\t%d\t%d ns/op\n", n, t);
+    printf("lat: %0.6f-lng: %0.6f\n" , lat, lng);
+    b = clock();
+    for (i = 0; i < 10; i++) {
+        distance(tests[0][0], tests[0][1], tests[0][2], tests[0][3]);
+    }
+    e = clock();
+    n = (int)(CLOCKS_PER_SEC / (e - b)) * 10;
+    b = clock();
+    for (i = 0; i < n; i++) {
+        distance(tests[0][0], tests[0][1], tests[0][2], tests[0][3]);
+    }
+    e = clock();
+
 }

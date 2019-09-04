@@ -20,7 +20,6 @@
 // Created by wumode on 19-7-16.
 //
 
-#include <FreeImage.h>
 #include "socket_communication.h"
 
 namespace socket_communication{
@@ -50,6 +49,7 @@ namespace socket_communication{
         offline_reconnection_ = false;
         memset(rx_buffer_,'\0', SOCKET_SIZE);
         memset(tx_buffer_, '\0', SOCKET_SIZE);
+        receive_thread_ = false;
     }
 
     SocketCommunication::SocketCommunication(const std::string &host, uint16_t port) {
@@ -62,6 +62,7 @@ namespace socket_communication{
         memset(tx_buffer_, '\0', SOCKET_SIZE);
         host_ = host;
         port_ = port;
+        receive_thread_ = false;
     }
 
     SocketCommunication::~SocketCommunication() {
@@ -99,10 +100,16 @@ namespace socket_communication{
         addr.sin_family = AF_INET;
         addr.sin_port = htons(_this->port_);
         addr.sin_addr.s_addr = htonl(INADDR_ANY);
-        inet_aton(_this->host_.c_str(), &(addr.sin_addr));
+        struct hostent *h_ptr = gethostbyname(_this->host_.c_str());
+        if(h_ptr == nullptr) {
+            std::cerr<<"Host name error"<<std::endl;
+            return false;
+        }
+        addr.sin_addr.s_addr = *((unsigned long*)h_ptr->h_addr_list[0]);
+        //inet_aton(_this->host_.c_str(), &(addr.sin_addr));
         int addrlen = sizeof(addr);
-        BOOL bReuseaddr = TRUE;
-        setsockopt(*_this->client_socket_ptr_, SOL_SOCKET, SO_REUSEADDR, (const char*)&bReuseaddr,sizeof(BOOL));
+        int32_t bReuseaddr = 1;
+        setsockopt(*_this->client_socket_ptr_, SOL_SOCKET, SO_REUSEADDR, (const char*)&bReuseaddr,sizeof(int32_t));
         int listen_socket = connect(*_this->client_socket_ptr_, (struct sockaddr *)&addr, addrlen);
         if (listen_socket == -1) {
             //LOG(ERROR)<<"connect "<<host_<<":"<<port_<<" error";
@@ -123,6 +130,7 @@ namespace socket_communication{
         _this->port_ = port;
         _this->host_ = host;
         std::cout<<"Socket started"<<std::endl;
+        receive_thread_ = true;
         return true;
     }
 
@@ -138,11 +146,36 @@ namespace socket_communication{
                                                   void *this_) {
         std::map<uint8_t , CallBackFunction>::iterator iter;
         iter = callback_function_directory_.find(flag);
-        if(iter != callback_function_directory_.end()){
-            callback_function_directory_.insert(std::pair<uint8_t, CallBackFunction>(flag, CallBackFunction(callBack1, flag, this_)));
-        }
-        else{
-            callback_function_directory_[flag] = CallBackFunction(callBack1, flag, this_);
+//        if(iter == callback_function_directory_.end()){
+//            callback_function_directory_.insert(std::pair<uint8_t, CallBackFunction>(flag, CallBackFunction(callBack1, flag, this_)));
+//        }
+//        else{
+//            callback_function_directory_[flag] = CallBackFunction(callBack1, flag, this_);
+//        }
+        callback_function_directory_[flag] = CallBackFunction(callBack1, flag, this_);
+
+    }
+
+    void SocketCommunication::SetSignalCallBackFunction(socket_communication::callBack callBackf,
+                                                        socket_communication::SocketSignal socket_signal,
+                                                        void *this_) {
+        std::map<SocketSignal , CallBackFunction>::iterator iter;
+        iter = signal_callback_function_directory_.find(socket_signal);
+//        if(iter == signal_callback_function_directory_.end()){
+//            signal_callback_function_directory_.insert(std::pair<SocketSignal, CallBackFunction>(socket_signal, CallBackFunction(callBackf, socket_signal, this_)));
+//        }
+//        else{
+//
+//        }
+        signal_callback_function_directory_[socket_signal] = CallBackFunction(callBackf, socket_signal, this_);
+    }
+
+    void SocketCommunication::CallSignalFunction(socket_communication::SocketSignal socket_signal, void *__this) {
+        auto* _this = (SocketCommunication*)__this;
+        std::map<SocketSignal , CallBackFunction>::iterator iter;
+        iter = _this->signal_callback_function_directory_.find(socket_signal);
+        if(iter != _this->signal_callback_function_directory_.end()){
+            _this->signal_callback_function_directory_[socket_signal].function_ptr_(nullptr, _this->signal_callback_function_directory_[socket_signal].this_ptr_);
         }
     }
 
@@ -169,39 +202,46 @@ namespace socket_communication{
             }
             _this->CallFunction(_this->rx_buffer_, (void*)_this);
         }
-        if(_this->client_socket_ptr_){
-            close(*_this->client_socket_ptr_);
-            delete _this->client_socket_ptr_;
-            _this->client_socket_ptr_ = nullptr;
-        }
+//        if(_this->client_socket_ptr_){
+//            //close(*_this->client_socket_ptr_);
+//            shutdown(*_this->client_socket_ptr_, SHUT_RDWR);
+//            delete _this->client_socket_ptr_;
+//            _this->client_socket_ptr_ = nullptr;
+//        }
         //_this->socket_thread_ = false;
         _this->is_open_ = false;
-        if(socket_closed){
+        if(socket_closed && _this->socket_thread_){
+            _this->CallSignalFunction(kSocketClose, _this);
             while (_this->socket_thread_){
+                if(_this->client_socket_ptr_){
+                    delete _this->client_socket_ptr_;
+                    _this->client_socket_ptr_ = nullptr;
+                }
                 if(_this->StartSocketReceiveThread(_this->host_, _this->port_, _this)){
                     _this->offline_reconnection_ = true;
+                    _this->CallSignalFunction(kSocketOfflineReconnected, _this);
                     break;
                 }
                 std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)1000000));
             }
         }
+        _this->receive_thread_ = false;
         return nullptr;
     }
 
     void SocketCommunication::CloseSocketReceiveThread() {
         socket_thread_ = false;
-        uint32_t n = 0;
-        while(client_socket_ptr_!= nullptr){
+        //uint32_t n = 0;
+        while(receive_thread_){
             std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)200));
-            if(n>9){
-                if(client_socket_ptr_){
-                    //close(*client_socket_ptr_);
-                    shutdown(*client_socket_ptr_, SHUT_RDWR);
-                    delete client_socket_ptr_;
-                    client_socket_ptr_ = nullptr;
-                }
+
+            if(receive_thread_ && client_socket_ptr_!=nullptr){
+                //close(*client_socket_ptr_);
+                shutdown(*client_socket_ptr_, SHUT_RDWR);
+                delete client_socket_ptr_;
+                client_socket_ptr_ = nullptr;
             }
-            n++;
+
         }
         is_open_ = false;
     }

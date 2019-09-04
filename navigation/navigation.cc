@@ -30,7 +30,7 @@ namespace navigation
      * @param config_path
      */
      ///构造函数，调用初始化成员函数Init_
-    Navigation::Navigation(std::string config_path) {
+    Navigation::Navigation(std::string& config_path) {
 //        if (Init_(config_path)){
 //            std::cout<<"Initialized success!"<<std::endl;
 //        }
@@ -249,20 +249,24 @@ namespace navigation
      * @param v_data
      */
      ///计算自主航行速度
-    void Navigation::NavigationVelocityAnalyze_(const double &navigation_yaw, VelocityData &v_data) {
+    void Navigation::NavigationVelocityAnalyze_(const double &navigation_yaw, Velocity &v_data) {
         double yaw_abs = fabs(navigation_yaw);
         double s = navigation_yaw/yaw_abs;
         if(yaw_abs>navigation_parameter_.corner_threshold){
-            v_data.velocity_angle = s*navigation_parameter_.steering_coefficient*navigation_parameter_.corner_threshold;
+            v_data.angular_velocity.z = s*navigation_parameter_.steering_coefficient*navigation_parameter_.corner_threshold;
         } else{
-            v_data.velocity_angle = navigation_parameter_.steering_coefficient*navigation_yaw;
+            v_data.angular_velocity.z = navigation_parameter_.steering_coefficient*navigation_yaw;
         }
-        v_data.velocity_x = navigation_parameter_.base_velocity - navigation_parameter_.steering_deceleration_coefficient
-                *fabs(v_data.velocity_angle);
+        v_data.angular_velocity.x = navigation_parameter_.base_velocity - navigation_parameter_.steering_deceleration_coefficient
+                *fabs(v_data.angular_velocity.z);
         if(stop_motor_){
             LOG(INFO)<<"stop"<<std::endl;
-            v_data.velocity_x = 0;
-            v_data.velocity_angle = 0;
+            v_data.linear_velocity.x = 0;
+            v_data.linear_velocity.y = 0;
+            v_data.linear_velocity.z = 0;
+            v_data.angular_velocity.z = 0;
+            v_data.angular_velocity.y = 0;
+            v_data.angular_velocity.x = 0;
         }
     }
 

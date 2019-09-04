@@ -110,7 +110,7 @@ namespace navigation {
         socketShow.locking = j.at("locking").get<uint8_t>();
         socketShow.speed = j.at("speed").get<double>();
         socketShow.id = j.at("id").get<uint8_t>();
-        socketShow.receiver_id = j.at("receiver_id").get<uint8_t>();
+        socketShow.receiver_id = j.at("receiver_id").get<std::vector<uint8_t >>();
     }
 
     void to_json(json &j, const SocketReceive &socketReceive) {
@@ -130,7 +130,7 @@ namespace navigation {
         socketReceive.route_updated = j.at("route_updated").get<uint8_t>();
         socketReceive.stop = j.at("stop").get<uint8_t>();
         socketReceive.behavior = j.at("behavior").get<uint8_t>();
-        socketReceive.receiver_id = j.at("receiver_id").get<uint8_t>();
+        socketReceive.receiver_id = j.at("receiver_id").get<std::vector<uint8_t>>();
     }
 
     void to_json(json& j, const SocketHandShake& socketHandShake){
@@ -152,6 +152,16 @@ namespace navigation {
     void from_json(const json& j, SocketHandShake2& socketHandShake2){
         socketHandShake2.identity = j.at("identity").get<uint8_t>();
         socketHandShake2.error_type = j.at("error_type").get<uint8_t>();
+    }
+
+    void to_json(json& j, SocketHandShake3& socketHandShake3){
+        j = json{{"identity",   socketHandShake3.identity},
+                 {"id_list",    socketHandShake3.id_list}};
+    }
+
+    void from_json(const json& j, SocketHandShake3& socketHandShake3){
+        socketHandShake3.id_list = j.at("id_list").get<std::vector<uint8_t>>();
+        socketHandShake3.identity = j.at("identity").get<uint8_t>();
     }
 }
 namespace navigation{
@@ -271,8 +281,6 @@ namespace navigation{
         boat_measurement_vector_.imu_data.linear_acceleration.x = 0.0;
         boat_measurement_vector_.imu_data.linear_acceleration.y = 0.0;
         boat_measurement_vector_.imu_data.angular_velocity.z = 0.0;
-        velocity_data_.velocity_x = 0.0;
-        velocity_data_.velocity_angle = 0.0;
 
         serial_measurement_mutex_ptr_ = new pthread_mutex_t;
         serial_channel_mutex_ptr_ = new pthread_mutex_t;
@@ -282,10 +290,10 @@ namespace navigation{
         pthread_mutex_init(route_updated_mutex_ptr_, nullptr); //线程锁初始化
 
         ser_com_ptr_ = new serial_communication::SerialCommunication(boat_params_.serialParams.port, boat_params_.serialParams.baud);
-        ser_com_ptr_ ->SetCallBackFunction((serial_communication::callBack)GpsMsgsCallback, GPS_FLAG, this);
-        ser_com_ptr_ ->SetCallBackFunction((serial_communication::callBack)ImuMsgsCallback, IMU_FLAG, this);
-        ser_com_ptr_ ->SetCallBackFunction((serial_communication::callBack)RemoteControlSignalCallback, REMOTE_CHANNEL_FLAG, this);
-        ser_com_ptr_->SetCallBackFunction((serial_communication::callBack)LockingCallback, LOCKING_FLAG, this);
+        ser_com_ptr_ ->SetCallBackFunction((serial_communication::callBack)GpsMsgsCallback, kGPS_FLAG, this);
+        ser_com_ptr_ ->SetCallBackFunction((serial_communication::callBack)ImuMsgsCallback, kIMU_FLAG, this);
+        ser_com_ptr_ ->SetCallBackFunction((serial_communication::callBack)RemoteControlSignalCallback, kREMOTE_CHANNEL_FLAG, this);
+        ser_com_ptr_->SetCallBackFunction((serial_communication::callBack)LockingCallback, kLOCKING_FLAG, this);
         bool res = ser_com_ptr_->StartSerialReceiveThread();
         if(!res){
             exit(-1);
@@ -297,6 +305,8 @@ namespace navigation{
         SocketHandShake_();
         socket_com_ptr_->SetCallBackFunction((socket_communication::callBack)SocketReceiveCallBack, kNormalData, this);
         socket_com_ptr_->SetCallBackFunction((socket_communication::callBack)SocketHandShake2CallBack, kHandShake2, this);
+        socket_com_ptr_->SetSignalCallBackFunction((socket_communication::callBack)SocketOfflineReconnectedCallBack,
+                socket_communication::kSocketOfflineReconnected, this);
          //std::cout<<"er"<<std::endl;
 //        now_call_timestamp_ = std::chrono::steady_clock::now();
 //        last_call_timestamp_ = std::chrono::steady_clock::now();
@@ -385,7 +395,7 @@ namespace navigation{
      */
     void boat::HardWareInitialization_(const std::string &com, unsigned int baud) {
         serial_communication::SerialCommunication ser(com, baud);
-        ser.SetCallBackFunction((serial_communication::callBack)HardWareInitializationCallBack, GPS_FLAG, this);
+        ser.SetCallBackFunction((serial_communication::callBack)HardWareInitializationCallBack, kGPS_FLAG, this);
         bool res = ser.StartSerialReceiveThread();
         if(!res){
             exit(-1);
@@ -529,6 +539,15 @@ namespace navigation{
         return true;
     }
 
+    void boat::SocketOfflineReconnectedCallBack(uint8_t *buffer_ptr_, void *__this) {
+        auto* _this = (boat*)__this;
+        if(_this->socket_com_ptr_->OfflineReconnection()){
+            _this->socket_handshake_ok_ = false;
+            _this->SocketHandShake_(_this);
+            _this->socket_com_ptr_->ResetOfflineFlag();
+        }
+    }
+
     void boat::SocketReceiveCallBack(uint8_t* buffer_ptr_, void* __this) {
         auto* _this = (boat*)__this;
         std::string string_rec = (const char*)buffer_ptr_;
@@ -558,9 +577,14 @@ namespace navigation{
             std::cerr<<"Dara parse error, data: "<<string_rec<<std::endl;
             return;
         }
-        if(s_r.receiver_id != _this->boat_params_.id) {
+        std::vector<uint8_t>::iterator iter;
+        iter = std::find(s_r.receiver_id.begin(), s_r.receiver_id.end(), _this->boat_params_.id);
+        if(iter == s_r.receiver_id.end()){
             return;
         }
+//        if(s_r.receiver_id != _this->boat_params_.id) {
+//            return;
+//        }
         if(s_r.empower!=_this->empower_trans_.empower) {
             _this->empower_trans_.empower = s_r.empower;
         }
@@ -599,7 +623,10 @@ namespace navigation{
      * @param velocity_info : 速度
      */
      ///速度发布
-    void boat::VelocityPublish_(VelocityData& velocity_data){
+    void boat::VelocityPublish_(Velocity& velocity){
+        VelocityDataTrans velocity_data;
+        velocity_data.velocity_x = (float)velocity.linear_velocity.x;
+        velocity_data.velocity_angle = (float)velocity.angular_velocity.z;
         if(velocity_data.velocity_angle>3.0f){
             velocity_data.velocity_angle = 3.0f;
         }else if(velocity_data.velocity_angle < -3.0f){
@@ -613,7 +640,7 @@ namespace navigation{
         LOG(INFO)<<"Velocity publish v_x: "<<velocity_data.velocity_x<<" v_a: "<<velocity_data.velocity_angle<<std::endl;
         //std::cout<<"Velocity publish v_x: "<<velocity_data.velocity_x<<" v_a: "<<velocity_data.velocity_angle<<std::endl;
         if(ser_com_ptr_){
-            ser_com_ptr_->SendData(velocity_data, VELOCITY_FLAG);
+            ser_com_ptr_->SendData(velocity_data, kVELOCITY_FLAG);
         }
     }
 
@@ -621,7 +648,7 @@ namespace navigation{
         LOG(INFO)<<"Control power publish: "<<(int)control_power_trans.host;
         //std::cout<<"Control power publish: "<<(int)control_power_trans.host<<std::endl;
         if(ser_com_ptr_){
-            ser_com_ptr_->SendData(control_power_trans, CONTROL_POWER_FLAG);
+            ser_com_ptr_->SendData(control_power_trans, kCONTROL_POWER_FLAG);
         }
     }
 
@@ -629,7 +656,7 @@ namespace navigation{
         LOG(INFO)<<"Empower publish: "<<(int)empowerTrans.empower;
         //std::cout<<"Empower publish: "<<(int)empowerTrans.empower<<std::endl;
         if(ser_com_ptr_){
-            ser_com_ptr_->SendData(empowerTrans, EMPOWER_FLAG);
+            ser_com_ptr_->SendData(empowerTrans, kEMPOWER_FLAG);
         }
     }
 
@@ -637,18 +664,32 @@ namespace navigation{
         LOG(INFO)<<"Stop publish: "<<(int)stopTrans.stop;
         //std::cout<<"Stop publish: "<<(int)stopTrans.stop<<std::endl;
         if(ser_com_ptr_){
-            ser_com_ptr_->SendData(stopTrans, STOP_FLAG);
+            ser_com_ptr_->SendData(stopTrans, kSTOP_FLAG);
+        }
+    }
+
+    void boat::ModePublish_(const BoatMode& mode) {
+        LOG(INFO)<<"Mode publish: "<<(int)mode;
+        ModeTrans m;
+        m.mode = mode;
+        if(ser_com_ptr_){
+            ser_com_ptr_->SendData(m, kMODE_FLAG);
+        }
+    }
+
+    void boat::BehaviorPublish_(uint8_t behavior) {
+        LOG(INFO)<<"Mode publish: "<<(int)behavior;
+        BehaviorTrans b;
+        b.behavior = behavior;
+        if(ser_com_ptr_){
+            ser_com_ptr_->SendData(b, kBEHAVIOR_FLAG);
         }
     }
 
     void boat::SocketShowPublish_() {
+
         if(socket_com_ptr_->IsOpen()){
             //std::cout<<"offline flag: "<<socket_com_ptr_->OfflineReconnection()<<std::endl;
-            if(socket_com_ptr_->OfflineReconnection()){
-                socket_handshake_ok_ = false;
-                SocketHandShake_();
-                socket_com_ptr_->ResetOfflineFlag();
-            }
             SocketShow s_s;
             GpsPosition gps_p;
             UtmToGps(&now_state_.position.utm_position, &gps_p);
@@ -662,7 +703,7 @@ namespace navigation{
             s_s.gps_position = gps_p;
             s_s.speed = gps_data_.speed;
             s_s.id = boat_params_.id;
-            s_s.receiver_id = 0;
+            s_s.receiver_id.push_back(1) ;
             socket_com_ptr_->SendData(s_s, kNormalData);
         }
     }
@@ -763,6 +804,7 @@ namespace navigation{
         ///channel 4    up     1000
         ///             down   2000
          auto* _this = (boat*)__this;
+         _this = static_cast<boat*>(__this);
          RemoteChannelTrans remote_channel_trans_data;
          RemoteChannelTrans* remote_channel_trans;
          remote_channel_trans = &remote_channel_trans_data;
@@ -817,14 +859,14 @@ namespace navigation{
      * @param v
      */
     ///分析遥控信号, 计算速度
-    void boat::RemoteVelocityAnalyze_(const RemoteChannelTrans &channel, VelocityData* v) {
+    void boat::RemoteVelocityAnalyze_(const RemoteChannelTrans &channel, Velocity* v) {
         int v_a = channel.channel_2 - 1500;
         int v_x = channel.channel_1 - 1500;
         int fre = 125;
         int v_a_s = v_a/fre;
         int v_x_s = v_x/fre;
-        v->velocity_x =  0.006 * v_x_s*fre;
-        v->velocity_angle = 0.003 * v_a_s*fre;
+        v->linear_velocity.x =  0.006 * v_x_s*fre;
+        v->angular_velocity.z = 0.003 * v_a_s*fre;
         //std::cout<<"pub: v_x: "<<v->velocity_x<<"v_a: "<<v->velocity_angle<<std::endl;
         //LOG(INFO)<<"pub: v_x: "<<v->velocity_x<<"v_a: "<<v->velocity_angle<<std::endl;
     }
@@ -886,8 +928,7 @@ namespace navigation{
             }
             //AnalysisRemoteInfo(remote_channel_data_main_thread_, &stop);
             Filter();
-            //std::cout<<"filter: "<<std::endl;
-            //LOG(INFO)<<"filter: "<<std::endl;
+
             if(mark_point_parameter_.mark_flag){
                 now_mark_timestamp = std::chrono::steady_clock::now();
                 std::chrono::duration<double> time_used = std::chrono::duration_cast<std::chrono::duration<double>>
@@ -915,11 +956,9 @@ namespace navigation{
                 //LOG(INFO)<<"Navi anal";
             }
             else if(boat_mode_ == remote_mode){
-                control_power_trans_.host = 1;
                 RemoteVelocityAnalyze_(remote_channel_data_main_thread_, &velocity_data_);
             }
             else if(boat_mode_ == track_mode){
-                control_power_trans_.host = 2;
             }
 //            else if(boat_mode_ == attack_mode){
 //                RemoteVelocityAnalyze_(remote_channel_data_main_thread_, &velocity_data_);
@@ -927,12 +966,15 @@ namespace navigation{
 //            }
             if(behavior_ & kAttack){
                 RemoteVelocityAnalyze_(remote_channel_data_main_thread_, &velocity_data_);
-                control_power_trans_.host = 3;
+                //control_power_trans_.host = 3;
             }
-            //std::cout<<stop<<std::endl;
             if(stop){
-                velocity_data_.velocity_angle = 0.0;
-                velocity_data_.velocity_x = 0.0;
+                velocity_data_.angular_velocity.x = 0.0;
+                velocity_data_.angular_velocity.y = 0.0;
+                velocity_data_.angular_velocity.z = 0.0;
+                velocity_data_.linear_velocity.x = 0.0;
+                velocity_data_.linear_velocity.y = 0.0;
+                velocity_data_.linear_velocity.z = 0.0;
                 //ReSetMarkPointFlag();
             }
             if(serial_send_count == boat_params_.frequency/boat_params_.serialParams.send_frequency){
@@ -942,6 +984,10 @@ namespace navigation{
                 ControlPowerPublish_(control_power_trans_);
                 std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)50));
                 EmpowerPublish_(empower_trans_);
+                std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)50));
+                ModePublish_(boat_mode_);
+                std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)50));
+                BehaviorPublish_(behavior_);
             }
             now_timestamp = std::chrono::steady_clock::now();
             std::chrono::duration<double> time_used = std::chrono::duration_cast<std::chrono::duration<double>>(now_timestamp-last_timestamp);

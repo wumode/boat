@@ -35,6 +35,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <cerrno>
+#include <netdb.h>
+//#include <FreeImage.h>
 
 #ifdef USE_GLOG
     #include <glog/logging.h>
@@ -65,7 +67,11 @@ namespace socket_communication {
     private:
         uint8_t data_flag;
     };
-
+    typedef enum SocketSignal{
+        kSocketClose = 1,
+        kSocketConnected = 2,
+        kSocketOfflineReconnected = 3
+    }SocketSignal;
     class SocketCommunication {
     public:
         SocketCommunication();
@@ -80,6 +86,7 @@ namespace socket_communication {
         int RemoveCallBackFunction(uint8_t flag);
         void ResetOfflineFlag();
         bool OfflineReconnection();
+        void SetSignalCallBackFunction(callBack callBackf, SocketSignal socket_signal, void* this_);
         template <typename T> void SendData(const T& data, uint8_t flag);
         void SetHost(const std::string& host);
         void SetPort(uint16_t port);
@@ -87,16 +94,18 @@ namespace socket_communication {
     private:
         //void DataReceiveAnalysis(const uint8_t *data_buf, uint8_t num, void* __this);
         void CallFunction(uint8_t* data, void* __this);
+        void CallSignalFunction(SocketSignal socket_signal, void* __this);
         //bool WriteData();
-        volatile bool socket_thread_;   //socket线程运行的标志
+        volatile bool socket_thread_;   //控制socket线程运行的标志
         volatile bool is_sending_;
-        //serial::Serial* ser_ptr_; //指向串口的指针
+
         int* client_socket_ptr_;
         std::string host_;
         uint16_t port_;
         //uint32_t baud_rate_;
         volatile bool is_open_;
         volatile bool offline_reconnection_;
+        volatile bool receive_thread_;
         uint8_t rx_buffer_[SOCKET_SIZE];
         uint8_t tx_buffer_[SOCKET_SIZE];
         //uint8_t _data_len, _data_cnt;
@@ -104,6 +113,7 @@ namespace socket_communication {
         //uint8_t receive_head_high_, receive_head_low_;
         uint8_t send_head_high_, send_head_low_;
         std::map<uint8_t, CallBackFunction> callback_function_directory_;
+        std::map<SocketSignal, CallBackFunction> signal_callback_function_directory_;
     };
 
     template <typename T>
