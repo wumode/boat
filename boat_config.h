@@ -20,7 +20,8 @@ namespace navigation{
         kINITIALIZED_FLAG = 0xf8,
         kSTOP_FLAG = 0xf9,
         kMODE_FLAG = 0xfa,
-        kBEHAVIOR_FLAG = 0xfb
+        kBEHAVIOR_FLAG = 0xfb,
+        KBEHAVIOR_PARAMS_FLAG = 0xfc
     }SerialDataType;
     typedef struct ImuDataTrans{
         volatile float roll;
@@ -79,6 +80,10 @@ namespace navigation{
         uint8_t behavior;
     }BehaviorTrans;
 
+    typedef struct BehaviorParamsTrans{
+        uint8_t laser_intensity;
+    }BehaviorParamsTrans;
+
     typedef struct SocketShow{
         std::vector<navigation::GpsPosition> route_gps_positions;
         navigation::GpsPosition gps_position;
@@ -99,6 +104,7 @@ namespace navigation{
         uint8_t stop;
         uint8_t behavior;
         std::vector<uint8_t> receiver_id;
+        uint8_t laser_intensity;
     }SocketReceive;
 
     typedef enum SocketHeader{

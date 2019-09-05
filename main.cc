@@ -21,10 +21,6 @@
 //
 
 #include <iostream>
-#include <unistd.h>
-#include <cstdlib>
-#include <ctime>
-#include <chrono>
 #include "boat.h"
 
 #ifdef USE_GLOG
@@ -59,6 +55,7 @@ int main(int argc, char* argv[])
     }
     navigation::boat boat(config_path);
     //status = boat.StartSerialThread(com, bound);
+    FLAGS_logtostderr = false;
     boat.Control();
 #ifdef USE_GLOG
     google::ShutdownGoogleLogging();

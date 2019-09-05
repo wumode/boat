@@ -94,6 +94,7 @@ namespace navigation {
         void EmpowerPublish_(EmpowerTrans& empowerTrans);
         void ModePublish_(const BoatMode& mode);
         void BehaviorPublish_(uint8_t behavior);
+        void BehaviorParamsPublish_(const BehaviorParamsTrans& behavior);
         void SocketShowPublish_();
 
         volatile bool hardware_initialized_;
@@ -117,6 +118,7 @@ namespace navigation {
         StopTrans stop_trans_;
         ControlPowerTrans control_power_trans_;
         BoatParams boat_params_;
+        BehaviorParamsTrans behavior_params_trans_;
         bool main_thread_;
         volatile bool stop;  //停止
         uint8_t behavior_;

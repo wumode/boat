@@ -95,17 +95,23 @@ namespace navigation
         TiXmlDocument config_xml;
         if (!config_xml.LoadFile(config_xml_path.c_str()))
         {
+#ifdef USE_GLOG
             LOG(ERROR) << "Can not load file: " << config_xml_path << std::endl;
+#endif
             config_xml.Clear();
             return false;
         }
         TiXmlElement* xmlRoot = config_xml.RootElement();
         if (xmlRoot == nullptr)
         {
+#ifdef USE_GLOG
             LOG(ERROR) << "Failed to load file: No root element." << std::endl;
+#endif
             return false;
         }
+#ifdef USE_GLOG
         LOG(INFO) << "Load file: " << config_xml_path << std::endl;
+#endif
         TiXmlElement* gps_xml = xmlRoot->FirstChildElement("gps");
         TiXmlElement* point_xml = gps_xml->FirstChildElement("point");
         while (point_xml){

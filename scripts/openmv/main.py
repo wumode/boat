@@ -3,10 +3,12 @@ import time
 from pyb import UART
 from pyb import Servo
 from pyb import Pin
+import utime
+from pyb import LED
 
 laser_disable=0
 laser_enable=1
-uart = UART(3, 921600, timeout=50) #串口初始化定义 p4 p5
+uart = UART(3, 921600, timeout=50)  #串口初始化定义 p4 p5
 # red_threshold  =(0, 100, 17, 127, -128, 127)  # 以前
 red_threshold  = (20, 68, 41, 127, -13, 54)
 yellow_threshold  = red_threshold
@@ -29,9 +31,7 @@ kp_down = 0.08
 ki_down = 0.45
 kd_down = 0.02
 
-#kp_down = 2.5
-#ki_down = 0
-#kd_down = 0
+
 
 bias_down = 0.0
 last_bias_down = 0.0
@@ -57,8 +57,8 @@ down_bias_range = 10
 #down_error_last = 0
 trace_error_last = 0
 
-mode_choose = -1
-mode_choose_last = -1
+mode_choose = 0
+mode_choose_last = 0
 mode_flag = 0
 stop_flag = 0
 EXPOSURE_TIME_SCALE = 0.80 #曝光值
@@ -78,10 +78,9 @@ sensor.set_auto_exposure(False,exposure_us = int(current_exposure_time_in_micros
 
 pwm_up = up_servo_zero_position
 pwm_down = down_servo_zero_position
-
-# up_servo.pulse_width(1500)
-
-#找到最大的色块 返回色块的外框的宽度w（int）blob[2] 返回色块的外框的宽度h（int）blob[3]
+led_red = LED(1)
+led_green = LED(2)
+led_blue = LED(3)
 
 
 def Incremental_PI_Up (pwm, now, target):
@@ -93,6 +92,7 @@ def Incremental_PI_Up (pwm, now, target):
     last_bias_up = bias_up
     return pwm
 
+
 def Incremental_PI_Down (pwm, now, target):
     global bias_down, last_bias_down,last_last_bias_down
     global kp_down, ki_down, kd_down
@@ -103,34 +103,41 @@ def Incremental_PI_Down (pwm, now, target):
     last_bias_down = bias_down
     return pwm
 
+
 def find_max(blobs):
     max_size=0
     for blob in blobs:
-        if blob[2]*blob[3] > max_size :
+        if blob[2]*blob[3] > max_size:
             max_blob = blob
             max_size = blob[2]*blob[3]
-    return max_blob
+            return max_blob
+    return None
 
 
-while(True):
+while True:
     clock.tick()
+    laser_able = laser_disable
+    cv = 80
+    led_green.toggle()
     while UART.any(UART(3)):
         mode_choose = UART.readchar(UART(3))
     # mode_choose = 2
     # continue
-    if mode_choose != 1 and mode_choose != 2 and mode_choose != 3:
-        # print("while: %d" % mode_choose)
+    if mode_choose != 0 and mode_choose != 1:
         mode_choose = mode_choose_last
-        # print("real: %d" % mode_choose)
-    # print("NOW: %d" % mode_choose)
+    print("NOW: %d" % mode_choose)
     mode_choose_last = mode_choose
-    # mode_choose = 2
-    if mode_choose == 2:#打气球程序段
+    if mode_choose == 1:
         # clock.tick()
+        led_red.toggle()
+        led_blue.off()
+        # led_green.off()
         img = sensor.snapshot()
         blobs = img.find_blobs([red_threshold])
         if blobs:
             max_blob = find_max(blobs)
+            if max_blob is None:
+                continue
             down_error_ori = max_blob.cx()-img.width()/2
             up_error_ori = max_blob.cy()-img.height()/2
             img.draw_rectangle(max_blob.rect())
@@ -141,7 +148,7 @@ while(True):
 
             pwm_up = Incremental_PI_Up(pwm_up, up_error_ori, up_bias_correct)
             pwm_down = Incremental_PI_Down(pwm_down, down_error_ori, down_bias_correct)
-            pwm_up   = int(pwm_up)
+            pwm_up = int(pwm_up)
             pwm_down = int(pwm_down)
 
             if pwm_up > up_pwm_limit_down + up_servo_zero_position:
@@ -157,36 +164,49 @@ while(True):
             up_servo.pulse_width(pwm_up)
             down_servo.pulse_width(pwm_down)
             # print("up_err: %d, down_err: %d" %(up_error_ori, down_error_ori))
-            if(abs(down_error_ori)<15 and up_error_ori<up_bias_range+up_bias_correct and up_error_ori>up_bias_correct-up_bias_range):
-                data=bytearray([laser_enable,0x0a])
-                uart.write(data)
+            if abs(down_error_ori)<15 and up_error_ori<up_bias_range+up_bias_correct and up_error_ori>up_bias_correct-up_bias_range:
+                # data = bytearray([laser_enable, 0x0a])
+                laser_able = laser_enable
             else:
-                data=bytearray([laser_disable,0x0a])
-                uart.write(data)
-    elif mode_choose == 3:
-        # clock.tick()
-        up_servo.pulse_width(up_servo_zero_position)
-        down_servo.pulse_width(down_servo_zero_position)
+                laser_able = laser_disable
+            data_trace = bytearray([laser_able, max_blob.cx(), stop_flag, 0x0a])
+            uart.write(data_trace)
+    # elif mode_choose == 3:
+    #     # clock.tick()
+    #     # up_servo.pulse_width(up_servo_zero_position)
+    #     # down_servo.pulse_width(down_servo_zero_position)
+    #     img = sensor.snapshot()
+    #     blobs_yellow = img.find_blobs([yellow_threshold])
+    #     if blobs_yellow:
+    #         max_blob = find_max(blobs_yellow)
+    #         # print("area: %d" % max_blob.area())
+    #         if max_blob.area() > 400:
+    #             stop_flag = 1
+    #         else:
+    #             stop_flag = 0
+    #         data_trace = bytearray([max_blob.cx(), stop_flag, 0x0b])
+    #         # print("cx: %d"%max_blob.cx())
+    #         # print(data_trace)
+    #         uart.write(data_trace)
+    #         img.draw_rectangle(max_blob.rect())
+    #         # img.draw_cross(max_blob.cx(), max_blob.cy())
+    #     else:
+    #         data_trace = bytearray([125,1,0x0b])
+    #         uart.write(data_trace)
+    elif mode_choose == 8:
+        led_red.off()
+        led_blue.toggle()
+        # led_green.off()
         img = sensor.snapshot()
-        blobs_yellow = img.find_blobs([yellow_threshold])
-        if blobs_yellow:
-            max_blob = find_max(blobs_yellow)
-            # print("area: %d" % max_blob.area())
-            if max_blob.area() > 400:
-                stop_flag=1
-            else:
-                stop_flag=0
-            data_trace = bytearray([max_blob.cx(),stop_flag,0x0b])
-            # print("cx: %d"%max_blob.cx())
-            # print(data_trace)
-            uart.write(data_trace)
-            img.draw_rectangle(max_blob.rect())
-            # img.draw_cross(max_blob.cx(), max_blob.cy())
+        blobs = img.find_blobs([red_threshold])
+        if blobs:
+            max_blob = find_max(blobs)
+            cx = max_blob.cx()
         else:
-            data_trace = bytearray([125,1,0x0b])
-            uart.write(data_trace)
-    elif mode_choose == 1:
+            cx = 125
         up_servo.pulse_width(up_servo_zero_position)
         down_servo.pulse_width(down_servo_zero_position)
+        data_trace = bytearray([laser_disable, cx, 1, 0x0a])
+        uart.write(data_trace)
     # print(mode_choose)
     # print(clock.fps())

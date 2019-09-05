@@ -120,7 +120,8 @@ namespace navigation {
                  {"route_updated",       socketReceive.route_updated},
                  {"stop",                socketReceive.stop},
                  {"behavior",            socketReceive.behavior},
-                 {"receiver_id",         socketReceive.receiver_id}};
+                 {"receiver_id",         socketReceive.receiver_id},
+                 {"laser_intensity",     socketReceive.laser_intensity}};
     }
 
     void from_json(const json &j, SocketReceive &socketReceive) {
@@ -131,6 +132,7 @@ namespace navigation {
         socketReceive.stop = j.at("stop").get<uint8_t>();
         socketReceive.behavior = j.at("behavior").get<uint8_t>();
         socketReceive.receiver_id = j.at("receiver_id").get<std::vector<uint8_t>>();
+        socketReceive.laser_intensity = j.at("laser_intensity").get<uint8_t>();
     }
 
     void to_json(json& j, const SocketHandShake& socketHandShake){
@@ -267,16 +269,19 @@ namespace navigation{
         locking_trans_.locking = 0;
         stop_trans_.stop = 0;
         control_power_trans_.host = 1;
+        behavior_params_trans_.laser_intensity = 20;
 
         gps_data_.gps_position = now_location_gps_;
         gps_data_.speed = 0.0f;
         UtmPosition utmPosition;
-
+#ifdef USE_GLOG
         LOG(INFO)<<"Init gps --- longitude: "<<gps_data_.gps_position.longitude<<" latitude: "<<gps_data_.gps_position.latitude;
+#endif
         GpsToUtm(&gps_data_.gps_position, &utmPosition);
         boat_measurement_vector_.position = utmPosition;
-
+#ifdef USE_GLOG
         LOG(INFO)<<"Init utm --- x: "<<boat_measurement_vector_.position.x<<" y: "<<boat_measurement_vector_.position.y<<" z: "<<boat_measurement_vector_.position.gridZone;
+#endif
         boat_measurement_vector_.imu_data.angle.yaw = initial_yaw_;
         boat_measurement_vector_.imu_data.linear_acceleration.x = 0.0;
         boat_measurement_vector_.imu_data.linear_acceleration.y = 0.0;
@@ -311,7 +316,9 @@ namespace navigation{
 //        now_call_timestamp_ = std::chrono::steady_clock::now();
 //        last_call_timestamp_ = std::chrono::steady_clock::now();
         std::cout<<"Initialized!"<<std::endl;
+#ifdef USE_GLOG
          LOG(INFO)<<"Initialized!"<<std::endl;
+#endif
     }
 
     void boat::SocketHandShake_() {
@@ -616,6 +623,8 @@ namespace navigation{
             pthread_mutex_unlock(_this->route_updated_mutex_ptr_);
             //_this->UpdateLocusPoints_(s_r.route_gps_positions, 0);
         }
+        _this->behavior_ = s_r.behavior;
+        _this->behavior_params_trans_.laser_intensity = s_r.laser_intensity;
     }
 
     /**
@@ -637,7 +646,9 @@ namespace navigation{
         }else if(velocity_data.velocity_x<-9.9f){
             velocity_data.velocity_x = -9.9f;
         }
+#ifdef USE_GLOG
         LOG(INFO)<<"Velocity publish v_x: "<<velocity_data.velocity_x<<" v_a: "<<velocity_data.velocity_angle<<std::endl;
+#endif
         //std::cout<<"Velocity publish v_x: "<<velocity_data.velocity_x<<" v_a: "<<velocity_data.velocity_angle<<std::endl;
         if(ser_com_ptr_){
             ser_com_ptr_->SendData(velocity_data, kVELOCITY_FLAG);
@@ -645,7 +656,9 @@ namespace navigation{
     }
 
     void boat::ControlPowerPublish_(ControlPowerTrans& control_power_trans){
+#ifdef USE_GLOG
         LOG(INFO)<<"Control power publish: "<<(int)control_power_trans.host;
+#endif
         //std::cout<<"Control power publish: "<<(int)control_power_trans.host<<std::endl;
         if(ser_com_ptr_){
             ser_com_ptr_->SendData(control_power_trans, kCONTROL_POWER_FLAG);
@@ -653,7 +666,9 @@ namespace navigation{
     }
 
     void boat::EmpowerPublish_(EmpowerTrans& empowerTrans){
+#ifdef USE_GLOG
         LOG(INFO)<<"Empower publish: "<<(int)empowerTrans.empower;
+#endif
         //std::cout<<"Empower publish: "<<(int)empowerTrans.empower<<std::endl;
         if(ser_com_ptr_){
             ser_com_ptr_->SendData(empowerTrans, kEMPOWER_FLAG);
@@ -661,7 +676,9 @@ namespace navigation{
     }
 
     void boat::StopPublish_(StopTrans& stopTrans){
+#ifdef USE_GLOG
         LOG(INFO)<<"Stop publish: "<<(int)stopTrans.stop;
+#endif
         //std::cout<<"Stop publish: "<<(int)stopTrans.stop<<std::endl;
         if(ser_com_ptr_){
             ser_com_ptr_->SendData(stopTrans, kSTOP_FLAG);
@@ -669,7 +686,9 @@ namespace navigation{
     }
 
     void boat::ModePublish_(const BoatMode& mode) {
+#ifdef USE_GLOG
         LOG(INFO)<<"Mode publish: "<<(int)mode;
+#endif
         ModeTrans m;
         m.mode = mode;
         if(ser_com_ptr_){
@@ -678,11 +697,24 @@ namespace navigation{
     }
 
     void boat::BehaviorPublish_(uint8_t behavior) {
-        LOG(INFO)<<"Mode publish: "<<(int)behavior;
+#ifdef USE_GLOG
+        LOG(INFO)<<"Behavior publish: "<<(int)behavior;
+#endif
         BehaviorTrans b;
         b.behavior = behavior;
         if(ser_com_ptr_){
             ser_com_ptr_->SendData(b, kBEHAVIOR_FLAG);
+        }
+    }
+
+    void boat::BehaviorParamsPublish_(const BehaviorParamsTrans& behavior) {
+#ifdef USE_GLOG
+        LOG(INFO)<<"Behavior Params publish: "<<behavior.laser_intensity;
+#endif
+        BehaviorParamsTrans b;
+        b.laser_intensity = behavior.laser_intensity;
+        if(ser_com_ptr_){
+            ser_com_ptr_->SendData(b, KBEHAVIOR_PARAMS_FLAG);
         }
     }
 
@@ -720,12 +752,14 @@ namespace navigation{
         ImuDataTrans* imu_trans;
         imu_trans = &imu_trans_data;
         memcpy(imu_trans, buffer_ptr_, sizeof(ImuDataTrans));
+#ifdef USE_GLOG
         LOG(INFO)<<"Imu call back --"
             <<" pitch: "<<imu_trans->pitch
             <<" roll: "<<imu_trans->roll
             <<" angular_velocity_z:"<<imu_trans->angular_velocity_z
             <<" linear_acceleration_x: "<<imu_trans->linear_acceleration_x
             <<" linear_acceleration_y: "<<imu_trans->linear_acceleration_y;
+#endif
         //auto* imu_trans = (ImuDataTrans*)buffer_ptr_;
         double ax, ay;
         if(fabsf(imu_trans->roll) > 10000*M_PI){
@@ -778,11 +812,15 @@ namespace navigation{
         GpsDataTrans* gps_trans;
         gps_trans = &gps_trans_data;
         memcpy(gps_trans, buffer_ptr_, sizeof(GpsDataTrans));
+#ifdef USE_GLOG
         LOG(INFO)<<"Gps call back -- longitude: "<<gps_trans->longitude<<" latitude: "<<gps_trans->latitude;
+#endif
         //std::cout<<"Gps call back -- longitude: "<<gps_trans->longitude<<" latitude: "<<gps_trans->latitude <<std::endl;
         //auto* gps_trans = (GpsDataTrans*)buffer_ptr_;
         if(gps_trans->longitude>360.0 || gps_trans->longitude<0.0 || gps_trans->latitude>90.0 || gps_trans->latitude< -90.0){
+#ifdef USE_GLOG
             LOG(ERROR)<<"Gps transmission error";
+#endif
             return;
         }
         _this->gps_data_.gps_position.longitude = gps_trans->longitude;
@@ -832,7 +870,9 @@ namespace navigation{
         locking_trans = &locking_trans_data;
         memcpy(locking_trans, buffer_ptr_, sizeof(StopTrans));
         _this->locking_trans_.locking = locking_trans->locking;
+#ifdef USE_GLOG
         LOG(INFO)<<"Locking call back: "<<locking_trans->locking;
+#endif
     }
 
     /**
@@ -964,7 +1004,7 @@ namespace navigation{
 //                RemoteVelocityAnalyze_(remote_channel_data_main_thread_, &velocity_data_);
 //                control_power_trans_.host = 3;
 //            }
-            if(behavior_ & kAttack){
+            if(behavior_ & (uint8_t)kAttack){
                 RemoteVelocityAnalyze_(remote_channel_data_main_thread_, &velocity_data_);
                 //control_power_trans_.host = 3;
             }
@@ -988,6 +1028,8 @@ namespace navigation{
                 ModePublish_(boat_mode_);
                 std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)50));
                 BehaviorPublish_(behavior_);
+                std::this_thread::sleep_for(std::chrono:: microseconds ((unsigned int)50));
+                BehaviorParamsPublish_(behavior_params_trans_);
             }
             now_timestamp = std::chrono::steady_clock::now();
             std::chrono::duration<double> time_used = std::chrono::duration_cast<std::chrono::duration<double>>(now_timestamp-last_timestamp);
